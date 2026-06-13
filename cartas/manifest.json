@@ -1,0 +1,46 @@
+{
+    "cartas": [
+        {
+            "id": "umbraeth/lilith",
+            "nombre": "Lilith",
+            "imagen": "cartas/umbraeth/lilith.png",
+            "region": "umbraeth",
+            "valor": 5
+        },
+        {
+            "id": "astra/vaelisse",
+            "nombre": "Vaelisse",
+            "imagen": "cartas/astra/vaelisse.png",
+            "region": "astra",
+            "valor": 5
+        },
+        {
+            "id": "elarion/irukka",
+            "nombre": "Irukka",
+            "imagen": "cartas/elarion/irukka.png",
+            "region": "elarion",
+            "valor": 5
+        },
+        {
+            "id": "skjoldheim/cassius",
+            "nombre": "Cassius",
+            "imagen": "cartas/skjoldheim/cassius.png",
+            "region": "skjoldheim",
+            "valor": 5
+        },
+        {
+            "id": "skjoldheim/raven",
+            "nombre": "Raven",
+            "imagen": "cartas/skjoldheim/raven.png",
+            "region": "skjoldheim",
+            "valor": 5
+        },
+        {
+            "id": "solareth/dio",
+            "nombre": "Dio",
+            "imagen": "cartas/solareth/dio.png",
+            "region": "solareth",
+            "valor": 5
+        }
+    ]
+}

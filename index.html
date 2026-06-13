@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colección de Cartas - Elfheim</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="auth-overlay" class="auth-overlay">
+        <div class="auth-box">
+            <h2>Colección de Cartas</h2>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-auth="login">Iniciar Sesión</button>
+                <button class="auth-tab" data-auth="register">Registrarse</button>
+            </div>
+            <form id="auth-form" class="auth-form">
+                <input type="email" id="auth-email" placeholder="Email" required autocomplete="email">
+                <input type="password" id="auth-password" placeholder="Contraseña" required minlength="6" autocomplete="current-password">
+                <button type="submit" class="auth-submit">Entrar</button>
+            </form>
+            <p id="auth-error" class="auth-error"></p>
+        </div>
+    </div>
+
+    <header>
+        <h1>Colección de Cartas</h1>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div class="monedas">
+                <span class="moneda-icon">🪙</span>
+                <span id="monedas">0</span>
+            </div>
+            <button id="auth-logout" class="auth-logout" style="display:none;padding:8px 14px;font-size:14px;">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" data-tab="tienda">Tienda</button>
+        <button class="nav-btn" data-tab="coleccion">Colección</button>
+    </nav>
+
+    <main>
+        <section id="tienda" class="tab-content active">
+            <div class="sobres-container">
+                <h2>Sobres Disponibles</h2>
+                <div class="sobres-grid">
+                    <div class="sobre-card region-umbraeth" data-tipo="umbraeth">
+                        <div class="sobre-imagen">🌑</div>
+                        <h3>Sobre Umbraeth</h3>
+                        <p>3 cartas de Umbraeth</p>
+                        <p class="precio">🪙 50</p>
+                        <button class="btn-comprar" data-precio="50" data-tipo="umbraeth">Abrir Sobre</button>
+                    </div>
+                    <div class="sobre-card region-skjoldheim" data-tipo="skjoldheim">
+                        <div class="sobre-imagen">❄️</div>
+                        <h3>Sobre Skjoldheim</h3>
+                        <p>3 cartas de Skjoldheim</p>
+                        <p class="precio">🪙 50</p>
+                        <button class="btn-comprar" data-precio="50" data-tipo="skjoldheim">Abrir Sobre</button>
+                    </div>
+                    <div class="sobre-card region-astra" data-tipo="astra">
+                        <div class="sobre-imagen">⭐</div>
+                        <h3>Sobre Astra</h3>
+                        <p>3 cartas de Astra</p>
+                        <p class="precio">🪙 50</p>
+                        <button class="btn-comprar" data-precio="50" data-tipo="astra">Abrir Sobre</button>
+                    </div>
+                    <div class="sobre-card region-solareth" data-tipo="solareth">
+                        <div class="sobre-imagen">🐉</div>
+                        <h3>Sobre Solareth</h3>
+                        <p>3 cartas de Solareth</p>
+                        <p class="precio">🪙 50</p>
+                        <button class="btn-comprar" data-precio="50" data-tipo="solareth">Abrir Sobre</button>
+                    </div>
+                    <div class="sobre-card region-elarion" data-tipo="elarion">
+                        <div class="sobre-imagen">🌿</div>
+                        <h3>Sobre Elarion</h3>
+                        <p>3 cartas de Elarion</p>
+                        <p class="precio">🪙 50</p>
+                        <button class="btn-comprar" data-precio="50" data-tipo="elarion">Abrir Sobre</button>
+                    </div>
+                </div>
+            </div>
+            <div class="info-monedas">
+                <button class="btn-moneda">🪙 +100 Monedas</button>
+            </div>
+        </section>
+
+        <section id="coleccion" class="tab-content">
+            <div class="coleccion-header">
+                <h2>Mi Colección</h2>
+                <div class="stats">
+                    <span id="stats-total">Total: 0</span>
+                    <span id="stats-unicos">Únicas: 0</span>
+                    <span id="stats-umbraeth">Umbraeth: 0</span>
+                    <span id="stats-skjoldheim">Skjoldheim: 0</span>
+                    <span id="stats-astra">Astra: 0</span>
+                    <span id="stats-solareth">Solareth: 0</span>
+                    <span id="stats-elarion">Elarion: 0</span>
+                </div>
+            </div>
+            <div class="filtros">
+                <button class="filtro-btn active" data-filtro="todas">Todas</button>
+                <button class="filtro-btn" data-filtro="umbraeth">Umbraeth</button>
+                <button class="filtro-btn" data-filtro="skjoldheim">Skjoldheim</button>
+                <button class="filtro-btn" data-filtro="astra">Astra</button>
+                <button class="filtro-btn" data-filtro="solareth">Solareth</button>
+                <button class="filtro-btn" data-filtro="elarion">Elarion</button>
+            </div>
+            <div id="coleccion-grid" class="coleccion-grid"></div>
+        </section>
+    </main>
+
+    <div id="modal-sobre" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2>¡Abre tu Sobre!</h2>
+            <div id="cartas-revelar" class="cartas-revelar"></div>
+            <button class="btn-coleccionar">Coleccionar</button>
+        </div>
+    </div>
+
+    <div id="modal-carta" class="modal">
+        <div class="modal-contenido carta-info">
+            <span class="cerrar">&times;</span>
+            <img id="carta-detalle-img" src="" alt="Carta">
+            <h3 id="carta-detalle-nombre"></h3>
+            <p id="carta-detalle-region"></p>
+            <p id="carta-detalle-cantidad"></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
