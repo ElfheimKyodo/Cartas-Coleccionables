@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://ougrrlgsnoezkkdrphvz.supabase.co/rest/v1/';
-const SUPABASE_ANON_KEY = 'sb_publishable_b5JWbhfO0qrwglB7WzUrkA_1YB6uPIV';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91Z3JybGdzbm9lemtrZHJwaHZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNDUzNTksImV4cCI6MjA5NjkyMTM1OX0.eORrYj8DpTk1Pk10QVCGwq0kooGbrP30UTI0O12E5_4';
 
 function getClient() {
     if (typeof supabase === 'undefined') {
