@@ -81,12 +81,18 @@ async function cargarDatos() {
         coleccion = {};
         for (const item of inventario || []) {
             const carta = cartasData.find(c => c.id === item.carta_id);
-            if (carta) {
-                coleccion[item.carta_id] = { carta, cantidad: item.cantidad };
-            }
+            if (carta) coleccion[item.carta_id] = { carta, cantidad: item.cantidad };
         }
     } catch (e) {
-        console.error('Error cargando datos desde Supabase:', e);
+        const status = e?.status || e?.code;
+        const msg = String(e?.message || e);
+        const esErrorSupabase = status === 406 || status === 'PGRST106' || status === 403 || /PGRST/.test(msg) || /row-level security/.test(msg) || /Forbidden/.test(msg);
+        if (esErrorSupabase) {
+            console.warn('[AUTH] Supabase no accesible por errores de backend; usando localStorage.');
+            supabaseEnabled = false;
+        } else {
+            console.error('[AUTH] Error cargando datos desde Supabase:', e);
+        }
         cargarLocalStorage();
     }
 }
@@ -126,7 +132,13 @@ async function guardarDatos() {
             await db.upsertInventory(supabaseClient, items);
         }
     } catch (e) {
-        console.error('Error guardando en Supabase:', e);
+        const msg = String(e?.message || e);
+        if (/row-level security/.test(msg) || /Forbidden/.test(msg) || /42501/.test(msg)) {
+            console.warn('[AUTH] Permisos insuficientes en Supabase; usando localStorage.');
+            supabaseEnabled = false;
+        } else {
+            console.error('[AUTH] Error guardando en Supabase:', e);
+        }
         guardarLocalStorage();
     }
 }
@@ -164,12 +176,16 @@ function actualizarEstadisticas() {
 }
 
 function cambiarTab(tab) {
+    console.log('[STEP] cambiarTab ->', tab);
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     const btn = document.querySelector(`.nav-btn[data-tab="${tab}"]`);
     if (btn) btn.classList.add('active');
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     const elemento = document.getElementById(tab);
-    if (elemento) elemento.classList.add('active');
+    if (elemento) {
+        console.log('[STEP] mostrando tab', tab, 'display=', getComputedStyle(elemento).display);
+        elemento.classList.add('active');
+    }
     if (tab === 'coleccion') renderizarColeccion();
 }
 
@@ -311,17 +327,34 @@ function setUsuario(user) {
     usuarioActual = user;
     const overlay = document.getElementById('auth-overlay');
     const authForm = document.getElementById('auth-form');
+    const profileTrigger = document.getElementById('profile-trigger');
+    const profileMenu = document.getElementById('profile-menu');
+    const profileEmail = document.getElementById('profile-email');
+
     if (user) {
         overlay.style.display = 'none';
         authForm.style.display = 'none';
+        if (profileTrigger) {
+            profileTrigger.style.display = 'flex';
+        }
+        if (profileMenu) {
+            if (profileEmail) profileEmail.textContent = user.email || 'Usuario';
+        }
+        
         cargarDatos().then(() => {
             actualizarMonedas();
             actualizarEstadisticas();
             renderizarColeccion();
+            console.log('[AUTH] Datos cargados:', { monedas, totalCartas: Object.keys(coleccion).length });
+        }).catch(err => {
+            console.error('[AUTH] Error al cargar datos:', err);
         });
     } else {
         overlay.style.display = 'flex';
         authForm.style.display = 'flex';
+        if (profileTrigger) profileTrigger.style.display = 'none';
+        if (profileMenu) profileMenu.style.display = 'none';
+        closeProfileMenu();
         coleccion = {};
         monedas = 0;
         actualizarMonedas();
@@ -330,128 +363,110 @@ function setUsuario(user) {
     }
 }
 
+function openProfileMenu() {
+    const profileMenu = document.getElementById('profile-menu');
+    if (profileMenu) profileMenu.style.display = 'block';
+}
+
+function closeProfileMenu() {
+    const profileMenu = document.getElementById('profile-menu');
+    if (profileMenu) profileMenu.style.display = 'none';
+}
+
+function cerrarModales() {
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+    closeProfileMenu();
+}
+
+function mostrarModoRegister() {
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+        if (tab.dataset.auth === 'register') tab.classList.add('active');
+        else tab.classList.remove('active');
+    });
+    const submitBtn = document.querySelector('.auth-submit');
+    if (submitBtn) submitBtn.textContent = 'Registrarse';
+}
+
+function mostrarModoLogin() {
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+        if (tab.dataset.auth === 'login') tab.classList.add('active');
+        else tab.classList.remove('active');
+    });
+    const submitBtn = document.querySelector('.auth-submit');
+    if (submitBtn) submitBtn.textContent = 'Entrar';
+}
+
 function onAuthSubmit(e) {
     e.preventDefault();
-
-    const emailInput = document.getElementById('auth-email');
-    const passwordInput = document.getElementById('auth-password');
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value.trim();
     const errorEl = document.getElementById('auth-error');
-
-    if (!emailInput || !passwordInput || !errorEl) return;
-
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-
     if (!email || !password) {
         errorEl.textContent = 'Completá email y contraseña';
         return;
     }
-
-    const loginTab = document.querySelector('.auth-tab[data-auth="login"]');
-    const isRegister = loginTab && !loginTab.classList.contains('active');
-
+    const esRegister = document.querySelector('.auth-tab[data-auth="register"]').classList.contains('active');
     errorEl.textContent = 'Cargando...';
-
-    return fireAuth(isRegister, email, password);
+    procesarAuth(esRegister, email, password);
 }
 
-async function fireAuth(isRegister, email, password) {
+async function procesarAuth(esRegister, email, password) {
     const errorEl = document.getElementById('auth-error');
-
     try {
-        const client = getSupabaseClient();
-        if (!client) {
-            throw new Error('Supabase no configurado');
-        }
-
+        const client = supabaseClient;
+        if (!client) throw new Error('Supabase no configurado');
         let user = null;
-
-        if (isRegister) {
-            const signUpResult = await auth.signUp(client, email, password);
-            if (signUpResult.error) throw signUpResult.error;
-            user = signUpResult.data.user;
+        if (esRegister) {
+            const result = await auth.signUp(client, email, password);
+            console.log('[AUTH] signUp result:', result);
+            user = result?.user ?? null;
+            if (!user) throw new Error('No se pudo crear el usuario');
         } else {
-            const signInResult = await auth.signIn(client, email, password);
-            if (signInResult.error) throw signInResult.error;
-            user = signInResult.data.user;
+            const result = await auth.signIn(client, email, password);
+            console.log('[AUTH] signIn result:', result);
+            if (result?.error) throw result.error;
+            user = result?.user ?? null;
+            if (!user) throw new Error('No se pudo iniciar sesión');
         }
-
-        if (!user) {
-            throw new Error('No se pudo obtener la sesión');
-        }
-
         setUsuario(user);
     } catch (err) {
-        if (errorEl) {
-            errorEl.textContent = err.message || 'Error de autenticación';
-        }
-    }
-}
-
-function setLoginMode() {
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-        if (tab.dataset.auth === 'login') {
-            tab.classList.add('active');
-        } else {
-            tab.classList.remove('active');
-        }
-    });
-
-    const submitBtn = document.querySelector('.auth-submit');
-    if (submitBtn) {
-        submitBtn.textContent = 'Entrar';
-    }
-}
-
-function setRegisterMode() {
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-        if (tab.dataset.auth === 'register') {
-            tab.classList.add('active');
-        } else {
-            tab.classList.remove('active');
-        }
-    });
-
-    const submitBtn = document.querySelector('.auth-submit');
-    if (submitBtn) {
-        submitBtn.textContent = 'Registrarse';
+        console.error('[AUTH] Error completo:', err);
+        errorEl.textContent = err.message || 'Error de autenticación';
     }
 }
 
 function inicializarUI() {
+    console.log('[STEP] inicializarUI');
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (!usuarioActual && supabaseEnabled && getSupabaseClient()) {
+            console.log('[CLICK] nav-btn', btn.dataset.tab, 'usuarioActual=', !!usuarioActual, 'supabaseEnabled=', supabaseEnabled);
+            if (!usuarioActual && supabaseEnabled && getClient()) {
                 mostrarAuthError('Iniciá sesión primero');
                 return;
             }
-
             cambiarTab(btn.dataset.tab);
         });
     });
 
     document.querySelectorAll('.btn-comprar').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (!usuarioActual && supabaseEnabled && getSupabaseClient()) {
+            if (!usuarioActual && supabaseEnabled && getClient()) {
                 mostrarAuthError('Iniciá sesión primero');
                 return;
             }
-
             const tipo = btn.dataset.tipo;
             const precio = parseInt(btn.dataset.precio);
             if (!Number.isFinite(precio)) return;
-
             comprarSobre(tipo, precio);
         });
     });
 
     document.querySelectorAll('.filtro-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (!usuarioActual && supabaseEnabled && getSupabaseClient()) {
+            if (!usuarioActual && supabaseEnabled && getClient()) {
                 mostrarAuthError('Iniciá sesión primero');
                 return;
             }
-
             aplicarFiltro(btn.dataset.filtro);
         });
     });
@@ -459,11 +474,10 @@ function inicializarUI() {
     const btnMoneda = document.querySelector('.btn-moneda');
     if (btnMoneda) {
         btnMoneda.addEventListener('click', async () => {
-            if (!usuarioActual && supabaseEnabled && getSupabaseClient()) {
+            if (!usuarioActual && supabaseEnabled && getClient()) {
                 mostrarAuthError('Iniciá sesión primero');
                 return;
             }
-
             monedas += 100;
             actualizarMonedas();
             await guardarDatos();
@@ -476,9 +490,7 @@ function inicializarUI() {
 
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', event => {
-            if (event.target === modal) {
-                cerrarModales();
-            }
+            if (event.target === modal) cerrarModales();
         });
     });
 
@@ -492,19 +504,17 @@ function inicializarUI() {
 
     if (loginTabBtn) {
         loginTabBtn.addEventListener('click', () => {
-            setLoginMode();
-            if (document.getElementById('auth-error')) {
-                document.getElementById('auth-error').textContent = '';
-            }
+            mostrarModoLogin();
+            const errorEl = document.getElementById('auth-error');
+            if (errorEl) errorEl.textContent = '';
         });
     }
 
     if (registerTabBtn) {
         registerTabBtn.addEventListener('click', () => {
-            setRegisterMode();
-            if (document.getElementById('auth-error')) {
-                document.getElementById('auth-error').textContent = '';
-            }
+            mostrarModoRegister();
+            const errorEl = document.getElementById('auth-error');
+            if (errorEl) errorEl.textContent = '';
         });
     }
 
@@ -513,25 +523,53 @@ function inicializarUI() {
         authForm.removeEventListener('submit', onAuthSubmit);
         authForm.addEventListener('submit', onAuthSubmit);
     }
+
+    const profileTrigger = document.getElementById('profile-trigger');
+    if (profileTrigger) {
+        profileTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const menu = document.getElementById('profile-menu');
+            if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+
+    const cerrarProfile = document.querySelector('.cerrar-profile');
+    if (cerrarProfile) {
+        cerrarProfile.addEventListener('click', closeProfileMenu);
+    }
+
+    const profileLogout = document.getElementById('profile-logout');
+    if (profileLogout) {
+        profileLogout.addEventListener('click', async () => {
+            try {
+                if (supabaseClient) await auth.signOut(supabaseClient);
+            } catch (e) {
+                console.error('Error al cerrar sesión:', e);
+            }
+            setUsuario(null);
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        const menu = document.getElementById('profile-menu');
+        const trigger = document.getElementById('profile-trigger');
+        if (menu && trigger && !menu.contains(e.target) && !trigger.contains(e.target)) {
+            menu.style.display = 'none';
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('[INIT] DOM cargado, iniciando app...');
+    window.onerror = (msg, url, line, col, err) => {
+        console.error('[GLOBAL ERROR]', msg, 'at', url + ':' + line + ':' + col, 'err=', err);
+    };
     inicializarSupabase();
     await cargarCartas();
 
     if (supabaseEnabled) {
         const session = await auth.getSession(supabaseClient);
-        if (session?.user) {
-            usuarioActual = session.user;
-        }
-        auth.onAuthStateChanged(supabaseClient, (_event, session) => {
-            if (session?.user) {
-                usuarioActual = session.user;
-            } else {
-                usuarioActual = null;
-            }
-            setUsuario(usuarioActual);
-        });
+        usuarioActual = session?.user ?? null;
     }
 
     cargarDatos();

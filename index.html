@@ -24,13 +24,22 @@
     </div>
 
     <header>
-        <h1>Colección de Cartas</h1>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <h1>Colección de Cartas</h1>
+            <div id="profile-trigger" class="profile-trigger" style="display:none;">👤</div>
+        </div>
         <div style="display:flex;align-items:center;gap:12px;">
             <div class="monedas">
                 <span class="moneda-icon">🪙</span>
                 <span id="monedas">0</span>
             </div>
-            <button id="auth-logout" class="auth-logout" style="display:none;padding:8px 14px;font-size:14px;">Cerrar Sesión</button>
+        </div>
+        <div id="profile-menu" class="profile-menu" style="display:none;">
+            <div class="profile-header">
+                <span id="profile-email" class="profile-email"></span>
+                <span class="cerrar-profile">&times;</span>
+            </div>
+            <button id="profile-logout" class="profile-logout-btn">Cerrar Sesión</button>
         </div>
     </header>
 

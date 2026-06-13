@@ -154,6 +154,7 @@ header {
     border-radius: 10px;
     margin-bottom: 20px;
     box-shadow: var(--shadow);
+    position: relative;
 }
 
 header h1 {
@@ -675,5 +676,77 @@ nav {
 }
 
 #auth-logout:hover {
+    transform: scale(1.05);
+}
+
+.profile-trigger {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff9800, #ffc107);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    border: none;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 152, 0, 0.4);
+}
+
+.profile-menu {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid #444;
+    min-width: 220px;
+    z-index: 1500;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444;
+}
+
+.profile-email {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: bold;
+    word-break: break-word;
+}
+
+.cerrar-profile {
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.cerrar-profile:hover {
+    color: var(--text);
+}
+
+.profile-logout-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #c62828, #b71c1c);
+    color: var(--text);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.profile-logout-btn:hover {
     transform: scale(1.05);
 }
