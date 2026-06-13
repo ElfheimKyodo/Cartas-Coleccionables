@@ -12,11 +12,31 @@ const db = {
     async getProfile(client, userId) {
         const { data, error } = await client
             .from('profiles')
-            .select('monedas')
+            .select('monedas, email')
             .eq('id', userId)
             .single();
         if (error && error.code !== 'PGRST116') throw error;
         return data;
+    },
+
+    async getProfileByUsername(client, username) {
+        const { data, error } = await client
+            .from('profiles')
+            .select('id, monedas, username, email')
+            .eq('username', username)
+            .maybeSingle();
+        if (error) throw error;
+        return data || null;
+    },
+
+    async getProfileByEmail(client, email) {
+        const { data, error } = await client
+            .from('profiles')
+            .select('id, monedas, username, email')
+            .eq('email', email)
+            .maybeSingle();
+        if (error) throw error;
+        return data || null;
     },
 
     async getInventory(client, userId) {
@@ -45,18 +65,44 @@ const db = {
 };
 
 const auth = {
-    async signUp(client, email, password) {
+    async signUp(client, email, password, username) {
         const { data, error } = await client.auth.signUp({ email, password });
         if (error) {
             console.error('[AUTH] signUp error:', error);
             throw error;
         }
         console.log('[AUTH] signUp success:', data);
+        if (data.user) {
+            const { data: profileData, error: profileError } = await client
+                .from('profiles')
+                .upsert({ 
+                    id: data.user.id, 
+                    username: username || email.split('@')[0], 
+                    email,
+                    monedas: 50  // Valor por defecto para nuevos usuarios
+                }, { onConflict: 'id' });
+            if (profileError) console.error('[AUTH] profile upsert error:', profileError);
+        }
         return { user: data.user ?? null, session: data.session ?? null };
     },
 
     async signIn(client, email, password) {
         const { data, error } = await client.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        return data;
+    },
+
+    async signInWithGoogle(client) {
+        const { data, error } = await client.auth.signInWithOAuth({
+            provider: 'discord',
+            options: { redirectTo: window.location.origin }
+        });
+        if (error) throw error;
+        return data;
+    },
+
+    async updatePassword(client, newPassword) {
+        const { data, error } = await client.auth.updateUser({ password: newPassword });
         if (error) throw error;
         return data;
     },

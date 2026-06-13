@@ -298,6 +298,14 @@ function renderizarColeccion(filtro = 'todas') {
     });
 }
 
+function toHtml(texto) {
+    const div = document.createElement('div');
+    div.textContent = texto;
+    return (div.innerHTML || '')
+        .replace(/\\n/g, '<br>')
+        .replace(/&lt;br&gt;/g, '<br>');
+}
+
 function mostrarDetalle(cartaId) {
     const data = obtenerCartaActual(cartaId);
     if (!data) return;
@@ -305,9 +313,27 @@ function mostrarDetalle(cartaId) {
     const img = document.getElementById('carta-detalle-img');
     img.src = carta.imagen || '';
     img.style.display = carta.imagen ? 'block' : 'none';
-    document.getElementById('carta-detalle-nombre').textContent = carta.nombre;
-    document.getElementById('carta-detalle-region').textContent = `Región: ${REGION_NOMBRES[carta.region]} | Valor: ${carta.valor} monedas`;
-    document.getElementById('carta-detalle-cantidad').textContent = `Cantidad: ${data.cantidad}${data.cantidad > 1 ? ' (puedes vender ' + (data.cantidad - 1) + ')' : ''}`;
+    const nombreEl = document.getElementById('carta-detalle-nombre');
+    if (nombreEl) nombreEl.textContent = carta.nombre;
+
+    const regionEl = document.getElementById('carta-detalle-region');
+    const valorEl = document.getElementById('carta-detalle-valor');
+    if (regionEl) regionEl.textContent = REGION_NOMBRES[carta.region] || carta.region;
+    if (valorEl) valorEl.textContent = `${carta.valor} monedas`;
+
+    const cantidadEl = document.getElementById('carta-detalle-cantidad');
+    if (cantidadEl) cantidadEl.textContent = `Cantidad: ${data.cantidad}`;
+
+    const btnVender = document.getElementById('btn-vender');
+    const inputVender = document.getElementById('vender-cantidad');
+    if (btnVender && inputVender) {
+        const maxVenta = Math.max(1, data.cantidad - 1);
+        inputVender.value = 1;
+        inputVender.max = maxVenta;
+        btnVender.disabled = data.cantidad <= 1;
+    }
+    document.getElementById('modal-carta').dataset.cartaId = cartaId;
+    document.getElementById('modal-carta').dataset.valor = carta.valor;
     document.getElementById('modal-carta').classList.add('active');
 }
 
@@ -329,38 +355,77 @@ function setUsuario(user) {
     const authForm = document.getElementById('auth-form');
     const profileTrigger = document.getElementById('profile-trigger');
     const profileMenu = document.getElementById('profile-menu');
-    const profileEmail = document.getElementById('profile-email');
+    const profileUsername = document.getElementById('profile-username');
+    const esOffline = user?.id === 'local';
 
     if (user) {
         overlay.style.display = 'none';
         authForm.style.display = 'none';
-        if (profileTrigger) {
-            profileTrigger.style.display = 'flex';
+        actualizarEstadoPerfil();
+        if (profileTrigger) profileTrigger.style.display = 'flex';
+        if (profileMenu && profileUsername) {
+            profileUsername.textContent = esOffline
+                ? 'Jugador Offline'
+                : (user.email ? user.email.split('@')[0] : 'Usuario');
         }
-        if (profileMenu) {
-            if (profileEmail) profileEmail.textContent = user.email || 'Usuario';
-        }
-        
-        cargarDatos().then(() => {
+        if (esOffline) {
+            cargarLocalStorage();
             actualizarMonedas();
             actualizarEstadisticas();
             renderizarColeccion();
-            console.log('[AUTH] Datos cargados:', { monedas, totalCartas: Object.keys(coleccion).length });
-        }).catch(err => {
-            console.error('[AUTH] Error al cargar datos:', err);
-        });
+        } else {
+            cargarDatos().then(() => {
+                actualizarMonedas();
+                actualizarEstadisticas();
+                renderizarColeccion();
+            }).catch(err => {
+                console.error('[AUTH] Error al cargar datos:', err);
+            });
+        }
     } else {
         overlay.style.display = 'flex';
         authForm.style.display = 'flex';
         if (profileTrigger) profileTrigger.style.display = 'none';
         if (profileMenu) profileMenu.style.display = 'none';
         closeProfileMenu();
+        cerrarModalProfile();
+        cerrarModalPassword();
         coleccion = {};
         monedas = 0;
         actualizarMonedas();
         actualizarEstadisticas();
         renderizarColeccion();
     }
+}
+
+function actualizarEstadoPerfil() {
+    const statusEl = document.getElementById('profile-status');
+    const usernameEl = document.getElementById('profile-username');
+    const btnEdit = document.getElementById('btn-edit-profile');
+    const btnPass = document.getElementById('btn-change-password');
+    const btnLogout = document.getElementById('profile-logout');
+    const btnLogin = document.getElementById('profile-login');
+    if (!statusEl || !usernameEl) return;
+    const esOffline = usuarioActual?.id === 'local';
+    statusEl.textContent = esOffline ? 'Offline' : 'Online';
+    statusEl.className = 'profile-status ' + (esOffline ? 'offline' : 'online');
+    usernameEl.textContent = esOffline
+        ? 'Jugador Offline'
+        : (usernameEl.textContent || 'Usuario');
+    if (btnEdit) btnEdit.style.display = esOffline ? 'none' : 'block';
+    if (btnPass) btnPass.style.display = esOffline ? 'none' : 'block';
+    if (btnLogout) btnLogout.style.display = esOffline ? 'none' : 'block';
+    if (btnLogin) btnLogin.style.display = esOffline ? 'block' : 'none';
+}
+
+async function cargarUsernamePerfil() {
+    if (!usuarioActual || !supabaseClient) return null;
+    const { data } = await supabaseClient
+        .from('profiles')
+        .select('username')
+        .eq('id', usuarioActual.id)
+        .maybeSingle();
+    return data?.username || null;
 }
 
 function openProfileMenu() {
@@ -373,9 +438,65 @@ function closeProfileMenu() {
     if (profileMenu) profileMenu.style.display = 'none';
 }
 
-function cerrarModales() {
-    document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-    closeProfileMenu();
+function openModalProfile() {
+    const modal = document.getElementById('modal-profile');
+    if (!modal) return;
+    modal.classList.add('active');
+    document.getElementById('edit-email') && (document.getElementById('edit-email').value = usuarioActual?.email || '');
+    cargarUsernamePerfil().then(name => {
+        const input = document.getElementById('edit-username');
+        if (input) input.value = name || '';
+    }).catch(() => {});
+}
+
+function cerrarModalProfile() {
+    const modal = document.getElementById('modal-profile');
+    if (modal) modal.classList.remove('active');
+}
+
+function openModalPassword() {
+    const modal = document.getElementById('modal-password');
+    if (modal) modal.classList.add('active');
+}
+
+function cerrarModalPassword() {
+    const modal = document.getElementById('modal-password');
+    if (modal) modal.classList.remove('active');
+}
+
+async function editarPerfil(username) {
+    if (!usuarioActual || !supabaseClient) return;
+    const { error } = await supabaseClient
+        .from('profiles')
+        .upsert({ id: usuarioActual.id, username }, { onConflict: 'id' });
+    if (error) {
+        console.error('[AUTH] Error guardando username:', error);
+        mostrarErrorPerfil(error.message || 'Error al guardar perfil');
+        return;
+    }
+    document.getElementById('profile-username').textContent = username;
+    cerrarModalProfile();
+}
+
+async function cambiarPassword(newPassword) {
+    if (!usuarioActual || !supabaseClient) return;
+    try {
+        await auth.updatePassword(supabaseClient, newPassword);
+        cerrarModalPassword();
+    } catch (e) {
+        console.error('[AUTH] Error cambiando contraseña:', e);
+        mostrarErrorPassword(e.message || 'Error al cambiar contraseña');
+    }
+}
+
+function mostrarErrorPerfil(msg) {
+    const el = document.getElementById('edit-profile-error');
+    if (el) el.textContent = msg;
+}
+
+function mostrarErrorPassword(msg) {
+    const el = document.getElementById('password-error');
+    if (el) el.textContent = msg;
 }
 
 function mostrarModoRegister() {
@@ -398,41 +519,53 @@ function mostrarModoLogin() {
 
 function onAuthSubmit(e) {
     e.preventDefault();
-    const email = document.getElementById('auth-email').value.trim();
+    const usernameOrEmail = document.getElementById('auth-username-or-email').value.trim();
     const password = document.getElementById('auth-password').value.trim();
     const errorEl = document.getElementById('auth-error');
-    if (!email || !password) {
-        errorEl.textContent = 'Completá email y contraseña';
+    if (!usernameOrEmail || !password) {
+        errorEl.textContent = 'Completá usuario/email y contraseña';
         return;
     }
     const esRegister = document.querySelector('.auth-tab[data-auth="register"]').classList.contains('active');
     errorEl.textContent = 'Cargando...';
-    procesarAuth(esRegister, email, password);
+    procesarAuth(esRegister, usernameOrEmail, password);
 }
 
-async function procesarAuth(esRegister, email, password) {
+async function procesarAuth(esRegister, usernameOrEmail, password) {
     const errorEl = document.getElementById('auth-error');
     try {
         const client = supabaseClient;
         if (!client) throw new Error('Supabase no configurado');
-        let user = null;
         if (esRegister) {
-            const result = await auth.signUp(client, email, password);
+            const email = usernameOrEmail.includes('@') ? usernameOrEmail : `${usernameOrEmail}@elfheim.user`;
+            const result = await auth.signUp(client, email, password, usernameOrEmail);
             console.log('[AUTH] signUp result:', result);
-            user = result?.user ?? null;
-            if (!user) throw new Error('No se pudo crear el usuario');
+            if (!result.user) throw new Error('No se pudo crear el usuario');
+            setUsuario(result.user);
         } else {
+            const email = usernameOrEmail.includes('@') ? usernameOrEmail : buscarEmailPorUsername(usernameOrEmail);
+            if (!email) {
+                throw new Error('Usuario no encontrado');
+            }
             const result = await auth.signIn(client, email, password);
             console.log('[AUTH] signIn result:', result);
-            if (result?.error) throw result.error;
-            user = result?.user ?? null;
-            if (!user) throw new Error('No se pudo iniciar sesión');
+            setUsuario(result.user);
         }
-        setUsuario(user);
     } catch (err) {
         console.error('[AUTH] Error completo:', err);
         errorEl.textContent = err.message || 'Error de autenticación';
     }
+}
+
+async function buscarEmailPorUsername(username) {
+    const cliente = supabaseClient;
+    if (!cliente) return null;
+    const { data } = await cliente
+        .from('profiles')
+        .select('email')
+        .eq('username', username)
+        .maybeSingle();
+    return data?.email || null;
 }
 
 function inicializarUI() {
@@ -472,16 +605,53 @@ function inicializarUI() {
     });
 
     const btnMoneda = document.querySelector('.btn-moneda');
+    let monedaTimer = null;
+    function actualizarBotonMoneda() {
+        if (!btnMoneda) return;
+        const uid = usuarioActual?.id || 'local';
+        const now = Date.now();
+        const cooldownMs = 60 * 60 * 1000;
+        const key = `elfheim_monedas_cooldown_${uid}`;
+        const last = parseInt(localStorage.getItem(key) || '0');
+        const remaining = cooldownMs - (now - last);
+
+        if (remaining > 0) {
+            const mins = Math.floor(remaining / 60000);
+            const secs = Math.floor((remaining % 60000) / 1000);
+            btnMoneda.disabled = true;
+            btnMoneda.textContent = `Espera ${mins}m ${secs}s`;
+            btnMoneda.style.opacity = '0.5';
+            btnMoneda.style.cursor = 'not-allowed';
+        } else {
+            btnMoneda.disabled = false;
+            btnMoneda.textContent = '🪙 +100 Monedas';
+            btnMoneda.style.opacity = '1';
+            btnMoneda.style.cursor = 'pointer';
+        }
+    }
     if (btnMoneda) {
         btnMoneda.addEventListener('click', async () => {
             if (!usuarioActual && supabaseEnabled && getClient()) {
                 mostrarAuthError('Iniciá sesión primero');
                 return;
             }
+            if (btnMoneda.disabled) return;
+            const uid = usuarioActual?.id || 'local';
+            const now = Date.now();
+            const cooldownMs = 60 * 60 * 1000;
+            const key = `elfheim_monedas_cooldown_${uid}`;
+            const last = parseInt(localStorage.getItem(key) || '0');
+            const remaining = cooldownMs - (now - last);
+            if (remaining > 0) return;
             monedas += 100;
             actualizarMonedas();
+            localStorage.setItem(key, now.toString());
             await guardarDatos();
+            actualizarBotonMoneda();
         });
+        if (monedaTimer) clearInterval(monedaTimer);
+        actualizarBotonMoneda();
+        monedaTimer = setInterval(actualizarBotonMoneda, 1000);
     }
 
     document.querySelectorAll('.cerrar').forEach(boton => {
@@ -497,6 +667,66 @@ function inicializarUI() {
     const btnColeccionar = document.querySelector('.btn-coleccionar');
     if (btnColeccionar) {
         btnColeccionar.addEventListener('click', cerrarModales);
+    }
+
+    const btnVender = document.getElementById('btn-vender');
+    const panelVenta = document.getElementById('vender-panel');
+    if (btnVender && panelVenta) {
+        btnVender.addEventListener('click', () => {
+            panelVenta.style.display = 'flex';
+        });
+    }
+
+    const btnConfirmarVenta = document.getElementById('btn-confirmar-venta');
+    if (btnConfirmarVenta) {
+        btnConfirmarVenta.addEventListener('click', async () => {
+            const modal = document.getElementById('modal-carta');
+            const cartaId = modal?.dataset?.cartaId;
+            const valor = parseInt(modal?.dataset?.valor || '0', 10);
+            const input = document.getElementById('vender-cantidad');
+            const cantidad = parseInt(input?.value || '1', 10);
+            if (!cartaId || !Number.isFinite(valor) || !Number.isFinite(cantidad) || cantidad <= 0) return;
+            const item = coleccion[cartaId];
+            if (!item || item.cantidad <= cantidad) return;
+            item.cantidad -= cantidad;
+            monedas += valor * cantidad;
+            actualizarMonedas();
+            actualizarEstadisticas();
+            renderizarColeccion();
+            await guardarDatos();
+            if (panelVenta) panelVenta.style.display = 'none';
+            const cantidadTexto = document.getElementById('carta-detalle-cantidad');
+            if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${item.cantidad}`;
+            if (btnVender) btnVender.disabled = true;
+        });
+    }
+
+    const btnVenderMas = document.getElementById('vender-mas');
+    const btnVenderMenos = document.getElementById('vender-menos');
+    const inputVender = document.getElementById('vender-cantidad');
+    if (btnVenderMas && inputVender) {
+        btnVenderMas.addEventListener('click', () => {
+            const modal = document.getElementById('modal-carta');
+            const cartaId = modal?.dataset?.cartaId;
+            const item = cartaId ? coleccion[cartaId] : null;
+            const max = item ? Math.max(1, item.cantidad - 1) : 1;
+            let valor = parseInt(inputVender.value || '1', 10);
+            if (Number.isFinite(valor)) {
+                inputVender.value = Math.min(max, valor + 1);
+            } else {
+                inputVender.value = 1;
+            }
+        });
+    }
+    if (btnVenderMenos && inputVender) {
+        btnVenderMenos.addEventListener('click', () => {
+            let valor = parseInt(inputVender.value || '1', 10);
+            if (Number.isFinite(valor) && valor > 1) {
+                inputVender.value = valor - 1;
+            } else {
+                inputVender.value = 1;
+            }
+        });
     }
 
     const loginTabBtn = document.querySelector('.auth-tab[data-auth="login"]');
@@ -528,14 +758,33 @@ function inicializarUI() {
     if (profileTrigger) {
         profileTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
+            const wrapper = document.getElementById('profile-trigger').parentElement;
             const menu = document.getElementById('profile-menu');
-            if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+            if (menu) {
+                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+            }
         });
     }
 
     const cerrarProfile = document.querySelector('.cerrar-profile');
     if (cerrarProfile) {
         cerrarProfile.addEventListener('click', closeProfileMenu);
+    }
+
+    const btnEditProfile = document.getElementById('btn-edit-profile');
+    if (btnEditProfile) {
+        btnEditProfile.addEventListener('click', () => {
+            closeProfileMenu();
+            openModalProfile();
+        });
+    }
+
+    const btnChangePassword = document.getElementById('btn-change-password');
+    if (btnChangePassword) {
+        btnChangePassword.addEventListener('click', () => {
+            closeProfileMenu();
+            openModalPassword();
+        });
     }
 
     const profileLogout = document.getElementById('profile-logout');
@@ -547,6 +796,150 @@ function inicializarUI() {
                 console.error('Error al cerrar sesión:', e);
             }
             setUsuario(null);
+        });
+    }
+
+    const profileLogin = document.getElementById('profile-login');
+    if (profileLogin) {
+        profileLogin.addEventListener('click', async () => {
+            closeProfileMenu();
+            const overlay = document.getElementById('auth-overlay');
+            const authForm = document.getElementById('auth-form');
+            if (overlay) overlay.style.display = 'flex';
+            if (authForm) authForm.style.display = 'flex';
+            const offlineBtn = document.getElementById('offline-toggle');
+            if (offlineBtn) {
+                offlineBtn.classList.remove('active');
+            }
+            localStorage.removeItem('elfheim_offline');
+            usuarioActual = null;
+            supabaseEnabled = true;
+            const client = getClient();
+            if (client) {
+                supabaseClient = client;
+            }
+        });
+    }
+
+    const discordBtn = document.getElementById('discord-signin');
+    if (discordBtn) {
+        discordBtn.addEventListener('click', async () => {
+            const errorEl = document.getElementById('auth-error');
+            try {
+                errorEl.textContent = 'Conectando con Discord...';
+                if (!supabaseClient) throw new Error('Supabase no configurado');
+                await auth.signInWithGoogle(supabaseClient);
+            } catch (err) {
+                console.error('[AUTH] Discord error:', err);
+                errorEl.textContent = err.message || 'Error con Discord';
+            }
+        });
+    }
+
+    const offlineBtn = document.getElementById('offline-toggle');
+    if (offlineBtn) {
+        offlineBtn.addEventListener('click', async () => {
+            const nuevoEstado = !offlineBtn.classList.contains('active');
+            offlineBtn.classList.toggle('active', nuevoEstado);
+            localStorage.setItem('elfheim_offline', nuevoEstado ? '1' : '0');
+
+            if (nuevoEstado) {
+                const cliente = getClient();
+                if (!nuevoEstado && cliente) {
+                    try {
+                        await db.upsertProfile(cliente, {
+                            id: usuarioActual.id,
+                            monedas,
+                            updated_at: new Date().toISOString()
+                        });
+                    } catch (_) {}
+                }
+                usuarioActual = { id: 'local', email: null };
+                supabaseEnabled = false;
+                cargarLocalStorage();
+                setUsuario(usuarioActual);
+                actualizarBotonMoneda();
+            } else {
+                const cliente = getClient();
+                if (cliente) {
+                    supabaseClient = cliente;
+                    supabaseEnabled = true;
+                }
+                cargarDatos().then(() => {
+                    actualizarMonedas();
+                    actualizarEstadisticas();
+                    renderizarColeccion();
+                    actualizarBotonMoneda();
+                }).catch(() => {
+                    cargarLocalStorage();
+                    actualizarMonedas();
+                    actualizarEstadisticas();
+                    renderizarColeccion();
+                    actualizarBotonMoneda();
+                });
+            }
+        });
+    }
+
+    document.querySelectorAll('.cerrar').forEach(boton => {
+        boton.addEventListener('click', () => {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+            closeProfileMenu();
+        });
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', event => {
+            if (event.target === modal) {
+                modal.classList.remove('active');
+                closeProfileMenu();
+            }
+        });
+    });
+
+    document.querySelectorAll('.btn-coleccionar').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        });
+    });
+
+    const formEditProfile = document.getElementById('form-edit-profile');
+    if (formEditProfile) {
+        formEditProfile.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('edit-username')?.value.trim();
+            if (!username) {
+                mostrarErrorPerfil('El nombre de usuario es obligatorio');
+                return;
+            }
+            if (username.length < 2 || username.length > 30) {
+                mostrarErrorPerfil('Debe tener entre 2 y 30 caracteres');
+                return;
+            }
+            editarPerfil(username);
+        });
+    }
+
+    const formChangePassword = document.getElementById('form-change-password');
+    if (formChangePassword) {
+        formChangePassword.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newP = document.getElementById('new-password').value;
+            const confirmP = document.getElementById('confirm-password').value;
+            const errorEl = document.getElementById('password-error');
+            if (!newP || !confirmP) {
+                mostrarErrorPassword('Completá ambos campos');
+                return;
+            }
+            if (newP !== confirmP) {
+                mostrarErrorPassword('Las contraseñas no coinciden');
+                return;
+            }
+            if (newP.length < 6) {
+                mostrarErrorPassword('Mínimo 6 caracteres');
+                return;
+            }
+            cambiarPassword(newP);
         });
     }
 
@@ -567,12 +960,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     inicializarSupabase();
     await cargarCartas();
 
-    if (supabaseEnabled) {
+    const modoOffline = localStorage.getItem('elfheim_offline') === '1';
+    const offlineBtn = document.getElementById('offline-toggle');
+    if (modoOffline && offlineBtn) {
+        offlineBtn.classList.add('active');
+        usuarioActual = { id: 'local', email: null };
+        supabaseEnabled = false;
+    } else if (!modoOffline && supabaseEnabled) {
         const session = await auth.getSession(supabaseClient);
         usuarioActual = session?.user ?? null;
     }
 
-    cargarDatos();
+    if (!modoOffline) {
+        cargarDatos();
+    } else {
+        cargarLocalStorage();
+    }
     inicializarUI();
     setUsuario(usuarioActual);
 });
