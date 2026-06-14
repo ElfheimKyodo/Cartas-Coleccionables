@@ -372,7 +372,7 @@ function setUsuario(user) {
         if (profileMenu && profileUsername) {
             profileUsername.textContent = esOffline
                 ? 'Jugador Offline'
-                : (user.email ? user.email.split('@')[0] : 'Usuario');
+                : 'Cargando...';
         }
         if (esOffline) {
             cargarLocalStorage();
@@ -386,6 +386,9 @@ function setUsuario(user) {
                 renderizarColeccion();
             }).catch(err => {
                 console.error('[AUTH] Error al cargar datos:', err);
+            });
+            actualizarUsernameDesdePerfil().catch(err => {
+                console.error('[AUTH] Error al cargar username:', err);
             });
         }
     } else {
@@ -417,7 +420,7 @@ function actualizarEstadoPerfil() {
     statusEl.className = 'profile-status ' + (esOffline ? 'offline' : 'online');
     usernameEl.textContent = esOffline
         ? 'Jugador Offline'
-        : (usernameEl.textContent || 'Usuario');
+        : (usuarioActual?.username || 'Usuario');
     if (btnEdit) btnEdit.style.display = esOffline ? 'none' : 'block';
     if (btnPass) btnPass.style.display = esOffline ? 'none' : 'block';
     if (btnLogout) btnLogout.style.display = esOffline ? 'none' : 'block';
@@ -432,6 +435,14 @@ async function cargarUsernamePerfil() {
         .eq('id', usuarioActual.id)
         .maybeSingle();
     return data?.username || null;
+}
+
+async function actualizarUsernameDesdePerfil() {
+    const username = await cargarUsernamePerfil();
+    if (username) {
+        usuarioActual.username = username;
+        actualizarEstadoPerfil();
+    }
 }
 
 function openProfileMenu() {
@@ -480,6 +491,7 @@ async function editarPerfil(username) {
         mostrarErrorPerfil(error.message || 'Error al guardar perfil');
         return;
     }
+    usuarioActual.username = username;
     document.getElementById('profile-username').textContent = username;
     cerrarModalProfile();
 }
