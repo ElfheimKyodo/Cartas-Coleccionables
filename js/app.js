@@ -400,9 +400,9 @@ function obtenerLogosSobre(sobre) {
 }
 
 function obtenerLogoSobre(sobre) {
+    if (sobre.tipo === 'generic') return 'cartas/logo_generic.png';
     const logos = obtenerLogosSobre(sobre);
-    if (sobre.tipo !== 'generic') return logos[0] || '';
-    return logos[logoGenericoIndex % logos.length] || '';
+    return logos[0] || '';
 }
 
 function obtenerPrecioSobre(sobre) {
@@ -476,18 +476,11 @@ function seleccionarSobre(tipo) {
     const info = document.getElementById('gacha-info-detalle');
     if (info) info.classList.remove('active');
     renderizarGachaSobres();
-    iniciarRotacionLogoGenerico();
 }
 
 function iniciarRotacionLogoGenerico() {
     if (logoGachaTimer) clearInterval(logoGachaTimer);
     logoGachaTimer = null;
-    if (sobreSeleccionado === 'generic') {
-        logoGachaTimer = setInterval(() => {
-            logoGenericoIndex = (logoGenericoIndex + 1) % REGIONES.length;
-            renderizarGachaSobres();
-        }, 1800);
-    }
 }
 
 function actualizarPresentacionGacha() {
