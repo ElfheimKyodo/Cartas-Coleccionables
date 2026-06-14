@@ -1,0 +1,77 @@
+{
+  "banners": [
+    {
+      "titulo": "Bienvenido a la Tienda de Sobres",
+      "texto": "En el Reino de Elfheim, podrás encontrar todo tipo de personajes, enemigos, bosses, NPCs, localizaciones e items. Para que te sea más divertido descubrir el lore, podrás abrir sobres y desbloquear pequeñas lecturas de cada pequeño apartado de lore. ¡Disfruta de la experiencia y sumérgete en el mundo de Elfheim a aumentas tu adicción a la apertura de sobres!",
+      "disponible": true
+    }
+  ],
+  "sobres": [
+    {
+      "tipo": "generic",
+      "disponible": true,
+      "oferta": 0,
+      "nombre": "Sobre Genérico",
+      "iconoFa": "fa-solid fa-layer-group",
+      "precio": 100,
+      "regiones": ["umbraeth", "skjoldheim", "astra", "solareth", "elarion"],
+      "descripcion": "Un gacha equilibrado con cartas de todas las regiones.",
+      "informacion": "<h4>Contiene 3 cartas aleatorias de todas las regiones</h4><ul><li>Umbraeth</li><li>Skjoldheim</li><li>Astra</li><li>Solareth</li><li>Elarion</li></ul>"
+    },
+    {
+      "tipo": "umbraeth",
+      "disponible": true,
+      "oferta": 25,
+      "nombre": "Sobre Umbraeth",
+      "iconoFa": "fa-solid fa-moon",
+      "precio": 200,
+      "regiones": ["umbraeth"],
+      "descripcion": "Sombras, demonios y secretos ocultos de Umbraeth.",
+      "informacion": "<h4>Contiene 3 cartas aleatorias de Umbraeth</h4><ul><li>Cartas de temática oscura</li><li>Región Umbraeth</li></ul>"
+    },
+    {
+      "tipo": "skjoldheim",
+      "disponible": true,
+      "oferta": 25,
+      "nombre": "Sobre Skjoldheim",
+      "iconoFa": "fa-solid fa-snowflake",
+      "precio": 200,
+      "regiones": ["skjoldheim"],
+      "descripcion": "Guerreros, hielo y runas antiguas de Skjoldheim.",
+      "informacion": "<h4>Contiene 3 cartas aleatorias de Skjoldheim</h4><ul><li>Cartas de hielo y guerra</li><li>Región Skjoldheim</li></ul>"
+    },
+    {
+      "tipo": "astra",
+      "disponible": true,
+      "oferta": 25,
+      "nombre": "Sobre Astra",
+      "iconoFa": "fa-solid fa-star",
+      "precio": 200,
+      "regiones": ["astra"],
+      "descripcion": "Misterio celestial y magia estelar de Astra.",
+      "informacion": "<h4>Contiene 3 cartas aleatorias de Astra</h4><ul><li>Cartas celestiales</li><li>Región Astra</li></ul>"
+    },
+    {
+      "tipo": "solareth",
+      "disponible": true,
+      "oferta": 25,
+      "nombre": "Sobre Solareth",
+      "iconoFa": "fa-solid fa-dragon",
+      "precio": 200,
+      "regiones": ["solareth"],
+      "descripcion": "Fuego, dragones y linajes solares de Solareth.",
+      "informacion": "<h4>Contiene 3 cartas aleatorias de Solareth</h4><ul><li>Cartas de fuego</li><li>Región Solareth</li></ul>"
+    },
+    {
+      "tipo": "elarion",
+      "disponible": true,
+      "oferta": 25,
+      "nombre": "Sobre Elarion",
+      "iconoFa": "fa-solid fa-leaf",
+      "precio": 200,
+      "regiones": ["elarion"],
+      "descripcion": "Naturaleza viva, espíritus y bosques de Elarion.",
+      "informacion": "<h4>Contiene 3 cartas aleatorias de Elarion</h4><ul><li>Cartas naturales</li><li>Región Elarion</li></ul>"
+    }
+  ]
+}

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Colección de Cartas - Elfheim</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -34,21 +35,23 @@
         </div>
         <div style="display:flex;align-items:center;gap:12px;position:relative;">
             <div class="monedas">
-                <span class="moneda-icon">🪙</span>
+                <span class="moneda-icon"><i class="fa-solid fa-coins"></i></span>
                 <span id="monedas">0</span>
+                <button id="btn-moneda" class="btn-moneda">+100</button>
+                <span id="moneda-timer" class="moneda-timer"></span>
             </div>
             <div class="profile-container">
-                <div id="profile-trigger" class="profile-trigger" style="display:none;">👤</div>
+                <div id="profile-trigger" class="profile-trigger" style="display:none;"><i class="fa-solid fa-user"></i></div>
                 <div id="profile-menu" class="profile-menu" style="display:none;">
                     <div class="profile-header">
                         <span id="profile-username" class="profile-username">Usuario</span>
                         <span id="profile-status" class="profile-status offline">Offline</span>
                     </div>
                     <div class="profile-body" id="profile-body">
-                        <button id="btn-edit-profile" class="profile-btn">✏️ Editar Perfil</button>
-                        <button id="btn-change-password" class="profile-btn">🔒 Cambiar Contraseña</button>
-                        <button id="profile-logout" class="profile-logout-btn">🚪 Cerrar Sesión</button>
-                        <button id="profile-login" class="profile-login-btn" style="display:none;">🔑 Iniciar Sesión</button>
+                        <button id="btn-edit-profile" class="profile-btn"><i class="fa-solid fa-pen-to-square"></i> Editar Perfil</button>
+                        <button id="btn-change-password" class="profile-btn"><i class="fa-solid fa-lock"></i> Cambiar Contraseña</button>
+                        <button id="profile-logout" class="profile-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+                        <button id="profile-login" class="profile-login-btn" style="display:none;"><i class="fa-solid fa-key"></i> Iniciar Sesión</button>
                     </div>
                 </div>
             </div>
@@ -63,47 +66,26 @@
     <main>
         <section id="tienda" class="tab-content active">
             <div class="sobres-container">
-                <h2>Sobres Disponibles</h2>
-                <div class="sobres-grid">
-                    <div class="sobre-card region-umbraeth" data-tipo="umbraeth">
-                        <div class="sobre-imagen">🌑</div>
-                        <h3>Sobre Umbraeth</h3>
-                        <p>3 cartas de Umbraeth</p>
-                        <p class="precio">🪙 50</p>
-                        <button class="btn-comprar" data-precio="50" data-tipo="umbraeth">Abrir Sobre</button>
+                <h2>Gacha de Sobres</h2>
+                <div id="gacha-banner" class="gacha-banner"></div>
+                <div id="gacha-sobres" class="gacha-sobres"></div>
+                <div class="gacha-stage">
+                    <div id="gacha-preview" class="gacha-preview region-generic">
+                        <img id="gacha-preview-img" alt="Sobre seleccionado">
+                        <i id="gacha-preview-icono" class="fa-solid fa-layer-group"></i>
                     </div>
-                    <div class="sobre-card region-skjoldheim" data-tipo="skjoldheim">
-                        <div class="sobre-imagen">❄️</div>
-                        <h3>Sobre Skjoldheim</h3>
-                        <p>3 cartas de Skjoldheim</p>
-                        <p class="precio">🪙 50</p>
-                        <button class="btn-comprar" data-precio="50" data-tipo="skjoldheim">Abrir Sobre</button>
-                    </div>
-                    <div class="sobre-card region-astra" data-tipo="astra">
-                        <div class="sobre-imagen">⭐</div>
-                        <h3>Sobre Astra</h3>
-                        <p>3 cartas de Astra</p>
-                        <p class="precio">🪙 50</p>
-                        <button class="btn-comprar" data-precio="50" data-tipo="astra">Abrir Sobre</button>
-                    </div>
-                    <div class="sobre-card region-solareth" data-tipo="solareth">
-                        <div class="sobre-imagen">🐉</div>
-                        <h3>Sobre Solareth</h3>
-                        <p>3 cartas de Solareth</p>
-                        <p class="precio">🪙 50</p>
-                        <button class="btn-comprar" data-precio="50" data-tipo="solareth">Abrir Sobre</button>
-                    </div>
-                    <div class="sobre-card region-elarion" data-tipo="elarion">
-                        <div class="sobre-imagen">🌿</div>
-                        <h3>Sobre Elarion</h3>
-                        <p>3 cartas de Elarion</p>
-                        <p class="precio">🪙 50</p>
-                        <button class="btn-comprar" data-precio="50" data-tipo="elarion">Abrir Sobre</button>
+                    <div class="gacha-presentacion">
+                        <span id="gacha-precio" class="gacha-precio"></span>
+                        <h3 id="gacha-titulo"></h3>
+                        <h4>Descripción del gacha</h4>
+                        <p id="gacha-descripcion"></p>
+                        <div class="gacha-acciones">
+                            <button id="btn-abrir-gacha" class="btn-gacha abrir">Abrir sobre</button>
+                            <button id="btn-info-gacha" class="btn-gacha secundario">Información</button>
+                        </div>
+                        <div id="gacha-info-detalle" class="gacha-info-detalle"></div>
                     </div>
                 </div>
-            </div>
-            <div class="info-monedas">
-                <button class="btn-moneda">🪙 +100 Monedas</button>
             </div>
         </section>
 
@@ -120,13 +102,17 @@
                     <span id="stats-elarion">Elarion: 0</span>
                 </div>
             </div>
-            <div class="filtros">
-                <button class="filtro-btn active" data-filtro="todas">Todas</button>
-                <button class="filtro-btn" data-filtro="umbraeth">Umbraeth</button>
-                <button class="filtro-btn" data-filtro="skjoldheim">Skjoldheim</button>
-                <button class="filtro-btn" data-filtro="astra">Astra</button>
-                <button class="filtro-btn" data-filtro="solareth">Solareth</button>
-                <button class="filtro-btn" data-filtro="elarion">Elarion</button>
+            <div class="filtros-avanzados">
+                <select id="filtro-tipo" class="filtro-select">
+                    <option value="nombre">Nombre</option>
+                    <option value="rareza">Rareza</option>
+                    <option value="region">Región</option>
+                    <option value="raza">Raza</option>
+                    <option value="categoria">Categoría</option>
+                </select>
+                <input type="text" id="filtro-valor" class="filtro-input" placeholder="Buscar...">
+                <button id="btn-buscar-filtro" class="filtro-buscar" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button id="btn-limpiar-filtro" class="filtro-limpiar">Limpiar</button>
             </div>
             <div id="coleccion-grid" class="coleccion-grid"></div>
         </section>
@@ -136,6 +122,7 @@
         <div class="modal-contenido">
             <span class="cerrar">&times;</span>
             <h2>¡Abre tu Sobre!</h2>
+            <p id="gacha-apertura-ayuda" class="gacha-apertura-ayuda">Hacé click en cada carta para revelarla.</p>
             <div id="cartas-revelar" class="cartas-revelar"></div>
             <button class="btn-coleccionar">Coleccionar</button>
         </div>
@@ -152,13 +139,33 @@
                     <h3 id="carta-detalle-nombre"></h3>
                     <div class="carta-detalle-seccion">
                         <div class="detalle-item">
-                            <span class="detalle-label">Región</span>
+                            <span class="detalle-label">Categoria</span>
+                            <span class="detalle-value" id="carta-detalle-categoria"></span>
+                        </div>
+                        <div class="detalle-item">
+                            <span class="detalle-label">Rareza</span>
+                            <span class="rareza-value" id="carta-detalle-rareza"></span>
+                        </div>
+                    </div>
+                    <div class="carta-detalle-seccion">
+                        <div class="detalle-item">
+                            <span class="detalle-label">Region</span>
                             <span class="detalle-value" id="carta-detalle-region"></span>
                         </div>
                         <div class="detalle-item">
-                            <span class="detalle-label">Valor</span>
-                            <span class="detalle-value" id="carta-detalle-valor"></span>
+                            <span class="detalle-label">Raza</span>
+                            <span class="detalle-value" id="carta-detalle-raza"></span>
                         </div>
+                    </div>
+                    <div class="carta-detalle-seccion">
+                        <div class="detalle-item">
+                            <span class="detalle-label">Descripcion</span>
+                            <span class="detalle-value carta-texto" id="carta-detalle-descripcion"></span>
+                        </div>
+                    </div>
+                    <div class="detalle-item carta-interprete-row">
+                        <span class="detalle-label">Interprete</span>
+                        <span class="detalle-value" id="carta-detalle-interprete"></span>
                     </div>
                     <p id="carta-detalle-cantidad"></p>
                     <div class="acciones-carta">
