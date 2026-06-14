@@ -50,47 +50,10 @@
                         <button id="profile-logout" class="profile-logout-btn">🚪 Cerrar Sesión</button>
                         <button id="profile-login" class="profile-login-btn" style="display:none;">🔑 Iniciar Sesión</button>
                     </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/app.js"></script>
-</body>
-</html>
     </header>
-
-    <!-- Modal de Editar Perfil -->
-    <div id="modal-profile" class="modal">
-        <div class="modal-contenido">
-            <span class="cerrar">&times;</span>
-            <h2>Editar Perfil</h2>
-            <form id="form-edit-profile" class="auth-form">
-                <input type="text" id="edit-username" placeholder="Nombre de usuario" required minlength="2" maxlength="30">
-                <input type="email" id="edit-email" placeholder="Email" disabled>
-                <button type="submit" class="auth-submit">Guardar Cambios</button>
-            </form>
-            <p id="edit-profile-error" class="auth-error"></p>
-        </div>
-    </div>
-
-    <!-- Modal de Cambiar Contraseña -->
-    <div id="modal-password" class="modal">
-        <div class="modal-contenido">
-            <span class="cerrar">&times;</span>
-            <h2>Cambiar Contraseña</h2>
-            <form id="form-change-password" class="auth-form">
-                <input type="password" id="new-password" placeholder="Nueva contraseña" required minlength="6" autocomplete="new-password">
-                <input type="password" id="confirm-password" placeholder="Confirmar contraseña" required minlength="6" autocomplete="new-password">
-                <button type="submit" class="auth-submit">Actualizar Contraseña</button>
-            </form>
-            <p id="password-error" class="auth-error"></p>
-        </div>
-    </div>
 
     <nav>
         <button class="nav-btn active" data-tab="tienda">Tienda</button>
@@ -200,7 +163,7 @@
                     <p id="carta-detalle-cantidad"></p>
                     <div class="acciones-carta">
                         <button id="btn-vender" class="btn-vender" disabled>Vender Carta</button>
-                        <div id="vender-panel" class="vender-panel" style="display:none;">
+                        <div id="vender-panel" class="vender-panel">
                             <label class="vender-label">Cantidad a vender:</label>
                             <div class="vender-control">
                                 <button id="vender-menos" class="vender-btn">-</button>
@@ -211,3 +174,38 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-profile" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2>Editar Perfil</h2>
+            <form id="form-edit-profile" class="auth-form">
+                <input type="text" id="edit-username" placeholder="Nombre de usuario" required minlength="2" maxlength="30">
+                <input type="email" id="edit-email" placeholder="Email" disabled>
+                <button type="submit" class="auth-submit">Guardar Cambios</button>
+            </form>
+            <p id="edit-profile-error" class="auth-error"></p>
+        </div>
+    </div>
+
+    <div id="modal-password" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2>Cambiar Contraseña</h2>
+            <form id="form-change-password" class="auth-form">
+                <input type="password" id="new-password" placeholder="Nueva contraseña" required minlength="6" autocomplete="new-password">
+                <input type="password" id="confirm-password" placeholder="Confirmar contraseña" required minlength="6" autocomplete="new-password">
+                <button type="submit" class="auth-submit">Actualizar Contraseña</button>
+            </form>
+            <p id="password-error" class="auth-error"></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

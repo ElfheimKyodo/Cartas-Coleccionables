@@ -4,6 +4,7 @@ let monedas = 0;
 let usuarioActual = null;
 let supabaseClient = null;
 let supabaseEnabled = false;
+let panelVenta = null;
 
 const REGIONES = ['umbraeth', 'skjoldheim', 'astra', 'solareth', 'elarion'];
 const REGION_NOMBRES = {
@@ -292,7 +293,8 @@ function renderizarColeccion(filtro = 'todas') {
     }).join('');
 
     grid.querySelectorAll('.carta-item').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function(e) {
+            e.stopPropagation();
             mostrarDetalle(this.dataset.cartaId);
         });
     });
@@ -332,9 +334,13 @@ function mostrarDetalle(cartaId) {
         inputVender.max = maxVenta;
         btnVender.disabled = data.cantidad <= 1;
     }
-    document.getElementById('modal-carta').dataset.cartaId = cartaId;
-    document.getElementById('modal-carta').dataset.valor = carta.valor;
-    document.getElementById('modal-carta').classList.add('active');
+    const modalCarta = document.getElementById('modal-carta');
+    modalCarta.dataset.cartaId = cartaId;
+    modalCarta.dataset.valor = carta.valor;
+    if (panelVenta) {
+        panelVenta.classList.remove('open');
+    }
+    modalCarta.classList.add('active');
 }
 
 function aplicarFiltro(filtro) {
@@ -673,7 +679,7 @@ function inicializarUI() {
     const panelVenta = document.getElementById('vender-panel');
     if (btnVender && panelVenta) {
         btnVender.addEventListener('click', () => {
-            panelVenta.style.display = 'flex';
+            panelVenta.classList.toggle('open');
         });
     }
 
@@ -694,7 +700,10 @@ function inicializarUI() {
             actualizarEstadisticas();
             renderizarColeccion();
             await guardarDatos();
-            if (panelVenta) panelVenta.style.display = 'none';
+            if (panelVenta) {
+                panelVenta.style.display = 'none';
+                panelVenta.dataset.abierto = '0';
+            }
             const cantidadTexto = document.getElementById('carta-detalle-cantidad');
             if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${item.cantidad}`;
             if (btnVender) btnVender.disabled = true;
@@ -750,7 +759,6 @@ function inicializarUI() {
 
     const authForm = document.getElementById('auth-form');
     if (authForm) {
-        authForm.removeEventListener('submit', onAuthSubmit);
         authForm.addEventListener('submit', onAuthSubmit);
     }
 
