@@ -105,8 +105,20 @@
       "categoria": "personaje",
       "rareza": "epica",
       "valor": 15,
-      "descripcion": "Eriska, apodada Speedy Leaf, es una pequeña híbrida humana-ratón de Skjoldheim que mide tan solo 50 cm. Nacida en una comunidad oculta de madrigueras, desde sus primeros meses de vida demostró ser una hábil ladrona que asaltaba a exploradores para conseguir recursos para su pueblo. Aunque respetaba la regla de jamás robar a su propia gente, fue acusada falsamente de traición y de robar un botín por otro ratón. Al no tener pruebas para defenderse, abandonó su aldea vistiendo una pequeña capa verde, símbolo de respeto que reciben los suyos al marcharse. Actualmente cuenta con un cartel de se busca por su cabeza.",
+      "descripcion": "Eriska, apodada \"Speedy Leaf\", es una pequeña híbrida humana-ratón de Skjoldheim que mide tan solo 50 cm. Nacida en una comunidad oculta de madrigueras, desde sus primeros meses de vida demostró ser una hábil ladrona que asaltaba a exploradores para conseguir recursos para su pueblo. Aunque respetaba la regla de jamás robar a su propia gente, fue acusada falsamente de traición y de robar un botín por otro ratón. Al no tener pruebas para defenderse, abandonó su aldea vistiendo una pequeña capa verde, símbolo de respeto que reciben los suyos al marcharse. Actualmente cuenta con un cartel de se busca por su cabeza.",
       "interprete": "Mai"
+    },
+    {
+      "id": "astra/aurel",
+      "nombre": "Aurel",
+      "imagen": "cartas/astra/aurel.png",
+      "region": "astra",
+      "raza": "Dragonfolk",
+      "categoria": "personaje",
+      "rareza": "epica",
+      "valor": 15,
+      "descripcion": "Aurel Kerosene, el \"Rey de las Cenizas\", es un imponente monarca de la raza Dragonfolk en Astra, distinguido por su cabello pelirrojo, ojos rojos de pupilas alargadas y escamas en su piel pálida. Viste túnicas ligeras con joyería de oro y suele caminar descalzo. Originalmente era un investigador ajeno a la política y obsesionado con la tecnología subterránea; sin embargo, se convirtió en héroe nacional al salvar al reino de una catástrofe volcánica estabilizando sus núcleos de energía con un proyecto experimental propio. Este logro le otorgó una inesperada popularidad y títulos que terminaron por llevarlo al trono, una coronación que todavía no logra comprender.",
+      "interprete": "Kerosene"
     }
   ]
 }
