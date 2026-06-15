@@ -12,7 +12,7 @@ const db = {
     async getProfile(client, userId) {
         const { data, error } = await client
             .from('profiles')
-            .select('monedas, email')
+            .select('monedas, email, updated_at')
             .eq('id', userId)
             .single();
         if (error && error.code !== 'PGRST116') throw error;
@@ -20,23 +20,7 @@ const db = {
     },
 
     async getProfileByUsername(client, username) {
-        const { data, error } = await client
-            .from('profiles')
-            .select('id, monedas, username, email')
-            .eq('username', username)
-            .maybeSingle();
-        if (error) throw error;
-        return data || null;
-    },
-
-    async getProfileByEmail(client, email) {
-        const { data, error } = await client
-            .from('profiles')
-            .select('id, monedas, username, email')
-            .eq('email', email)
-            .maybeSingle();
-        if (error) throw error;
-        return data || null;
+        throw new Error('Búsqueda por username deshabilitada por política de seguridad');
     },
 
     async getInventory(client, userId) {
@@ -49,18 +33,58 @@ const db = {
     },
 
     async upsertInventory(client, items) {
-        if (!items.length) return;
+        if (!items || !items.length) return;
         const { error } = await client
             .from('inventory')
             .upsert(items, { onConflict: 'user_id,carta_id' });
         if (error) throw error;
     },
 
-    async upsertProfile(client, profile) {
-        const { error } = await client
-            .from('profiles')
-            .upsert(profile);
+    async claimDailyCoins(client, userId) {
+        const { data, error } = await client
+            .rpc('reclamar_monedas_diarias', { p_user_id: userId });
+        console.log('[RPC] reclamar_monedas_diarias raw:', data, 'error:', error);
         if (error) throw error;
+        const row = (data || [])[0];
+        return row ? { ...row } : null;
+    },
+
+    async openPack(client, userId, packType, price, regions) {
+        const { data, error } = await client
+            .rpc('abrir_sobre', {
+                p_user_id: userId,
+                p_sobre_tipo: packType,
+                p_precio: price,
+                p_regiones: regions
+            });
+        if (error) throw error;
+        const row = Array.isArray(data) ? data[0] : (data || null);
+        if (!row) {
+            throw new Error('Respuesta vacía del servidor');
+        }
+        return { ...row };
+    },
+
+    async sellCard(client, userId, cardId, quantity, unitPrice) {
+        const { data, error } = await client
+            .rpc('vender_carta', {
+                p_user_id: userId,
+                p_carta_id: cardId,
+                p_cantidad: quantity,
+                p_valor_unitario: unitPrice
+            });
+        if (error) throw error;
+        const row = (data || [])[0];
+        return row ? { ...row } : null;
+    },
+
+    async getShopConfig(client) {
+        const { data, error } = await client
+            .from('shop_config')
+            .select('id, key, value, updated_at')
+            .order('key', { ascending: true });
+        if (error) throw error;
+        return data || [];
     }
 };
 
@@ -75,11 +99,10 @@ const auth = {
         if (data.user) {
             const { data: profileData, error: profileError } = await client
                 .from('profiles')
-                .upsert({ 
-                    id: data.user.id, 
-                    username: username || email.split('@')[0], 
-                    email,
-                    monedas: 50  // Valor por defecto para nuevos usuarios
+                .upsert({
+                    id: data.user.id,
+                    username: username || email.split('@')[0],
+                    email
                 }, { onConflict: 'id' });
             if (profileError) console.error('[AUTH] profile upsert error:', profileError);
         }

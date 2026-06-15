@@ -12,6 +12,7 @@ let previewDestelloTimer = null;
 let monedaTimer = null;
 let sobresConfigurados = [];
 let bannersConfigurados = [];
+let lastClaimServerMs = Date.now();
 
 const REGIONES = ['umbraeth', 'skjoldheim', 'astra', 'solareth', 'elarion'];
 const REGION_NOMBRES = {
@@ -193,7 +194,16 @@ async function cargarDatos() {
     }
     try {
         const profile = await db.getProfile(supabaseClient, usuarioActual.id);
+        console.log('[COOLDOWN] profile:', profile);
         monedas = profile?.monedas ?? 50;
+
+        if (profile?.updated_at) {
+            const parsed = Date.parse(profile.updated_at);
+            console.log('[COOLDOWN] updated_at raw:', profile.updated_at, 'parsed:', parsed, 'isNaN:', Number.isNaN(parsed));
+            if (!Number.isNaN(parsed)) {
+                lastClaimServerMs = parsed;
+            }
+        }
 
         const inventario = await db.getInventory(supabaseClient, usuarioActual.id);
         coleccion = {};
@@ -234,12 +244,6 @@ async function guardarDatos() {
         return;
     }
     try {
-        await db.upsertProfile(supabaseClient, {
-            id: usuarioActual.id,
-            monedas,
-            updated_at: new Date().toISOString()
-        });
-
         const items = Object.entries(coleccion).map(([cartaId, data]) => ({
             user_id: usuarioActual.id,
             carta_id: cartaId,
@@ -321,12 +325,11 @@ function actualizarBotonMoneda() {
     const timerMoneda = document.getElementById('moneda-timer');
     if (!btnMoneda) return;
 
-    const uid = usuarioActual?.id || 'local';
     const now = Date.now();
+    const serverNow = lastClaimServerMs || now;
     const cooldownMs = 60 * 60 * 1000;
-    const key = `elfheim_monedas_cooldown_${uid}`;
-    const last = parseInt(localStorage.getItem(key) || '0');
-    const remaining = cooldownMs - (now - last);
+    const remaining = cooldownMs - (now - serverNow);
+    console.log('[COOLDOWN] now=', now, 'lastClaimServerMs=', lastClaimServerMs, 'remaining=', remaining);
 
     if (remaining > 0) {
         const mins = Math.floor(remaining / 60000);
@@ -540,12 +543,51 @@ function comprarSobre(region, precio) {
         return;
     }
 
-    monedas -= precio;
-    actualizarMonedas();
-    guardarDatos();
+    if (!supabaseEnabled || !usuarioActual) {
+        monedas -= precio;
+        actualizarMonedas();
+        guardarLocalStorage();
+
+        const cartas = generarCartasRegion(region);
+        mostrarAnimacionSobre(cartas, region);
+        return;
+    }
 
     const cartas = generarCartasRegion(region);
-    mostrarAnimacionSobre(cartas, region);
+    const sobre = obtenerSobre(region);
+
+    db.openPack(supabaseClient, usuarioActual.id, region, sobre.precio, sobre.regiones)
+        .then(result => {
+            if (!result?.ok) {
+                console.error('[ECON] Error abriendo paquete:', result?.mensaje);
+                return;
+            }
+            monedas = result.nuevo_saldo;
+            actualizarMonedas();
+
+            for (const carta of cartas) {
+                if (!coleccion[carta.id]) {
+                    coleccion[carta.id] = {
+                        carta: {
+                            id: carta.id,
+                            nombre: carta.nombre,
+                            region: carta.region,
+                            valor: carta.valor,
+                            imagen: carta.imagen
+                        },
+                        cantidad: 0
+                    };
+                }
+                coleccion[carta.id].cantidad++;
+            }
+            mostrarAnimacionSobre(cartas, region);
+            actualizarEstadisticas();
+            guardarLocalStorage();
+        })
+        .catch(err => {
+            console.error('[ECON] Excepción abriendo paquete:', err);
+            mostrarErrorSupabase('Error al procesar el paquete');
+        });
 }
 
 function generarCartasRegion(region) {
@@ -607,25 +649,6 @@ function mostrarAnimacionSobre(cartas, region) {
     });
 
     modal.classList.add('active');
-
-    for (const carta of cartas) {
-        if (!coleccion[carta.id]) {
-            coleccion[carta.id] = {
-                carta: {
-                    id: carta.id,
-                    nombre: carta.nombre,
-                    region: carta.region,
-                    valor: carta.valor,
-                    imagen: carta.imagen
-                },
-                cantidad: 0
-            };
-        }
-        coleccion[carta.id].cantidad++;
-    }
-
-    guardarDatos();
-    actualizarEstadisticas();
 }
 
 function cerrarModales() {
@@ -918,6 +941,11 @@ function mostrarErrorPassword(msg) {
     if (el) el.textContent = msg;
 }
 
+function mostrarErrorSupabase(msg) {
+    const el = document.getElementById('auth-error');
+    if (el) el.textContent = msg;
+}
+
 function mostrarModoRegister() {
     document.querySelectorAll('.auth-tab').forEach(tab => {
         if (tab.dataset.auth === 'register') tab.classList.add('active');
@@ -938,16 +966,16 @@ function mostrarModoLogin() {
 
 function onAuthSubmit(e) {
     e.preventDefault();
-    const usernameOrEmail = document.getElementById('auth-username-or-email').value.trim();
+    const email = document.getElementById('auth-username-or-email').value.trim();
     const password = document.getElementById('auth-password').value.trim();
     const errorEl = document.getElementById('auth-error');
-    if (!usernameOrEmail || !password) {
-        errorEl.textContent = 'Completá usuario/email y contraseña';
+    if (!email || !password) {
+        errorEl.textContent = 'Completá email y contraseña';
         return;
     }
     const esRegister = document.querySelector('.auth-tab[data-auth="register"]').classList.contains('active');
     errorEl.textContent = 'Cargando...';
-    procesarAuth(esRegister, usernameOrEmail, password);
+    procesarAuth(esRegister, email, password);
 }
 
 async function procesarAuth(esRegister, usernameOrEmail, password) {
@@ -956,16 +984,16 @@ async function procesarAuth(esRegister, usernameOrEmail, password) {
         const client = supabaseClient;
         if (!client) throw new Error('Supabase no configurado');
         if (esRegister) {
-            const email = usernameOrEmail.includes('@') ? usernameOrEmail : `${usernameOrEmail}@elfheim.user`;
-            const result = await auth.signUp(client, email, password, usernameOrEmail);
+            const username = usernameOrEmail.trim();
+            if (!username) throw new Error('Ingresá un nombre de usuario');
+            const email = `${username}@elfheim.user`;
+            const result = await auth.signUp(client, email, password, username);
             console.log('[AUTH] signUp result:', result);
             if (!result.user) throw new Error('No se pudo crear el usuario');
             setUsuario(result.user);
         } else {
-            const email = usernameOrEmail.includes('@') ? usernameOrEmail : buscarEmailPorUsername(usernameOrEmail);
-            if (!email) {
-                throw new Error('Usuario no encontrado');
-            }
+            const email = usernameOrEmail.trim();
+            if (!email) throw new Error('Ingresá tu email');
             const result = await auth.signIn(client, email, password);
             console.log('[AUTH] signIn result:', result);
             setUsuario(result.user);
@@ -974,17 +1002,6 @@ async function procesarAuth(esRegister, usernameOrEmail, password) {
         console.error('[AUTH] Error completo:', err);
         errorEl.textContent = err.message || 'Error de autenticación';
     }
-}
-
-async function buscarEmailPorUsername(username) {
-    const cliente = supabaseClient;
-    if (!cliente) return null;
-    const { data } = await cliente
-        .from('profiles')
-        .select('email')
-        .eq('username', username)
-        .maybeSingle();
-    return data?.email || null;
 }
 
 function inicializarUI() {
@@ -1088,24 +1105,42 @@ function inicializarUI() {
                 return;
             }
             if (btnMoneda.disabled) return;
-            const uid = usuarioActual?.id || 'local';
-            const now = Date.now();
-            const cooldownMs = 60 * 60 * 1000;
-            const key = `elfheim_monedas_cooldown_${uid}`;
-            const last = parseInt(localStorage.getItem(key) || '0');
-            const remaining = cooldownMs - (now - last);
-            if (remaining > 0) return;
-            monedas += 100;
-            actualizarMonedas();
-            animarReclamoMonedas();
-            localStorage.setItem(key, now.toString());
-            actualizarBotonMoneda();
-            await guardarDatos();
-            actualizarBotonMoneda();
+
+            if (!supabaseEnabled || !usuarioActual) {
+                monedas += 100;
+                actualizarMonedas();
+                animarReclamoMonedas();
+                lastClaimServerMs = Date.now();
+                actualizarBotonMoneda();
+                guardarLocalStorage();
+                return;
+            }
+
+            try {
+                const result = await db.claimDailyCoins(supabaseClient, usuarioActual.id);
+                if (result && result.obtenido > 0) {
+                    monedas = result.nuevo_saldo;
+                    actualizarMonedas();
+                    animarReclamoMonedas();
+                    if (typeof result.updated_at === 'string') {
+                        lastClaimServerMs = new Date(result.updated_at).getTime() || Date.now();
+                    } else {
+                        lastClaimServerMs = Date.now();
+                    }
+                } else {
+                    if (typeof result?.proxima_en === 'number' && result.proxima_en > 0) {
+                        lastClaimServerMs = Date.now() - (3600000 - result.proxima_en * 1000);
+                    }
+                }
+                actualizarBotonMoneda();
+            } catch (err) {
+                console.error('[ECON] Error reclamando monedas:', err);
+                mostrarErrorSupabase('Error al reclamar la recompensa');
+            }
         });
         if (monedaTimer) clearInterval(monedaTimer);
-        actualizarBotonMoneda();
         monedaTimer = setInterval(actualizarBotonMoneda, 1000);
+        actualizarBotonMoneda();
     }
 
     document.querySelectorAll('.cerrar').forEach(boton => {
@@ -1300,16 +1335,6 @@ function inicializarUI() {
             localStorage.setItem('elfheim_offline', nuevoEstado ? '1' : '0');
 
             if (nuevoEstado) {
-                const cliente = getClient();
-                if (!nuevoEstado && cliente) {
-                    try {
-                        await db.upsertProfile(cliente, {
-                            id: usuarioActual.id,
-                            monedas,
-                            updated_at: new Date().toISOString()
-                        });
-                    } catch (_) {}
-                }
                 usuarioActual = { id: 'local', email: null };
                 supabaseEnabled = false;
                 cargarLocalStorage();
@@ -1429,7 +1454,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (!modoOffline) {
-        cargarDatos();
+        await cargarDatos();
     } else {
         cargarLocalStorage();
     }
