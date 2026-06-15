@@ -101,19 +101,28 @@
                     <span id="stats-elarion">Elarion: 0</span>
                 </div>
             </div>
-            <div class="filtros-avanzados">
-                <select id="filtro-tipo" class="filtro-select">
-                    <option value="nombre">Nombre</option>
-                    <option value="rareza">Rareza</option>
-                    <option value="region">Región</option>
-                    <option value="raza">Raza</option>
-                    <option value="categoria">Categoría</option>
-                </select>
-                <input type="text" id="filtro-valor" class="filtro-input" placeholder="Buscar...">
-                <button id="btn-buscar-filtro" class="filtro-buscar" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <button id="btn-limpiar-filtro" class="filtro-limpiar">Limpiar</button>
-            </div>
-            <div id="coleccion-grid" class="coleccion-grid"></div>
+<div class="filtros-avanzados">
+                 <select id="filtro-tipo" class="filtro-select">
+                     <option value="nombre">Nombre</option>
+                     <option value="rareza">Rareza</option>
+                     <option value="region">Región</option>
+                     <option value="raza">Raza</option>
+                     <option value="categoria">Categoría</option>
+                 </select>
+                 <input type="text" id="filtro-valor" class="filtro-input" placeholder="Buscar...">
+                 <button id="btn-buscar-filtro" class="filtro-buscar" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                 <button id="btn-limpiar-filtro" class="filtro-limpiar">Limpiar</button>
+                 <select id="orden-tipo" class="filtro-select filtro-orden">
+                     <option value="defecto">Orden</option>
+                     <option value="rareza">Por rareza</option>
+                     <option value="alfabetico">A-Z</option>
+                 </select>
+                 <select id="orden-direccion" class="filtro-select filtro-direccion">
+                     <option value="asc">Asc</option>
+                     <option value="desc">Desc</option>
+                 </select>
+             </div>
+             <div id="coleccion-grid" class="coleccion-grid"></div>
         </section>
     </main>
 

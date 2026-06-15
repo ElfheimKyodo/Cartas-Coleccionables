@@ -424,7 +424,7 @@ function cambiarTab(tab) {
         console.log('[STEP] mostrando tab', tab, 'display=', getComputedStyle(elemento).display);
         elemento.classList.add('active');
     }
-    if (tab === 'coleccion') renderizarColeccion();
+    if (tab === 'coleccion') renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
 }
 
 function obtenerLogosSobre(sobre) {
@@ -686,7 +686,15 @@ function cerrarModales() {
     if (preview) preview.classList.remove('animacion-activa');
 }
 
-function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }) {
+const RAREZA_ORDEN = {
+    legendaria: 0,
+    epica: 1,
+    rara: 2,
+    poco_comun: 3,
+    comun: 4
+};
+
+function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }, orden = { tipo: 'defecto', direccion: 'asc' }) {
     const grid = document.getElementById('coleccion-grid');
     if (!grid) return;
     let items = Object.values(coleccion).map(item => obtenerCartaActual(item.carta.id)).filter(Boolean);
@@ -701,6 +709,19 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
             if (campo === 'raza') return (i.carta.raza || '').toLowerCase().includes(q);
             if (campo === 'categoria') return (i.carta.categoria || '').toLowerCase().includes(q);
             return true;
+        });
+    }
+
+    const { tipo, direccion } = orden;
+    if (tipo !== 'defecto') {
+        items.sort((a, b) => {
+            let comp = 0;
+            if (tipo === 'rareza') {
+                comp = (RAREZA_ORDEN[a.carta.rareza] ?? 99) - (RAREZA_ORDEN[b.carta.rareza] ?? 99);
+            } else if (tipo === 'alfabetico') {
+                comp = (a.carta.nombre || '').localeCompare(b.carta.nombre || '');
+            }
+            return direccion === 'desc' ? -comp : comp;
         });
     }
 
@@ -796,11 +817,20 @@ function mostrarDetalle(cartaId) {
     modalCarta.classList.add('active');
 }
 
+function obtenerOrdenActual() {
+    const selectOrdenTipo = document.getElementById('orden-tipo');
+    const selectOrdenDireccion = document.getElementById('orden-direccion');
+    return {
+        tipo: selectOrdenTipo ? selectOrdenTipo.value : 'defecto',
+        direccion: selectOrdenDireccion ? selectOrdenDireccion.value : 'asc'
+    };
+}
+
 function aplicarFiltro(filtro) {
     document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
     const btn = document.querySelector(`.filtro-btn[data-filtro="${filtro}"]`);
     if (btn) btn.classList.add('active');
-    renderizarColeccion(filtro);
+    renderizarColeccion(filtro, { campo: 'nombre', valor: '' }, obtenerOrdenActual());
 }
 
 function mostrarAuthError(msg) {
@@ -825,30 +855,30 @@ function setUsuario(user) {
         if (profileMenu && profileUsername) {
             profileUsername.textContent = 'Cargando...';
         }
-        cargarDatos().then(() => {
-            actualizarMonedas();
-            actualizarEstadisticas();
-            renderizarColeccion();
-        }).catch(err => {
-            console.error('[AUTH] Error al cargar datos:', err);
-        });
-        actualizarUsernameDesdePerfil().catch(err => {
-            console.error('[AUTH] Error al cargar username:', err);
-        });
-    } else {
-        overlay.style.display = 'flex';
-        authForm.style.display = 'flex';
-        if (profileTrigger) profileTrigger.style.display = 'none';
-        if (profileMenu) profileMenu.style.display = 'none';
-        closeProfileMenu();
-        cerrarModalProfile();
-        cerrarModalPassword();
-        coleccion = {};
-        monedas = 0;
-        actualizarMonedas();
-        actualizarEstadisticas();
-        renderizarColeccion();
-    }
+cargarDatos().then(() => {
+             actualizarMonedas();
+             actualizarEstadisticas();
+             renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+         }).catch(err => {
+             console.error('[AUTH] Error al cargar datos:', err);
+         });
+         actualizarUsernameDesdePerfil().catch(err => {
+             console.error('[AUTH] Error al cargar username:', err);
+         });
+     } else {
+         overlay.style.display = 'flex';
+         authForm.style.display = 'flex';
+         if (profileTrigger) profileTrigger.style.display = 'none';
+         if (profileMenu) profileMenu.style.display = 'none';
+         closeProfileMenu();
+         cerrarModalProfile();
+         cerrarModalPassword();
+         coleccion = {};
+         monedas = 0;
+         actualizarMonedas();
+         actualizarEstadisticas();
+         renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+     }
 }
 
 function actualizarEstadoPerfil() {
@@ -1094,43 +1124,66 @@ function inicializarUI() {
                 mostrarAuthError('Iniciá sesión primero');
                 return;
             }
-            const filtro = btn.dataset.filtro;
-            const campo = selectFiltroTipo ? selectFiltroTipo.value : 'nombre';
-            const valor = inputFiltroValor ? inputFiltroValor.value : '';
-            document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderizarColeccion(filtro, { campo, valor });
-        });
+const filtro = btn.dataset.filtro;
+             const campo = selectFiltroTipo ? selectFiltroTipo.value : 'nombre';
+             const valor = inputFiltroValor ? inputFiltroValor.value : '';
+             document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+             btn.classList.add('active');
+             renderizarColeccion(filtro, { campo, valor }, obtenerOrdenActual());
+         });
     });
 
-    if (btnBuscarFiltro && inputFiltroValor && selectFiltroTipo) {
-        btnBuscarFiltro.addEventListener('click', () => {
-            if (!usuarioActual && supabaseEnabled && getClient()) {
-                mostrarAuthError('Iniciá sesión primero');
-                return;
-            }
-            const filtroRegion = document.querySelector('.filtro-btn.active')?.dataset.filtro || 'todas';
-            const campo = selectFiltroTipo.value;
-            const valor = inputFiltroValor.value.trim();
-            renderizarColeccion(filtroRegion, { campo, valor });
-        });
-    }
+if (btnBuscarFiltro && inputFiltroValor && selectFiltroTipo) {
+         btnBuscarFiltro.addEventListener('click', () => {
+             if (!usuarioActual && supabaseEnabled && getClient()) {
+                 mostrarAuthError('Iniciá sesión primero');
+                 return;
+             }
+             const filtroRegion = document.querySelector('.filtro-btn.active')?.dataset.filtro || 'todas';
+             const campo = selectFiltroTipo.value;
+             const valor = inputFiltroValor.value.trim();
+             const selectOrdenTipo = document.getElementById('orden-tipo');
+             const selectOrdenDireccion = document.getElementById('orden-direccion');
+             const ordenTipo = selectOrdenTipo ? selectOrdenTipo.value : 'defecto';
+             const ordenDireccion = selectOrdenDireccion ? selectOrdenDireccion.value : 'asc';
+             renderizarColeccion(filtroRegion, { campo, valor }, { tipo: ordenTipo, direccion: ordenDireccion });
+         });
+     }
+
+     const selectOrdenTipo = document.getElementById('orden-tipo');
+     const selectOrdenDireccion = document.getElementById('orden-direccion');
+     if (selectOrdenTipo && selectOrdenDireccion) {
+         const aplicarOrden = () => {
+             if (!usuarioActual && supabaseEnabled && getClient()) {
+                 mostrarAuthError('Iniciá sesión primero');
+                 return;
+             }
+             const filtroRegion = document.querySelector('.filtro-btn.active')?.dataset.filtro || 'todas';
+             const campo = selectFiltroTipo ? selectFiltroTipo.value : 'nombre';
+             const valor = inputFiltroValor ? inputFiltroValor.value.trim() : '';
+             const ordenTipo = selectOrdenTipo.value;
+             const ordenDireccion = selectOrdenDireccion.value;
+             renderizarColeccion(filtroRegion, { campo, valor }, { tipo: ordenTipo, direccion: ordenDireccion });
+         };
+         selectOrdenTipo.addEventListener('change', aplicarOrden);
+         selectOrdenDireccion.addEventListener('change', aplicarOrden);
+     }
     
-    const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
-    if (btnLimpiarFiltro && inputFiltroValor && selectFiltroTipo) {
-        btnLimpiarFiltro.addEventListener('click', () => {
-            if (!usuarioActual && supabaseEnabled && getClient()) {
-                mostrarAuthError('Iniciá sesión primero');
-                return;
-            }
-            inputFiltroValor.value = '';
-            if (selectFiltroTipo.value !== 'nombre') {
-                selectFiltroTipo.value = 'nombre';
-            }
-            const filtroRegion = document.querySelector('.filtro-btn.active')?.dataset.filtro || 'todas';
-            renderizarColeccion(filtroRegion, { campo: 'nombre', valor: '' });
-        });
-    }
+const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
+     if (btnLimpiarFiltro && inputFiltroValor && selectFiltroTipo) {
+         btnLimpiarFiltro.addEventListener('click', () => {
+             if (!usuarioActual && supabaseEnabled && getClient()) {
+                 mostrarAuthError('Iniciá sesión primero');
+                 return;
+             }
+             inputFiltroValor.value = '';
+             if (selectFiltroTipo.value !== 'nombre') {
+                 selectFiltroTipo.value = 'nombre';
+             }
+             const filtroRegion = document.querySelector('.filtro-btn.active')?.dataset.filtro || 'todas';
+             renderizarColeccion(filtroRegion, { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+         });
+     }
 
     if (btnMoneda) {
         btnMoneda.addEventListener('click', async () => {
@@ -1219,9 +1272,9 @@ function inicializarUI() {
             item.cantidad -= cantidad;
             monedas += valor * cantidad;
             actualizarMonedas();
-            actualizarEstadisticas();
-            renderizarColeccion();
-            await guardarDatos();
+actualizarEstadisticas();
+             renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+             await guardarDatos();
             if (panelVenta) {
                 panelVenta.style.display = 'none';
                 panelVenta.dataset.abierto = '0';
