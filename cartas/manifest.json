@@ -119,6 +119,18 @@
       "valor": 15,
       "descripcion": "Aurel Kerosene, el \"Rey de las Cenizas\", es un imponente monarca de la raza Dragonfolk en Astra, distinguido por su cabello pelirrojo, ojos rojos de pupilas alargadas y escamas en su piel pálida. Viste túnicas ligeras con joyería de oro y suele caminar descalzo. Originalmente era un investigador ajeno a la política y obsesionado con la tecnología subterránea; sin embargo, se convirtió en héroe nacional al salvar al reino de una catástrofe volcánica estabilizando sus núcleos de energía con un proyecto experimental propio. Este logro le otorgó una inesperada popularidad y títulos que terminaron por llevarlo al trono, una coronación que todavía no logra comprender.",
       "interprete": "Kerosene"
+    },
+    {
+      "id": "elarion/emil",
+      "nombre": "Emil",
+      "imagen": "cartas/elarion/emil.png",
+      "region": "elarion",
+      "raza": "Humano",
+      "categoria": "personaje",
+      "rareza": "epica",
+      "valor": 15,
+      "descripcion": "Emil Norton es un joven de 20 años de Elarion, de cabello peinado hacia atrás, ojos verdes y ropa sencilla de cuero. De origen humilde, creció explorando pacíficamente los bosques de su reino debido a su fascinación por la naturaleza. Para poder defenderse en sus viajes, aprendió a usar la espada de forma autodidacta; aunque no es el más experto, posee la habilidad suficiente para protegerse y mantiene siempre el deseo de seguir aprendiendo.",
+      "interprete": "ThaZeriod"
     }
   ]
 }
