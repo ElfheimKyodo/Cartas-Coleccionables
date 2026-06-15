@@ -7,6 +7,89 @@ function getClient() {
     }
     return supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
+async function applySession(client, payload) {
+    if (!payload?.access_token || !payload?.refresh_token) {
+        return { user: payload?.user ?? null, session: payload?.session ?? null };
+    }
+    const { data, error } = await client.auth.setSession({
+        access_token: payload.access_token,
+        refresh_token: payload.refresh_token
+    });
+    if (error) throw error;
+    return {
+        user: data.user ?? payload.user ?? null,
+        session: data.session ?? {
+            access_token: payload.access_token,
+            refresh_token: payload.refresh_token,
+            token_type: payload.token_type || 'bearer',
+            expires_in: payload.expires_in || 3600,
+            expires_at: payload.expires_at || Math.floor(Date.now() / 1000) + (payload.expires_in || 3600),
+            user: data.user ?? payload.user ?? null
+        }
+    };
+}
+
+async function signInWithCaptchaToken(client, email, password, captchaToken) {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'X-Captcha-Token': captchaToken
+        },
+        body: JSON.stringify({
+            email,
+            password,
+            gotrue_meta_security: {
+                captcha_token: captchaToken
+            }
+        })
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+        throw new Error(payload?.error_description || payload?.msg || 'Error de autenticación');
+    }
+    return applySession(client, payload);
+}
+
+async function signUpWithCaptchaToken(client, email, password, username, captchaToken) {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+        method: 'POST',
+        headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'X-Captcha-Token': captchaToken
+        },
+        body: JSON.stringify({
+            email,
+            password,
+            data: { username: username || email.split('@')[0] },
+            gotrue_meta_security: {
+                captcha_token: captchaToken
+            }
+        })
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+        throw new Error(payload?.error_description || payload?.msg || 'Error de autenticación');
+    }
+    const result = await applySession(client, payload);
+    if (result.user) {
+        const { error: profileError } = await client
+            .from('profiles')
+            .upsert({
+                id: result.user.id,
+                username: username || email.split('@')[0]
+            }, { onConflict: 'id' });
+        if (profileError) {
+            console.error('[AUTH] profile upsert error after signup:', profileError);
+        }
+    }
+    return result;
+}
+
 
 const db = {
     async getProfile(client, userId) {
@@ -246,7 +329,10 @@ const db = {
 };
 
 const auth = {
-    async signUp(client, email, password, username) {
+    async signUp(client, email, password, username, captchaToken = "") {
+        if (captchaToken) {
+            return signUpWithCaptchaToken(client, email, password, username, captchaToken);
+        }
         const { data, error } = await client.auth.signUp({ email, password });
         if (error) {
             console.error('[AUTH] signUp error:', error);
@@ -265,7 +351,10 @@ const auth = {
         return { user: data.user ?? null, session: data.session ?? null };
     },
 
-    async signIn(client, email, password) {
+    async signIn(client, email, password, captchaToken = "") {
+        if (captchaToken) {
+            return signInWithCaptchaToken(client, email, password, captchaToken);
+        }
         const { data, error } = await client.auth.signInWithPassword({ email, password });
         if (error) throw error;
         return data;

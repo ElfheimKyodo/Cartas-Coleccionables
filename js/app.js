@@ -14,6 +14,40 @@ let sobresConfigurados = [];
 let bannersConfigurados = [];
 let lastClaimServerMs = 0;
 const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
+const HCAPTCHA_SITE_KEY = '2cd6abf4-851c-4ad6-9d70-29500b6c944c';
+let hcaptchaWidgetId = null;
+
+function inicializarHCaptcha() {
+    if (!HCAPTCHA_SITE_KEY) {
+        console.warn('[HCAPTCHA] HCAPTCHA_SITE_KEY está vacío.');
+        return;
+    }
+    if (hcaptchaWidgetId !== null) return;
+    if (!window.hcaptcha) {
+        console.warn('[HCAPTCHA] El script de hCaptcha aún no cargó.');
+        return;
+    }
+    const contenedor = document.getElementById('hcaptcha-container');
+    if (!contenedor) {
+        console.warn('[HCAPTCHA] No existe #hcaptcha-container.');
+        return;
+    }
+    hcaptchaWidgetId = window.hcaptcha.render(contenedor, {
+        sitekey: HCAPTCHA_SITE_KEY,
+        theme: 'dark',
+        size: 'normal'
+    });
+}
+
+function obtenerTokenHCaptcha() {
+    if (!HCAPTCHA_SITE_KEY || !window.hcaptcha || hcaptchaWidgetId === null) return '';
+    return window.hcaptcha.getResponse(hcaptchaWidgetId) || '';
+}
+
+function resetHCaptcha() {
+    if (!HCAPTCHA_SITE_KEY || !window.hcaptcha || hcaptchaWidgetId === null) return;
+    window.hcaptcha.reset(hcaptchaWidgetId);
+}
 
 const REGIONES = ['umbraeth', 'skjoldheim', 'astra', 'solareth', 'elarion'];
 const REGION_NOMBRES = {
@@ -1096,30 +1130,37 @@ function onAuthSubmit(e) {
         errorEl.textContent = 'Ingresá una contraseña';
         return;
     }
+    if (HCAPTCHA_SITE_KEY && !obtenerTokenHCaptcha()) {
+        errorEl.textContent = 'Completá el captcha';
+        return;
+    }
 
     errorEl.textContent = 'Cargando...';
-    procesarAuth(esRegister, username, email, password);
+    procesarAuth(esRegister, username, email, password, obtenerTokenHCaptcha());
 }
 
-async function procesarAuth(esRegister, username, email, password) {
+async function procesarAuth(esRegister, username, email, password, captchaToken = '') {
     const errorEl = document.getElementById('auth-error');
     try {
         const client = supabaseClient;
         if (!client) throw new Error('Supabase no configurado');
         if (esRegister) {
             if (!username) throw new Error('Ingresá un nombre de usuario');
-            const result = await auth.signUp(client, email, password, username);
+            const result = await auth.signUp(client, email, password, username, captchaToken);
             console.log('[AUTH] signUp result:', result);
             if (!result.user) throw new Error('No se pudo crear el usuario');
+            resetHCaptcha();
             setUsuario(result.user);
         } else {
             if (!validarEmail(email)) throw new Error('Ingresá un correo válido');
-            const result = await auth.signIn(client, email, password);
+            const result = await auth.signIn(client, email, password, captchaToken);
             console.log('[AUTH] signIn result:', result);
+            resetHCaptcha();
             setUsuario(result.user);
         }
     } catch (err) {
         console.error('[AUTH] Error completo:', err);
+        resetHCaptcha();
         errorEl.textContent = err.message || 'Error de autenticación';
     }
 }
@@ -1614,4 +1655,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     inicializarUI();
     setUsuario(usuarioActual);
+    inicializarHCaptcha();
+    window.addEventListener("load", inicializarHCaptcha);
 });
