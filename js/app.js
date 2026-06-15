@@ -697,7 +697,32 @@ const RAREZA_ORDEN = {
 function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }, orden = { tipo: 'defecto', direccion: 'asc' }) {
     const grid = document.getElementById('coleccion-grid');
     if (!grid) return;
-    let items = Object.values(coleccion).map(item => obtenerCartaActual(item.carta.id)).filter(Boolean);
+
+    const manifestOrder = {};
+    cartasData.forEach((carta, index) => {
+        manifestOrder[carta.id] = index;
+    });
+
+    let items = cartasData.map(carta => {
+        const guardada = coleccion[carta.id];
+        return {
+            carta: {
+                id: carta.id,
+                nombre: carta.nombre,
+                region: carta.region,
+                raza: carta.raza || '—',
+                categoria: carta.categoria || 'personaje',
+                rareza: carta.rareza || 'comun',
+                valor: carta.valor,
+                imagen: carta.imagen,
+                descripcion: carta.descripcion || '',
+                interprete: carta.interprete || ''
+            },
+            cantidad: guardada ? guardada.cantidad : 0,
+            desbloqueada: !!guardada
+        };
+    });
+
     if (filtro !== 'todas') items = items.filter(i => i.carta.region === filtro);
     const { campo, valor } = filtroAvanzado;
     if (valor.trim()) {
@@ -713,37 +738,42 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
     }
 
     const { tipo, direccion } = orden;
-    if (tipo !== 'defecto') {
-        items.sort((a, b) => {
-            let comp = 0;
-            if (tipo === 'rareza') {
-                comp = (RAREZA_ORDEN[a.carta.rareza] ?? 99) - (RAREZA_ORDEN[b.carta.rareza] ?? 99);
-            } else if (tipo === 'alfabetico') {
-                comp = (a.carta.nombre || '').localeCompare(b.carta.nombre || '');
-            }
-            return direccion === 'desc' ? -comp : comp;
-        });
-    }
+
+    items.sort((a, b) => {
+        if (!a.desbloqueada && b.desbloqueada) return 1;
+        if (a.desbloqueada && !b.desbloqueada) return -1;
+
+        let comp = 0;
+        if (tipo === 'rareza') {
+            comp = (RAREZA_ORDEN[a.carta.rareza] ?? 99) - (RAREZA_ORDEN[b.carta.rareza] ?? 99);
+        } else if (tipo === 'alfabetico') {
+            comp = (a.carta.nombre || '').localeCompare(b.carta.nombre || '');
+        } else {
+            comp = (manifestOrder[a.carta.id] ?? 999999) - (manifestOrder[b.carta.id] ?? 999999);
+        }
+        return direccion === 'desc' ? -comp : comp;
+    });
 
     if (items.length === 0) {
-        grid.innerHTML = '<p class="sin-cartas">No tienes cartas en tu colección aún.<br>Abre sobres en la pestaña Tienda para comenzar.</p>';
+        grid.innerHTML = '<p class="sin-cartas">No hay cartas que coincidan con el filtro.<br>Abre sobres en la pestaña Tienda para comenzar.</p>';
         return;
     }
 
-    grid.innerHTML = items.map(({ carta, cantidad }) => {
+    grid.innerHTML = items.map(({ carta, cantidad, desbloqueada }) => {
         const claseRegion = 'region-' + carta.region;
         const claseRareza = 'rareza-' + (carta.rareza || 'comun');
+        const claseBloqueada = desbloqueada ? '' : ' bloqueada';
         const rutaImagen = carta.imagen || '';
         const nombreRareza = carta.rareza ? (RAREZA_NOMBRES[carta.rareza] || carta.rareza) : '';
         const bgRareza = carta.rareza ? (RAREZA_COLORS[carta.rareza] || '') : '';
         return `
-            <div class="carta-item ${claseRegion} ${claseRareza}" data-carta-id="${carta.id}">
+            <div class="carta-item ${claseRegion} ${claseRareza}${claseBloqueada}" data-carta-id="${carta.id}">
                 ${nombreRareza ? `<span class="rareza-badge" style="background:${bgRareza}; color:#fff;">${nombreRareza}</span>` : ''}
                 <img src="${rutaImagen}" alt="${carta.nombre}" 
                      onerror="this.style.display='none'; this.parentElement.querySelector('.carta-placeholder').style.display='flex';"
                      loading="lazy">
                 <div class="carta-placeholder" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:50px; background:rgba(0,0,0,0.3);"><i class="fa-solid fa-gem"></i></div>
-                <div class="carta-cantidad">x${cantidad}</div>
+                ${desbloqueada ? `<div class="carta-cantidad">x${cantidad}</div>` : ''}
                 <div class="carta-nombre">${carta.nombre}</div>
             </div>
         `;
@@ -752,7 +782,10 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
     grid.querySelectorAll('.carta-item').forEach(item => {
         item.addEventListener('click', function(e) {
             e.stopPropagation();
-            mostrarDetalle(this.dataset.cartaId);
+            const cartaId = this.dataset.cartaId;
+            const cartaElement = this;
+            if (cartaElement.classList.contains('bloqueada')) return;
+            mostrarDetalle(cartaId);
         });
     });
 }

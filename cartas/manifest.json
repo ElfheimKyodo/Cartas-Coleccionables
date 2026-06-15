@@ -131,6 +131,18 @@
       "valor": 15,
       "descripcion": "Emil Norton es un joven de 20 años de Elarion, de cabello peinado hacia atrás, ojos verdes y ropa sencilla de cuero. De origen humilde, creció explorando pacíficamente los bosques de su reino debido a su fascinación por la naturaleza. Para poder defenderse en sus viajes, aprendió a usar la espada de forma autodidacta; aunque no es el más experto, posee la habilidad suficiente para protegerse y mantiene siempre el deseo de seguir aprendiendo.",
       "interprete": "ThaZeriod"
+    },
+    {
+      "id": "umbraeth/grimoult",
+      "nombre": "Grimoult",
+      "imagen": "cartas/umbraeth/grimoult.png",
+      "region": "umbraeth",
+      "raza": "Vampiro",
+      "categoria": "personaje",
+      "rareza": "epica",
+      "valor": 15,
+      "descripcion": "Grimoult, conocido como \"El Archiduque\", es un vampiro de 100 años (con apariencia de 60) proveniente del reino de Umbraeth. Es un hombre alto, fornido y de aura seria e intimidante, que viste prendas largas y elegantes, luce una gran barba y carece por completo de humanidad. En su juventud se obsesionó con la inmortalidad tras años de estudiar las artes mágicas prohibidas. Lejos de desanimarse al cruzarse con un vampiro que lo transformó, se emocionó por haber alcanzado su ansiado anhelo; desde entonces, financiado por sus riquezas como vendedor de vino, pasa los años encerrado en su castillo devorando libros de literatura y diversos tipos de magia.",
+      "interprete": "Baldwim"
     }
   ]
 }

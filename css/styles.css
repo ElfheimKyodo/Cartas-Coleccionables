@@ -1010,20 +1010,34 @@ nav {
 }
 
 .carta-item {
-  aspect-ratio: 825/1425;
-  background: var(--surface);
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-  box-shadow: var(--shadow);
-  transition: transform 0.3s;
-  border: 2px solid transparent;
-}
+   aspect-ratio: 825/1425;
+   background: var(--surface);
+   border-radius: 10px;
+   overflow: hidden;
+   cursor: pointer;
+   position: relative;
+   box-shadow: var(--shadow);
+   transition: transform 0.3s;
+   border: 2px solid transparent;
+ }
 
-.carta-item:hover {
-  transform: scale(1.05);
-}
+ .carta-item.bloqueada {
+   opacity: 0.35;
+   filter: grayscale(0.8);
+   cursor: not-allowed;
+ }
+
+.carta-item.bloqueada .carta-nombre {
+    color: var(--text-secondary);
+  }
+
+  .carta-item.bloqueada .rareza-badge {
+    filter: grayscale(0);
+  }
+
+ .carta-item:hover {
+   transform: scale(1.05);
+ }
 
 .carta-item img {
   width: 100%;
