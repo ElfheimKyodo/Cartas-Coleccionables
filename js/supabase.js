@@ -361,9 +361,10 @@ const auth = {
     },
 
     async signInWithGoogle(client) {
+        const redirectTo = `${window.location.origin}${window.location.pathname}`;
         const { data, error } = await client.auth.signInWithOAuth({
             provider: 'discord',
-            options: { redirectTo: window.location.origin }
+            options: { redirectTo }
         });
         if (error) throw error;
         return data;
