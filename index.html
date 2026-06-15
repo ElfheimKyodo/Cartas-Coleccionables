@@ -16,14 +16,14 @@
                 <button class="auth-tab" data-auth="register">Registrarse</button>
             </div>
             <form id="auth-form" class="auth-form">
-                <input type="email" id="auth-username-or-email" placeholder="Email" required autocomplete="username">
+                <input type="text" id="auth-username" placeholder="Nombre de usuario" minlength="2" maxlength="30" autocomplete="username" style="display:none;">
+                <input type="email" id="auth-email" placeholder="Email" required autocomplete="email">
                 <input type="password" id="auth-password" placeholder="Contraseña" required minlength="6" autocomplete="current-password">
                 <button type="submit" class="auth-submit">Entrar</button>
                 <button type="button" id="discord-signin" class="discord-signin-btn">
                     <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e3d80db9971f10a9757c99_Symbol.svg" alt="Discord" width="20" height="20">
                     Discord
                 </button>
-                <button type="button" id="offline-toggle" class="offline-toggle-btn">Modo Offline</button>
             </form>
             <p id="auth-error" class="auth-error"></p>
         </div>
@@ -45,7 +45,6 @@
                 <div id="profile-menu" class="profile-menu" style="display:none;">
                     <div class="profile-header">
                         <span id="profile-username" class="profile-username">Usuario</span>
-                        <span id="profile-status" class="profile-status offline">Offline</span>
                     </div>
                     <div class="profile-body" id="profile-body">
                         <button id="btn-edit-profile" class="profile-btn"><i class="fa-solid fa-pen-to-square"></i> Editar Perfil</button>
@@ -117,6 +116,12 @@
             <div id="coleccion-grid" class="coleccion-grid"></div>
         </section>
     </main>
+
+    <footer class="site-footer">
+        <span>Hecho por</span>
+        <strong>Fadia</strong>
+        <i class="fa-solid fa-sparkles"></i>
+    </footer>
 
     <div id="modal-sobre" class="modal">
         <div class="modal-contenido">

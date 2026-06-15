@@ -146,31 +146,6 @@ body {
   border-color: #5865F2;
 }
 
-.offline-toggle-btn {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background: #1f1f1f;
-  color: #aaa;
-  border: 1px solid #333;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.2s;
-}
-
-.offline-toggle-btn:hover {
-  border-color: #555;
-  color: #fff;
-}
-
-.offline-toggle-btn.active {
-  background: #2a2a2a;
-  border-color: #5865F2;
-  color: #fff;
-}
-
 /* Header */
 header {
   display: flex;
@@ -277,26 +252,6 @@ header h1 {
   border: 1px solid #444;
   min-width: 220px;
   z-index: 1500;
-}
-
-.profile-status {
-  font-size: 11px;
-  font-weight: bold;
-  padding: 3px 8px;
-  border-radius: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-left: 8px;
-}
-
-.profile-status.online {
-  background: #2e7d32;
-  color: #fff;
-}
-
-.profile-status.offline {
-  background: #c62828;
-  color: #fff;
 }
 
 .profile-body {
@@ -1708,6 +1663,54 @@ nav {
 }
 
 .carta-detalle-rareza.rareza-legendaria { color: #ffd700; }
+
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 28px 0 8px;
+  padding: 4px 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+}
+
+.site-footer strong {
+  color: #c084fc;
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.45);
+  animation: fadiaSparkle 4.5s ease-in-out infinite;
+}
+
+.site-footer i {
+  color: #c084fc;
+  font-size: 13px;
+  animation: footerSparkle 4.5s ease-in-out infinite;
+}
+
+@keyframes fadiaSparkle {
+  0%, 100% {
+    color: #7e22ce;
+    text-shadow: 0 0 4px rgba(192, 132, 252, 0.25);
+    transform: translateY(0);
+  }
+  50% {
+    color: #f5d0fe;
+    text-shadow: 0 0 18px rgba(192, 132, 252, 0.95);
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes footerSparkle {
+  0%, 100% {
+    transform: rotate(-6deg) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(6deg) scale(1.1);
+    opacity: 1;
+  }
+}
 
 /* Modal responsive para detalles */
 @media (max-width: 760px) {

@@ -12,7 +12,8 @@ let previewDestelloTimer = null;
 let monedaTimer = null;
 let sobresConfigurados = [];
 let bannersConfigurados = [];
-let lastClaimServerMs = Date.now();
+let lastClaimServerMs = 0;
+const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
 
 const REGIONES = ['umbraeth', 'skjoldheim', 'astra', 'solareth', 'elarion'];
 const REGION_NOMBRES = {
@@ -43,6 +44,25 @@ const CATEGORIA_NOMBRES = {
     localizacion: 'Localizacion',
     item: 'Item'
 };
+
+function obtenerClaveUltimoReclamo(userId = usuarioActual?.id || 'local') {
+    return `${LAST_CLAIM_STORAGE_KEY}_${String(userId || 'local')}`;
+}
+
+function leerUltimoReclamoLocal(userId = null) {
+    const valor = Number(localStorage.getItem(obtenerClaveUltimoReclamo(userId)));
+    return Number.isFinite(valor) && valor > 0 ? valor : 0;
+}
+
+function guardarUltimoReclamoLocal(ms, userId = null) {
+    const clave = obtenerClaveUltimoReclamo(userId);
+    if (Number.isFinite(ms) && ms > 0) {
+        localStorage.setItem(clave, ms.toString());
+    } else {
+        localStorage.removeItem(clave);
+    }
+}
+
 
 const SOBRES = [
     {
@@ -202,7 +222,14 @@ async function cargarDatos() {
             console.log('[COOLDOWN] updated_at raw:', profile.updated_at, 'parsed:', parsed, 'isNaN:', Number.isNaN(parsed));
             if (!Number.isNaN(parsed)) {
                 lastClaimServerMs = parsed;
+                guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
+            } else {
+                lastClaimServerMs = leerUltimoReclamoLocal(usuarioActual.id);
+                console.log('[COOLDOWN] updated_at inválido; usando localStorage:', lastClaimServerMs);
             }
+        } else {
+            lastClaimServerMs = leerUltimoReclamoLocal(usuarioActual.id);
+            console.log('[COOLDOWN] updated_at ausente; usando localStorage:', lastClaimServerMs);
         }
 
         const inventario = await db.getInventory(supabaseClient, usuarioActual.id);
@@ -231,6 +258,7 @@ function cargarLocalStorage() {
         if (guardado) coleccion = JSON.parse(guardado);
         const monedasGuardadas = localStorage.getItem('elfheim_monedas');
         monedas = monedasGuardadas ? parseInt(monedasGuardadas) : 50;
+        lastClaimServerMs = leerUltimoReclamoLocal(usuarioActual?.id || 'local');
     } catch (e) {
         console.error('Error cargando localStorage:', e);
         coleccion = {};
@@ -326,10 +354,11 @@ function actualizarBotonMoneda() {
     if (!btnMoneda) return;
 
     const now = Date.now();
-    const serverNow = lastClaimServerMs || now;
+    const userId = usuarioActual?.id || 'local';
+    const serverNow = lastClaimServerMs > 0 ? lastClaimServerMs : now;
     const cooldownMs = 60 * 60 * 1000;
-    const remaining = cooldownMs - (now - serverNow);
-    console.log('[COOLDOWN] now=', now, 'lastClaimServerMs=', lastClaimServerMs, 'remaining=', remaining);
+    const remaining = lastClaimServerMs > 0 ? cooldownMs - (now - serverNow) : 0;
+    console.log('[COOLDOWN DEBUG] userId=', userId, 'now=', now, 'lastClaimServerMs=', lastClaimServerMs, 'remaining=', remaining);
 
     if (remaining > 0) {
         const mins = Math.floor(remaining / 60000);
@@ -780,13 +809,13 @@ function mostrarAuthError(msg) {
 }
 
 function setUsuario(user) {
+    lastClaimServerMs = 0;
     usuarioActual = user;
     const overlay = document.getElementById('auth-overlay');
     const authForm = document.getElementById('auth-form');
     const profileTrigger = document.getElementById('profile-trigger');
     const profileMenu = document.getElementById('profile-menu');
     const profileUsername = document.getElementById('profile-username');
-    const esOffline = user?.id === 'local';
 
     if (user) {
         overlay.style.display = 'none';
@@ -794,27 +823,18 @@ function setUsuario(user) {
         actualizarEstadoPerfil();
         if (profileTrigger) profileTrigger.style.display = 'flex';
         if (profileMenu && profileUsername) {
-            profileUsername.textContent = esOffline
-                ? 'Jugador Offline'
-                : 'Cargando...';
+            profileUsername.textContent = 'Cargando...';
         }
-        if (esOffline) {
-            cargarLocalStorage();
+        cargarDatos().then(() => {
             actualizarMonedas();
             actualizarEstadisticas();
             renderizarColeccion();
-        } else {
-            cargarDatos().then(() => {
-                actualizarMonedas();
-                actualizarEstadisticas();
-                renderizarColeccion();
-            }).catch(err => {
-                console.error('[AUTH] Error al cargar datos:', err);
-            });
-            actualizarUsernameDesdePerfil().catch(err => {
-                console.error('[AUTH] Error al cargar username:', err);
-            });
-        }
+        }).catch(err => {
+            console.error('[AUTH] Error al cargar datos:', err);
+        });
+        actualizarUsernameDesdePerfil().catch(err => {
+            console.error('[AUTH] Error al cargar username:', err);
+        });
     } else {
         overlay.style.display = 'flex';
         authForm.style.display = 'flex';
@@ -832,23 +852,17 @@ function setUsuario(user) {
 }
 
 function actualizarEstadoPerfil() {
-    const statusEl = document.getElementById('profile-status');
     const usernameEl = document.getElementById('profile-username');
     const btnEdit = document.getElementById('btn-edit-profile');
     const btnPass = document.getElementById('btn-change-password');
     const btnLogout = document.getElementById('profile-logout');
     const btnLogin = document.getElementById('profile-login');
-    if (!statusEl || !usernameEl) return;
-    const esOffline = usuarioActual?.id === 'local';
-    statusEl.textContent = esOffline ? 'Offline' : 'Online';
-    statusEl.className = 'profile-status ' + (esOffline ? 'offline' : 'online');
-    usernameEl.textContent = esOffline
-        ? 'Jugador Offline'
-        : (usuarioActual?.username || 'Usuario');
-    if (btnEdit) btnEdit.style.display = esOffline ? 'none' : 'block';
-    if (btnPass) btnPass.style.display = esOffline ? 'none' : 'block';
-    if (btnLogout) btnLogout.style.display = esOffline ? 'none' : 'block';
-    if (btnLogin) btnLogin.style.display = esOffline ? 'block' : 'none';
+    if (!usernameEl) return;
+    usernameEl.textContent = usuarioActual?.username || 'Usuario';
+    if (btnEdit) btnEdit.style.display = 'block';
+    if (btnPass) btnPass.style.display = 'block';
+    if (btnLogout) btnLogout.style.display = 'block';
+    if (btnLogin) btnLogin.style.display = 'none';
 }
 
 async function cargarUsernamePerfil() {
@@ -951,7 +965,11 @@ function mostrarModoRegister() {
         if (tab.dataset.auth === 'register') tab.classList.add('active');
         else tab.classList.remove('active');
     });
+    const usernameField = document.getElementById('auth-username');
+    const passwordField = document.getElementById('auth-password');
     const submitBtn = document.querySelector('.auth-submit');
+    if (usernameField) usernameField.style.display = 'block';
+    if (passwordField) passwordField.autocomplete = 'new-password';
     if (submitBtn) submitBtn.textContent = 'Registrarse';
 }
 
@@ -960,40 +978,56 @@ function mostrarModoLogin() {
         if (tab.dataset.auth === 'login') tab.classList.add('active');
         else tab.classList.remove('active');
     });
+    const usernameField = document.getElementById('auth-username');
+    const passwordField = document.getElementById('auth-password');
     const submitBtn = document.querySelector('.auth-submit');
+    if (usernameField) usernameField.style.display = 'none';
+    if (passwordField) passwordField.autocomplete = 'current-password';
     if (submitBtn) submitBtn.textContent = 'Entrar';
+}
+
+function validarEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function onAuthSubmit(e) {
     e.preventDefault();
-    const email = document.getElementById('auth-username-or-email').value.trim();
-    const password = document.getElementById('auth-password').value.trim();
+    const username = document.getElementById('auth-username')?.value.trim() || '';
+    const email = document.getElementById('auth-email')?.value.trim() || '';
+    const password = document.getElementById('auth-password')?.value || '';
     const errorEl = document.getElementById('auth-error');
-    if (!email || !password) {
-        errorEl.textContent = 'Completá email y contraseña';
+    const esRegister = document.querySelector('.auth-tab[data-auth="register"]').classList.contains('active');
+
+    if (esRegister && !username) {
+        errorEl.textContent = 'Ingresá un nombre de usuario';
         return;
     }
-    const esRegister = document.querySelector('.auth-tab[data-auth="register"]').classList.contains('active');
+    if (!validarEmail(email)) {
+        errorEl.textContent = 'Ingresá un correo válido';
+        return;
+    }
+    if (!password) {
+        errorEl.textContent = 'Ingresá una contraseña';
+        return;
+    }
+
     errorEl.textContent = 'Cargando...';
-    procesarAuth(esRegister, email, password);
+    procesarAuth(esRegister, username, email, password);
 }
 
-async function procesarAuth(esRegister, usernameOrEmail, password) {
+async function procesarAuth(esRegister, username, email, password) {
     const errorEl = document.getElementById('auth-error');
     try {
         const client = supabaseClient;
         if (!client) throw new Error('Supabase no configurado');
         if (esRegister) {
-            const username = usernameOrEmail.trim();
             if (!username) throw new Error('Ingresá un nombre de usuario');
-            const email = `${username}@elfheim.user`;
             const result = await auth.signUp(client, email, password, username);
             console.log('[AUTH] signUp result:', result);
             if (!result.user) throw new Error('No se pudo crear el usuario');
             setUsuario(result.user);
         } else {
-            const email = usernameOrEmail.trim();
-            if (!email) throw new Error('Ingresá tu email');
+            if (!validarEmail(email)) throw new Error('Ingresá un correo válido');
             const result = await auth.signIn(client, email, password);
             console.log('[AUTH] signIn result:', result);
             setUsuario(result.user);
@@ -1111,6 +1145,7 @@ function inicializarUI() {
                 actualizarMonedas();
                 animarReclamoMonedas();
                 lastClaimServerMs = Date.now();
+                guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
                 actualizarBotonMoneda();
                 guardarLocalStorage();
                 return;
@@ -1122,16 +1157,20 @@ function inicializarUI() {
                     monedas = result.nuevo_saldo;
                     actualizarMonedas();
                     animarReclamoMonedas();
-                    if (typeof result.updated_at === 'string') {
-                        lastClaimServerMs = new Date(result.updated_at).getTime() || Date.now();
+                    const claimUpdatedAt = result.updated_at || result.ultima_actualizacion;
+                    if (typeof claimUpdatedAt === 'string') {
+                        lastClaimServerMs = new Date(claimUpdatedAt).getTime() || Date.now();
                     } else {
                         lastClaimServerMs = Date.now();
                     }
+                    guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
                 } else {
                     if (typeof result?.proxima_en === 'number' && result.proxima_en > 0) {
                         lastClaimServerMs = Date.now() - (3600000 - result.proxima_en * 1000);
+                        guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
                     }
                 }
+                console.log('[COOLDOWN CLAIM] userId=', usuarioActual?.id || 'local', 'result:', result, 'lastClaimServerMs:', lastClaimServerMs);
                 actualizarBotonMoneda();
             } catch (err) {
                 console.error('[ECON] Error reclamando monedas:', err);
@@ -1298,17 +1337,13 @@ function inicializarUI() {
             const authForm = document.getElementById('auth-form');
             if (overlay) overlay.style.display = 'flex';
             if (authForm) authForm.style.display = 'flex';
-            const offlineBtn = document.getElementById('offline-toggle');
-            if (offlineBtn) {
-                offlineBtn.classList.remove('active');
-            }
-            localStorage.removeItem('elfheim_offline');
             usuarioActual = null;
             supabaseEnabled = true;
             const client = getClient();
             if (client) {
                 supabaseClient = client;
             }
+            setUsuario(null);
         });
     }
 
@@ -1323,41 +1358,6 @@ function inicializarUI() {
             } catch (err) {
                 console.error('[AUTH] Discord error:', err);
                 errorEl.textContent = err.message || 'Error con Discord';
-            }
-        });
-    }
-
-    const offlineBtn = document.getElementById('offline-toggle');
-    if (offlineBtn) {
-        offlineBtn.addEventListener('click', async () => {
-            const nuevoEstado = !offlineBtn.classList.contains('active');
-            offlineBtn.classList.toggle('active', nuevoEstado);
-            localStorage.setItem('elfheim_offline', nuevoEstado ? '1' : '0');
-
-            if (nuevoEstado) {
-                usuarioActual = { id: 'local', email: null };
-                supabaseEnabled = false;
-                cargarLocalStorage();
-                setUsuario(usuarioActual);
-                actualizarBotonMoneda();
-            } else {
-                const cliente = getClient();
-                if (cliente) {
-                    supabaseClient = cliente;
-                    supabaseEnabled = true;
-                }
-                cargarDatos().then(() => {
-                    actualizarMonedas();
-                    actualizarEstadisticas();
-                    renderizarColeccion();
-                    actualizarBotonMoneda();
-                }).catch(() => {
-                    cargarLocalStorage();
-                    actualizarMonedas();
-                    actualizarEstadisticas();
-                    renderizarColeccion();
-                    actualizarBotonMoneda();
-                });
             }
         });
     }
@@ -1442,22 +1442,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     await cargarCartas();
     await cargarConfiguracionSobres();
 
-    const modoOffline = localStorage.getItem('elfheim_offline') === '1';
-    const offlineBtn = document.getElementById('offline-toggle');
-    if (modoOffline && offlineBtn) {
-        offlineBtn.classList.add('active');
-        usuarioActual = { id: 'local', email: null };
-        supabaseEnabled = false;
-    } else if (!modoOffline && supabaseEnabled) {
+    if (supabaseEnabled) {
         const session = await auth.getSession(supabaseClient);
         usuarioActual = session?.user ?? null;
     }
 
-    if (!modoOffline) {
-        await cargarDatos();
-    } else {
-        cargarLocalStorage();
-    }
     inicializarUI();
     setUsuario(usuarioActual);
 });

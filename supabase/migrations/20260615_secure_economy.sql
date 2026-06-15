@@ -100,14 +100,14 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION reclamar_monedas_diarias(p_user_id UUID)
-RETURNS TABLE(obtenido INTEGER, nuevo_saldo INTEGER, proxima_en INTEGER, updated_at TIMESTAMPTZ) AS $$
+RETURNS TABLE(obtenido INTEGER, nuevo_saldo INTEGER, proxima_en INTEGER, ultima_actualizacion TIMESTAMPTZ) AS $$
 DECLARE
     v_ultima TIMESTAMPTZ;
     v_cooldown INTERVAL := INTERVAL '1 hour';
     v_bonus INTEGER := 100;
     v_nuevo_saldo INTEGER;
 BEGIN
-    SELECT monedas, updated_at INTO v_nuevo_saldo, v_ultima FROM profiles WHERE id = p_user_id FOR UPDATE;
+    SELECT p.monedas, p.updated_at INTO v_nuevo_saldo, v_ultima FROM profiles p WHERE p.id = p_user_id FOR UPDATE;
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Perfil no encontrado';
     END IF;
@@ -117,13 +117,13 @@ BEGIN
         IF proxima_en < 0 THEN proxima_en := 0; END IF;
         obtenido := 0;
         nuevo_saldo := v_nuevo_saldo;
-        updated_at := v_ultima;
+        ultima_actualizacion := v_ultima;
         RETURN NEXT;
         RETURN;
     END IF;
 
-    UPDATE profiles SET monedas = monedas + v_bonus, updated_at = NOW() WHERE id = p_user_id;
-    SELECT monedas, updated_at INTO v_nuevo_saldo, v_ultima FROM profiles WHERE id = p_user_id;
+    UPDATE profiles p SET monedas = p.monedas + v_bonus, updated_at = NOW() WHERE p.id = p_user_id;
+    SELECT p.monedas, p.updated_at INTO v_nuevo_saldo, v_ultima FROM profiles p WHERE p.id = p_user_id;
 
     INSERT INTO transacciones_monedas (user_id, delta, motivo, saldo_resultante)
     VALUES (p_user_id, v_bonus, 'recompensa_diaria', v_nuevo_saldo);
@@ -131,7 +131,7 @@ BEGIN
     obtenido := v_bonus;
     nuevo_saldo := v_nuevo_saldo;
     proxima_en := 0;
-    updated_at := v_ultima;
+    ultima_actualizacion := v_ultima;
     RETURN NEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
