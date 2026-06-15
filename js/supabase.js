@@ -12,7 +12,7 @@ const db = {
     async getProfile(client, userId) {
         const { data, error } = await client
             .from('profiles')
-            .select('monedas, email, updated_at')
+            .select('monedas, updated_at')
             .eq('id', userId)
             .single();
         if (error && error.code !== 'PGRST116') throw error;
@@ -38,6 +38,163 @@ const db = {
             .from('inventory')
             .upsert(items, { onConflict: 'user_id,carta_id' });
         if (error) throw error;
+    },
+
+    async updateCoins(client, userId, delta) {
+        const { data: profile, error: readError } = await client
+            .from('profiles')
+            .select('monedas')
+            .eq('id', userId)
+            .single();
+        if (readError) throw readError;
+
+        const actual = Number(profile?.monedas ?? 0);
+        const nuevo = actual + Number(delta || 0);
+        if (!Number.isFinite(nuevo) || nuevo < 0) {
+            throw new Error('Saldo insuficiente');
+        }
+
+        const { data, error } = await client
+            .from('profiles')
+            .update({ monedas: nuevo })
+            .eq('id', userId)
+            .select('monedas, updated_at')
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async addInventory(client, userId, items) {
+        if (!items || !items.length) return [];
+
+        const agrupados = {};
+        for (const item of items) {
+            const cartaId = item?.id || item?.carta_id;
+            const cantidad = Number(item?.cantidad ?? item?.count ?? 1);
+            if (!cartaId || !Number.isFinite(cantidad) || cantidad <= 0) continue;
+            agrupados[cartaId] = (agrupados[cartaId] || 0) + cantidad;
+        }
+
+        const agregados = [];
+        for (const [cartaId, cantidad] of Object.entries(agrupados)) {
+            const { data: actual, error: readError } = await client
+                .from('inventory')
+                .select('cantidad')
+                .eq('user_id', userId)
+                .eq('carta_id', cartaId)
+                .maybeSingle();
+            if (readError) throw readError;
+
+            const siguiente = Number(actual?.cantidad ?? 0) + cantidad;
+            let data;
+            let error;
+            if (actual) {
+                ({ data, error } = await client
+                    .from('inventory')
+                    .update({ cantidad: siguiente })
+                    .eq('user_id', userId)
+                    .eq('carta_id', cartaId)
+                    .select('carta_id, cantidad')
+                    .single());
+            } else {
+                ({ data, error } = await client
+                    .from('inventory')
+                    .insert({ user_id: userId, carta_id: cartaId, cantidad: siguiente })
+                    .select('carta_id, cantidad')
+                    .single());
+            }
+            if (error) throw error;
+            agregados.push(data);
+        }
+        return agregados;
+    },
+
+    async removeInventory(client, userId, cardId, quantity) {
+        const { data: actual, error: readError } = await client
+            .from('inventory')
+            .select('cantidad')
+            .eq('user_id', userId)
+            .eq('carta_id', cardId)
+            .maybeSingle();
+        if (readError) throw readError;
+        if (!actual || actual.cantidad < quantity) {
+            throw new Error('Inventario insuficiente');
+        }
+
+        const siguiente = actual.cantidad - quantity;
+        let error;
+        if (siguiente <= 0) {
+            ({ error } = await client
+                .from('inventory')
+                .delete()
+                .eq('user_id', userId)
+                .eq('carta_id', cardId));
+        } else {
+            ({ error } = await client
+                .from('inventory')
+                .update({ cantidad: siguiente })
+                .eq('user_id', userId)
+                .eq('carta_id', cardId));
+        }
+        if (error) throw error;
+        return { carta_id: cardId, cantidad: siguiente };
+    },
+
+    async sellCardTable(client, userId, cardId, quantity, unitPrice) {
+        const inventario = await this.removeInventory(client, userId, cardId, quantity);
+        try {
+            const profile = await this.updateCoins(client, userId, unitPrice * quantity);
+            return {
+                nuevo_saldo: profile.monedas,
+                vendidas: quantity,
+                inventario
+            };
+        } catch (err) {
+            await this.addInventory(client, userId, [{ id: cardId, cantidad: quantity }]);
+            throw err;
+        }
+    },
+
+    async claimDailyCoinsTable(client, userId, lastClaimServerMs = 0) {
+        const cooldownMs = 60 * 60 * 1000;
+        const { data: profile, error: readError } = await client
+            .from('profiles')
+            .select('monedas, updated_at')
+            .eq('id', userId)
+            .single();
+        if (readError) throw readError;
+
+        const now = Date.now();
+        const serverNow = lastClaimServerMs > 0 ? lastClaimServerMs : now;
+        const remaining = lastClaimServerMs > 0 ? cooldownMs - (now - serverNow) : 0;
+
+        if (remaining > 0) {
+            return {
+                obtenido: 0,
+                nuevo_saldo: Number(profile?.monedas ?? 0),
+                proxima_en: Math.max(0, Math.ceil(remaining / 1000)),
+                ultima_actualizacion: profile?.updated_at || null
+            };
+        }
+
+        const nuevo = Number(profile?.monedas ?? 0) + 100;
+        const { data, error } = await client
+            .from('profiles')
+            .update({
+                monedas: nuevo,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', userId)
+            .select('monedas, updated_at')
+            .single();
+        if (error) throw error;
+
+        return {
+            obtenido: 100,
+            nuevo_saldo: data.monedas,
+            proxima_en: 0,
+            ultima_actualizacion: data.updated_at
+        };
     },
 
     async claimDailyCoins(client, userId) {
@@ -101,8 +258,7 @@ const auth = {
                 .from('profiles')
                 .upsert({
                     id: data.user.id,
-                    username: username || email.split('@')[0],
-                    email
+                    username: username || email.split('@')[0]
                 }, { onConflict: 'id' });
             if (profileError) console.error('[AUTH] profile upsert error:', profileError);
         }

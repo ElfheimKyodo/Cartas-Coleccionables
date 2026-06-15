@@ -572,26 +572,49 @@ function comprarSobre(region, precio) {
         return;
     }
 
+    const cartas = generarCartasRegion(region);
+    const sobre = obtenerSobre(region);
+    const precioFinal = obtenerPrecioSobre(sobre);
+
     if (!supabaseEnabled || !usuarioActual) {
-        monedas -= precio;
+        monedas -= precioFinal;
         actualizarMonedas();
         guardarLocalStorage();
-
-        const cartas = generarCartasRegion(region);
         mostrarAnimacionSobre(cartas, region);
         return;
     }
 
-    const cartas = generarCartasRegion(region);
-    const sobre = obtenerSobre(region);
+    (async () => {
+        try {
+            const profile = await db.getProfile(supabaseClient, usuarioActual.id);
+            monedas = profile?.monedas ?? monedas;
+            actualizarMonedas();
 
-    db.openPack(supabaseClient, usuarioActual.id, region, sobre.precio, sobre.regiones)
-        .then(result => {
-            if (!result?.ok) {
-                console.error('[ECON] Error abriendo paquete:', result?.mensaje);
+            if (monedas < precioFinal) {
+                const btn = document.querySelector(`.btn-gacha[data-tipo="${region}"]`);
+                if (btn) {
+                    btn.classList.add('error-shake');
+                    setTimeout(() => btn.classList.remove('error-shake'), 300);
+                }
                 return;
             }
-            monedas = result.nuevo_saldo;
+
+            try {
+                const result = await db.openPack(supabaseClient, usuarioActual.id, region, precioFinal, sobre.regiones);
+                if (!result?.ok) throw new Error(result?.mensaje || 'Error abriendo paquete');
+                monedas = result.nuevo_saldo;
+            } catch (rpcError) {
+                console.warn('[ECON] RPC abrir_sobre no disponible; usando escritura directa en tablas:', rpcError);
+                const profileActualizado = await db.updateCoins(supabaseClient, usuarioActual.id, -precioFinal);
+                try {
+                    await db.addInventory(supabaseClient, usuarioActual.id, cartas);
+                } catch (inventoryError) {
+                    await db.updateCoins(supabaseClient, usuarioActual.id, precioFinal);
+                    throw inventoryError;
+                }
+                monedas = profileActualizado.monedas;
+            }
+
             actualizarMonedas();
 
             for (const carta of cartas) {
@@ -612,11 +635,11 @@ function comprarSobre(region, precio) {
             mostrarAnimacionSobre(cartas, region);
             actualizarEstadisticas();
             guardarLocalStorage();
-        })
-        .catch(err => {
+        } catch (err) {
             console.error('[ECON] Excepción abriendo paquete:', err);
             mostrarErrorSupabase('Error al procesar el paquete');
-        });
+        }
+    })();
 }
 
 function generarCartasRegion(region) {
@@ -1238,7 +1261,14 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             }
 
             try {
-                const result = await db.claimDailyCoins(supabaseClient, usuarioActual.id);
+                let result;
+                try {
+                    result = await db.claimDailyCoins(supabaseClient, usuarioActual.id);
+                } catch (rpcError) {
+                    console.warn('[ECON] RPC reclamar_monedas_diarias no disponible; usando escritura directa en tablas:', rpcError);
+                    result = await db.claimDailyCoinsTable(supabaseClient, usuarioActual.id, lastClaimServerMs);
+                }
+
                 if (result && result.obtenido > 0) {
                     monedas = result.nuevo_saldo;
                     actualizarMonedas();
@@ -1301,20 +1331,42 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             const cantidad = parseInt(input?.value || '1', 10);
             if (!cartaId || !Number.isFinite(valor) || !Number.isFinite(cantidad) || cantidad <= 0) return;
             const item = coleccion[cartaId];
-            if (!item || item.cantidad <= cantidad) return;
-            item.cantidad -= cantidad;
-            monedas += valor * cantidad;
+            if (!item || (!supabaseEnabled && item.cantidad <= cantidad)) return;
+
+            if (supabaseEnabled && usuarioActual) {
+                try {
+                    let result;
+                    try {
+                        result = await db.sellCard(supabaseClient, usuarioActual.id, cartaId, cantidad, valor);
+                    } catch (rpcError) {
+                        console.warn('[ECON] RPC vender_carta no disponible; usando escritura directa en tablas:', rpcError);
+                        result = await db.sellCardTable(supabaseClient, usuarioActual.id, cartaId, cantidad, valor);
+                    }
+                    if (!result) throw new Error('Respuesta vacía del servidor');
+                    monedas = result.nuevo_saldo;
+                    await cargarDatos();
+                } catch (err) {
+                    console.error('[ECON] Error vendiendo carta:', err);
+                    mostrarErrorSupabase('Error al vender la carta');
+                    return;
+                }
+            } else {
+                item.cantidad -= cantidad;
+                monedas += valor * cantidad;
+                guardarLocalStorage();
+            }
+
             actualizarMonedas();
-actualizarEstadisticas();
-             renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
-             await guardarDatos();
+            actualizarEstadisticas();
+            renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
             if (panelVenta) {
                 panelVenta.style.display = 'none';
                 panelVenta.dataset.abierto = '0';
             }
+            const itemActualizado = coleccion[cartaId];
             const cantidadTexto = document.getElementById('carta-detalle-cantidad');
-            if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${item.cantidad}`;
-            if (btnVender) btnVender.disabled = true;
+            if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${itemActualizado?.cantidad ?? 0}`;
+            if (btnVender) btnVender.disabled = !itemActualizado || itemActualizado.cantidad <= 1;
         });
     }
 
@@ -1430,6 +1482,33 @@ actualizarEstadisticas();
                 supabaseClient = client;
             }
             setUsuario(null);
+        });
+    }
+
+    const profileSync = document.getElementById('profile-sync');
+    if (profileSync) {
+        const textoOriginal = '<i class="fa-solid fa-rotate"></i> Sincronizar';
+        profileSync.addEventListener('click', async () => {
+            if (!usuarioActual) return;
+            profileSync.disabled = true;
+            profileSync.textContent = 'Sincronizando...';
+            try {
+                await cargarDatos();
+                actualizarMonedas();
+                actualizarEstadisticas();
+                renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+                profileSync.innerHTML = '<i class="fa-solid fa-check"></i> Sincronizado';
+            } catch (err) {
+                console.error('[AUTH] Error sincronizando datos:', err);
+                profileSync.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Error';
+            } finally {
+                setTimeout(() => {
+                    if (!profileSync.disabled) {
+                        profileSync.innerHTML = textoOriginal;
+                    }
+                }, 1500);
+                profileSync.disabled = false;
+            }
         });
     }
 
