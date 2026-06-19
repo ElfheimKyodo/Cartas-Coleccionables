@@ -143,6 +143,18 @@
       "valor": 15,
       "descripcion": "Grimoult, conocido como \"El Archiduque\", es un vampiro de 100 años (con apariencia de 60) proveniente del reino de Umbraeth. Es un hombre alto, fornido y de aura seria e intimidante, que viste prendas largas y elegantes, luce una gran barba y carece por completo de humanidad. En su juventud se obsesionó con la inmortalidad tras años de estudiar las artes mágicas prohibidas. Lejos de desanimarse al cruzarse con un vampiro que lo transformó, se emocionó por haber alcanzado su ansiado anhelo; desde entonces, financiado por sus riquezas como vendedor de vino, pasa los años encerrado en su castillo devorando libros de literatura y diversos tipos de magia.",
       "interprete": "Baldwim"
+    },
+    {
+      "id": "solareth/lune",
+      "nombre": "Lune",
+      "imagen": "cartas/solareth/lune.png",
+      "region": "solareth",
+      "raza": "Serafín",
+      "categoria": "personaje",
+      "rareza": "epica",
+      "valor": 15,
+      "descripcion": "Lune D. Brionac, apodada \"La hija más cercana a Dios\", es una joven de 19 años de la raza Santo proveniente del reino de Solareth. De figura delgada, piel blanca y cabello cano de largas hebras, destaca por vestir ropajes claros y livianos. Perdió la vista a muy temprana edad, pero su ceguera se convirtió en el origen de un don extraordinario: prodigiosas habilidades curativas y de apoyo nacidas de su deseo de proteger a los demás. Su compasión inquebrantable, pureza de corazón y bondad casi divina la han convertido en una figura venerada y en una luz de esperanza dedicada a aliviar el dolor ajeno.",
+      "interprete": "Lune"
     }
   ]
 }
