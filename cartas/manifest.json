@@ -155,6 +155,18 @@
       "valor": 15,
       "descripcion": "Lune D. Brionac, apodada \"La hija más cercana a Dios\", es una joven de 19 años de la raza Santo proveniente del reino de Solareth. De figura delgada, piel blanca y cabello cano de largas hebras, destaca por vestir ropajes claros y livianos. Perdió la vista a muy temprana edad, pero su ceguera se convirtió en el origen de un don extraordinario: prodigiosas habilidades curativas y de apoyo nacidas de su deseo de proteger a los demás. Su compasión inquebrantable, pureza de corazón y bondad casi divina la han convertido en una figura venerada y en una luz de esperanza dedicada a aliviar el dolor ajeno.",
       "interprete": "Lune"
+    },
+    {
+      "id": "elarion/golemguardian",
+      "nombre": "Gólem Guardian",
+      "imagen": "cartas/elarion/golemguardian.png",
+      "region": "elarion",
+      "raza": "Gólem",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Golem Guardián es una criatura ancestral y pacífica nacida de la tierra misma, cuyo propósito es proteger y nutrir el equilibrio del bosque en lugar de servir para la guerra. Este ser, que funciona como un ecosistema andante de roca antigua cubierto de musgo y líquenes, posee una paciencia geológica que le permite integrarse con el paisaje hasta que la naturaleza requiere su ayuda de forma totalmente protectora y no agresiva. Más allá de su rol físico, es venerado por los habitantes del bosque como un sabio maestro de superación personal, ya que su presencia guía a quienes buscan su ayuda a entrenar la resistencia del cuerpo, calmar la mente a través del enfoque presente y sintonizar el alma con los ciclos naturales para alcanzar la paz absoluta.",
+      "interprete": "__null__"
     }
   ]
 }
