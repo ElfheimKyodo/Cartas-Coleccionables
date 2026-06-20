@@ -1040,6 +1040,8 @@ function mostrarDetalle(cartaId) {
         panelVentaGlobal.classList.remove('open');
     }
     modalCarta.classList.add('active');
+    const contenidoModal = modalCarta.querySelector('.modal-contenido');
+    if (contenidoModal) contenidoModal.scrollTop = 0;
 }
 
 function obtenerOrdenActual() {
