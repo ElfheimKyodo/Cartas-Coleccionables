@@ -105,8 +105,9 @@ const SOBRES = [
         icono: 'fa-solid fa-layer-group',
         precio: 50,
         regiones: REGIONES,
+        probabilidades: { comun: 60, poco_comun: 25, rara: 12, epica: 3, legendaria: 0 },
         descripcion: 'Un gacha equilibrado con cartas de todas las regiones.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de todas las regiones</h4> \nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de todas las regiones</h4>\nPrueba'
     },
     {
         tipo: 'umbraeth',
@@ -114,6 +115,7 @@ const SOBRES = [
         icono: 'fa-solid fa-moon',
         precio: 50,
         regiones: ['umbraeth'],
+        probabilidades: { comun: 50, poco_comun: 25, rara: 15, epica: 8, legendaria: 2 },
         descripcion: 'Sombras, demonios y secretos ocultos de Umbraeth.',
         informacion: '<h4>Contiene 3 cartas aleatorias de Umbraeth</h4><ul><li>Lilith: La Dama Rosa</li></ul>'
     },
@@ -123,8 +125,9 @@ const SOBRES = [
         icono: 'fa-solid fa-snowflake',
         precio: 50,
         regiones: ['skjoldheim'],
+        probabilidades: { comun: 45, poco_comun: 25, rara: 18, epica: 10, legendaria: 2 },
         descripcion: 'Guerreros, hielo y runas antiguas de Skjoldheim.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Skjoldheim</h4> \nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Skjoldheim</h4>\nPrueba'
     },
     {
         tipo: 'astra',
@@ -132,8 +135,9 @@ const SOBRES = [
         icono: 'fa-solid fa-star',
         precio: 50,
         regiones: ['astra'],
+        probabilidades: { comun: 40, poco_comun: 30, rara: 20, epica: 8, legendaria: 2 },
         descripcion: 'Misterio celestial y magia estelar de Astra.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Astra</h4> \nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Astra</h4>\nPrueba'
     },
     {
         tipo: 'solareth',
@@ -141,8 +145,9 @@ const SOBRES = [
         icono: 'fa-solid fa-dragon',
         precio: 50,
         regiones: ['solareth'],
+        probabilidades: { comun: 55, poco_comun: 25, rara: 13, epica: 6, legendaria: 1 },
         descripcion: 'Fuego, dragones y linajes solares de Solareth.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Solareth</h4> \nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Solareth</h4>\nPrueba'
     },
     {
         tipo: 'elarion',
@@ -150,8 +155,9 @@ const SOBRES = [
         icono: 'fa-solid fa-leaf',
         precio: 50,
         regiones: ['elarion'],
+        probabilidades: { comun: 70, poco_comun: 20, rara: 8, epica: 2, legendaria: 0 },
         descripcion: 'Naturaleza viva, espíritus y bosques de Elarion.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Elarion</h4> \nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Elarion</h4>\nPrueba'
     }
 ];
 
@@ -497,7 +503,12 @@ function actualizarSrcConTransicion(img, src, alt) {
 }
 
 function obtenerImagenSobre(sobre) {
-    const cartasPermitidas = cartasData.filter(carta => sobre.regiones.includes(carta.region));
+    let cartasPermitidas = [];
+    if (sobre.cartas && sobre.cartas.length > 0) {
+        cartasPermitidas = cartasData.filter(carta => sobre.cartas.includes(carta.id));
+    } else {
+        cartasPermitidas = cartasData.filter(carta => sobre.regiones.includes(carta.region));
+    }
     return cartasPermitidas[0]?.imagen || '';
 }
 
@@ -634,7 +645,7 @@ function comprarSobre(region, precio) {
             }
 
             try {
-                const result = await db.openPack(supabaseClient, usuarioActual.id, region, precioFinal, sobre.regiones);
+                const result = await db.openPack(supabaseClient, usuarioActual.id, region, precioFinal, cartas);
                 if (!result?.ok) throw new Error(result?.mensaje || 'Error abriendo paquete');
                 monedas = result.nuevo_saldo;
             } catch (rpcError) {
@@ -668,7 +679,7 @@ function comprarSobre(region, precio) {
             }
             mostrarAnimacionSobre(cartas, region);
             actualizarEstadisticas();
-            guardarLocalStorage();
+            guardarDatos();
         } catch (err) {
             console.error('[ECON] Excepción abriendo paquete:', err);
             mostrarErrorSupabase('Error al procesar el paquete');
@@ -676,16 +687,51 @@ function comprarSobre(region, precio) {
     })();
 }
 
+function obtenerProbabilidadesRareza() {
+    return {
+        comun: 50,
+        poco_comun: 25,
+        rara: 15,
+        epica: 8,
+        legendaria: 2
+    };
+}
+
 function generarCartasRegion(region) {
     const cartas = [];
     const sobre = obtenerSobre(region);
-    const regionesPermitidas = sobre.regiones || [region];
-    const cartasRegion = cartasData.filter(c => regionesPermitidas.includes(c.region));
-    if (cartasRegion.length === 0) return cartasData.length > 0 ? [cartasData[0]] : [];
+    let cartasPermitidas = [];
+    if (sobre.cartas && sobre.cartas.length > 0) {
+        cartasPermitidas = cartasData.filter(c => sobre.cartas.includes(c.id));
+    } else {
+        const regionesPermitidas = sobre.regiones || [region];
+        cartasPermitidas = cartasData.filter(c => regionesPermitidas.includes(c.region));
+    }
+    if (cartasPermitidas.length === 0) return cartasData.length > 0 ? [cartasData[0]] : [];
+
+    const probRarezas = sobre.probabilidades || obtenerProbabilidadesRareza();
+
     for (let i = 0; i < 3; i++) {
-        cartas.push(cartasRegion[Math.floor(Math.random() * cartasRegion.length)]);
+        const rarezaSeleccionada = obtenerRarezaPorProbabilidad(probRarezas);
+        const cartasFiltradas = cartasPermitidas.filter(c => c.rareza === rarezaSeleccionada);
+        if (cartasFiltradas.length > 0) {
+            cartas.push(cartasFiltradas[Math.floor(Math.random() * cartasFiltradas.length)]);
+        } else {
+            cartas.push(cartasPermitidas[Math.floor(Math.random() * cartasPermitidas.length)]);
+        }
     }
     return cartas;
+}
+
+function obtenerRarezaPorProbabilidad(probRarezas) {
+    const rarezas = Object.keys(probRarezas);
+    const total = rarezas.reduce((sum, r) => sum + probRarezas[r], 0);
+    let rand = Math.random() * total;
+    for (const rareza of rarezas) {
+        rand -= probRarezas[rareza];
+        if (rand <= 0) return rareza;
+    }
+    return rarezas[rarezas.length - 1];
 }
 
 function mostrarAnimacionSobre(cartas, region) {
@@ -884,7 +930,15 @@ function mostrarDetalle(cartaId) {
     }
     if (valorEl) valorEl.textContent = carta.valor != null ? `${carta.valor} monedas` : '—';
     if (descripcionEl) descripcionEl.textContent = carta.descripcion || '—';
-    if (interpreteEl) interpreteEl.textContent = carta.interprete || '—';
+    if (interpreteEl) {
+        const interpreteRow = interpreteEl.closest('.carta-interprete-row');
+        if (carta.interprete === '__null__') {
+            if (interpreteRow) interpreteRow.style.display = 'none';
+        } else {
+            if (interpreteRow) interpreteRow.style.display = '';
+            interpreteEl.textContent = carta.interprete || '—';
+        }
+    }
 
     const cantidadEl = document.getElementById('carta-detalle-cantidad');
     if (cantidadEl) cantidadEl.textContent = `Cantidad: ${data.cantidad}`;

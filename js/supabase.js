@@ -289,14 +289,17 @@ const db = {
         return row ? { ...row } : null;
     },
 
-    async openPack(client, userId, packType, price, regions) {
+    async openPack(client, userId, packType, price, cards = []) {
+        const cartasJsonb = JSON.stringify(cards.map(c => ({ id: c.id, cantidad: 1 })));
         const { data, error } = await client
             .rpc('abrir_sobre', {
                 p_user_id: userId,
                 p_sobre_tipo: packType,
+                p_cartas: cartasJsonb,
                 p_precio: price,
-                p_regiones: regions
+                p_regiones: []
             });
+        console.log('[RPC] abrir_sobre data:', data, 'error:', error);
         if (error) throw error;
         const row = Array.isArray(data) ? data[0] : (data || null);
         if (!row) {

@@ -167,6 +167,18 @@
       "valor": 15,
       "descripcion": "El Golem Guardián es una criatura ancestral y pacífica nacida de la tierra misma, cuyo propósito es proteger y nutrir el equilibrio del bosque en lugar de servir para la guerra. Este ser, que funciona como un ecosistema andante de roca antigua cubierto de musgo y líquenes, posee una paciencia geológica que le permite integrarse con el paisaje hasta que la naturaleza requiere su ayuda de forma totalmente protectora y no agresiva. Más allá de su rol físico, es venerado por los habitantes del bosque como un sabio maestro de superación personal, ya que su presencia guía a quienes buscan su ayuda a entrenar la resistencia del cuerpo, calmar la mente a través del enfoque presente y sintonizar el alma con los ciclos naturales para alcanzar la paz absoluta.",
       "interprete": "__null__"
+    },
+    {
+      "id": "elarion/hylodoron",
+      "nombre": "Hylodoron",
+      "imagen": "cartas/elarion/hylodoron.png",
+      "region": "elarion",
+      "raza": "Ciervo Místico",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Hylodoron es un majestuoso espíritu elemental que se manifiesta en los bosques altos de Hyléia. Este ciervo sagrado posee un cuerpo de luz translúcida en cuyo interior crecen flores luminiscentes, coronado por una imponente cornamenta de pura energía radiante. Como ser pacífico y benevolente, aparece por las noches para guiar a los viajeros perdidos revelando senderos ocultos y creando puentes de luz, al tiempo que su brillo calma el entorno y sana la mente y el alma de quienes lo contemplan.",
+      "interprete": "__null__"
     }
   ]
 }
