@@ -1107,17 +1107,10 @@ cargarDatos().then(() => {
 }
 
 function actualizarEstadoPerfil() {
-    const usernameEl = document.getElementById('profile-username');
-    const btnEdit = document.getElementById('btn-edit-profile');
-    const btnPass = document.getElementById('btn-change-password');
-    const btnLogout = document.getElementById('profile-logout');
-    const btnLogin = document.getElementById('profile-login');
-    if (!usernameEl) return;
-    usernameEl.textContent = usuarioActual?.username || 'Usuario';
-    if (btnEdit) btnEdit.style.display = 'block';
-    if (btnPass) btnPass.style.display = 'block';
-    if (btnLogout) btnLogout.style.display = 'block';
-    if (btnLogin) btnLogin.style.display = 'none';
+    const usernameEl = document.getElementById('user-menu-username');
+    const emailEl = document.getElementById('user-menu-email');
+    if (usernameEl) usernameEl.textContent = usuarioActual?.username || 'Usuario';
+    if (emailEl) emailEl.textContent = usuarioActual?.email || '';
 }
 
 async function cargarUsernamePerfil() {
@@ -1139,13 +1132,13 @@ async function actualizarUsernameDesdePerfil() {
 }
 
 function openProfileMenu() {
-    const profileMenu = document.getElementById('profile-menu');
-    if (profileMenu) profileMenu.style.display = 'block';
+    const modal = document.getElementById('modal-user');
+    if (modal) modal.classList.add('active');
 }
 
 function closeProfileMenu() {
-    const profileMenu = document.getElementById('profile-menu');
-    if (profileMenu) profileMenu.style.display = 'none';
+    const modal = document.getElementById('modal-user');
+    if (modal) modal.classList.remove('active');
 }
 
 function openModalProfile() {
@@ -1602,17 +1595,8 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
     if (profileTrigger) {
         profileTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            const wrapper = document.getElementById('profile-trigger').parentElement;
-            const menu = document.getElementById('profile-menu');
-            if (menu) {
-                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-            }
+            openProfileMenu();
         });
-    }
-
-    const cerrarProfile = document.querySelector('.cerrar-profile');
-    if (cerrarProfile) {
-        cerrarProfile.addEventListener('click', closeProfileMenu);
     }
 
     const btnEditProfile = document.getElementById('btn-edit-profile');
@@ -1661,7 +1645,47 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
         });
     }
 
-    const profileSync = document.getElementById('profile-sync');
+function resetearColeccion() {
+    coleccion = {};
+    monedas = 0;
+    lastClaimServerMs = 0;
+    localStorage.removeItem('elfheim_coleccion');
+    localStorage.removeItem('elfheim_monedas');
+    localStorage.removeItem(obtenerClaveUltimoReclamo(usuarioActual?.id));
+    actualizarMonedas();
+    actualizarEstadisticas();
+    renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+    actualizarBotonMoneda();
+    if (monedaTimer) {
+        clearInterval(monedaTimer);
+        monedaTimer = null;
+    }
+    monedaTimer = setInterval(actualizarBotonMoneda, 1000);
+    actualizarBotonMoneda();
+}
+
+async function resetearColeccionServidor() {
+    if (!supabaseEnabled || !usuarioActual) {
+        resetearColeccion();
+        return;
+    }
+    if (!confirm('¿Estás seguro? Esto borrará TODAS tus cartas y monedas. No se puede deshacer.')) return;
+    try {
+        const result = await db.resetInventory(supabaseClient, usuarioActual.id);
+        if (result?.ok) {
+            resetearColeccion();
+            if (typeof result.nuevo_saldo === 'number') {
+                monedas = result.nuevo_saldo;
+                actualizarMonedas();
+            }
+        }
+    } catch (e) {
+        console.error('[AUTH] Error reseteando datos en servidor:', e);
+        mostrarErrorSupabase('Error al resetear la colección');
+    }
+}
+
+const profileSync = document.getElementById('profile-sync');
     if (profileSync) {
         const textoOriginal = '<i class="fa-solid fa-rotate"></i> Sincronizar';
         profileSync.addEventListener('click', async () => {
@@ -1688,6 +1712,14 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
         });
     }
 
+    const profileReset = document.getElementById('profile-reset');
+    if (profileReset) {
+        profileReset.addEventListener('click', () => {
+            closeProfileMenu();
+            resetearColeccionServidor();
+        });
+    }
+
     const discordBtn = document.getElementById('discord-signin');
     if (discordBtn) {
         discordBtn.addEventListener('click', async () => {
@@ -1709,6 +1741,11 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             closeProfileMenu();
         });
     });
+
+    const cerrarUserMenu = document.querySelector('.user-menu-close');
+    if (cerrarUserMenu) {
+        cerrarUserMenu.addEventListener('click', closeProfileMenu);
+    }
 
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', event => {
@@ -1766,10 +1803,10 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
     }
 
     document.addEventListener('click', (e) => {
-        const menu = document.getElementById('profile-menu');
+        const modal = document.getElementById('modal-user');
         const trigger = document.getElementById('profile-trigger');
-        if (menu && trigger && !menu.contains(e.target) && !trigger.contains(e.target)) {
-            menu.style.display = 'none';
+        if (modal && trigger && !modal.contains(e.target) && !trigger.contains(e.target)) {
+            closeProfileMenu();
         }
     });
 }

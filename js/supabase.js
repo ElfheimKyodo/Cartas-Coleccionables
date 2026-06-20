@@ -328,6 +328,23 @@ const db = {
             .order('key', { ascending: true });
         if (error) throw error;
         return data || [];
+    },
+
+    async resetInventory(client, userId) {
+        const { error: invError } = await client
+            .from('inventory')
+            .delete()
+            .eq('user_id', userId);
+        if (invError) throw invError;
+
+        const { data: profile, error: profileError } = await client
+            .from('profiles')
+            .update({ monedas: 0, updated_at: new Date().toISOString() })
+            .eq('id', userId)
+            .select('monedas')
+            .single();
+        if (profileError && profileError.code !== 'PGRST116') throw profileError;
+        return { ok: true, nuevo_saldo: 0 };
     }
 };
 
