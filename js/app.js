@@ -16,6 +16,27 @@ let lastClaimServerMs = 0;
 const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
 const HCAPTCHA_SITE_KEY = '2cd6abf4-851c-4ad6-9d70-29500b6c944c';
 let hcaptchaWidgetId = null;
+let audioCache = {};
+
+function cargarSonido(nombre) {
+    if (audioCache[nombre]) return audioCache[nombre];
+    try {
+        const audio = new Audio(`sounds/${nombre}.mp3`);
+        audioCache[nombre] = audio;
+        return audio;
+    } catch (e) {
+        console.warn('No se pudo cargar sonido:', nombre, e);
+        return null;
+    }
+}
+
+function reproducirSonido(nombre) {
+    const audio = cargarSonido(nombre);
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.debug('Audio play failed:', e));
+    }
+}
 
 function inicializarHCaptcha() {
     if (!HCAPTCHA_SITE_KEY) {
@@ -59,14 +80,12 @@ const REGION_NOMBRES = {
 };
 const RAREZA_NOMBRES = {
     comun: 'Comun',
-    poco_comun: 'Poco comun',
     rara: 'Rara',
     epica: 'Epica',
     legendaria: 'Legendaria'
 };
 const RAREZA_COLORS = {
     comun: '#6b7280',
-    poco_comun: '#15803d',
     rara: '#15803d',
     epica: '#7c3aed',
     legendaria: 'linear-gradient(135deg, #f59e0b, #ffd700)'
@@ -105,9 +124,9 @@ const SOBRES = [
         icono: 'fa-solid fa-layer-group',
         precio: 50,
         regiones: REGIONES,
-        probabilidades: { comun: 60, poco_comun: 25, rara: 12, epica: 3, legendaria: 0 },
+        probabilidades: { comun: 75, rara: 15, epica: 8, legendaria: 2 },
         descripcion: 'Un gacha equilibrado con cartas de todas las regiones.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de todas las regiones</h4>\nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de todas las regiones</h4>'
     },
     {
         tipo: 'umbraeth',
@@ -115,9 +134,9 @@ const SOBRES = [
         icono: 'fa-solid fa-moon',
         precio: 50,
         regiones: ['umbraeth'],
-        probabilidades: { comun: 50, poco_comun: 25, rara: 15, epica: 8, legendaria: 2 },
+        probabilidades: { comun: 75, rara: 15, epica: 8, legendaria: 2 },
         descripcion: 'Sombras, demonios y secretos ocultos de Umbraeth.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Umbraeth</h4><ul><li>Lilith: La Dama Rosa</li></ul>'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Umbraeth</h4>'
     },
     {
         tipo: 'skjoldheim',
@@ -125,9 +144,9 @@ const SOBRES = [
         icono: 'fa-solid fa-snowflake',
         precio: 50,
         regiones: ['skjoldheim'],
-        probabilidades: { comun: 45, poco_comun: 25, rara: 18, epica: 10, legendaria: 2 },
+        probabilidades: { comun: 75, rara: 15, epica: 8, legendaria: 2 },
         descripcion: 'Guerreros, hielo y runas antiguas de Skjoldheim.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Skjoldheim</h4>\nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Skjoldheim</h4>'
     },
     {
         tipo: 'astra',
@@ -135,9 +154,9 @@ const SOBRES = [
         icono: 'fa-solid fa-star',
         precio: 50,
         regiones: ['astra'],
-        probabilidades: { comun: 40, poco_comun: 30, rara: 20, epica: 8, legendaria: 2 },
+        probabilidades: { comun: 75, rara: 15, epica: 8, legendaria: 2 },
         descripcion: 'Misterio celestial y magia estelar de Astra.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Astra</h4>\nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Astra</h4>'
     },
     {
         tipo: 'solareth',
@@ -145,9 +164,9 @@ const SOBRES = [
         icono: 'fa-solid fa-dragon',
         precio: 50,
         regiones: ['solareth'],
-        probabilidades: { comun: 55, poco_comun: 25, rara: 13, epica: 6, legendaria: 1 },
+        probabilidades: { comun: 75, rara: 15, epica: 8, legendaria: 2 },
         descripcion: 'Fuego, dragones y linajes solares de Solareth.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Solareth</h4>\nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Solareth</h4>'
     },
     {
         tipo: 'elarion',
@@ -155,9 +174,9 @@ const SOBRES = [
         icono: 'fa-solid fa-leaf',
         precio: 50,
         regiones: ['elarion'],
-        probabilidades: { comun: 70, poco_comun: 20, rara: 8, epica: 2, legendaria: 0 },
+        probabilidades: { comun: 75, rara: 15, epica: 8, legendaria: 2 },
         descripcion: 'Naturaleza viva, espíritus y bosques de Elarion.',
-        informacion: '<h4>Contiene 3 cartas aleatorias de Elarion</h4>\nPrueba'
+        informacion: '<h4>Contiene 3 cartas aleatorias de Elarion</h4>'
     }
 ];
 
@@ -426,6 +445,7 @@ function actualizarBotonMoneda() {
 }
 
 function animarReclamoMonedas() {
+    reproducirSonido('claim');
     const monedasEl = document.getElementById('monedas');
     const btnMoneda = document.querySelector('.btn-moneda');
     if (monedasEl) {
@@ -604,7 +624,16 @@ function toggleInformacionGacha() {
     const info = document.getElementById('gacha-info-detalle');
     if (!info) return;
     info.classList.toggle('active');
-    info.innerHTML = info.classList.contains('active') ? sobre.informacion.replace(/\n/g, '<br>') : '';
+
+    const probRarezas = sobre.probabilidades || obtenerProbabilidadesRareza();
+    const regionesInfo = sobre.regiones.map(r => `<li>${REGION_NOMBRES[r] || r}</li>`).join('');
+    const rarezaInfo = Object.entries(probRarezas).map(([r, w]) => 
+        `<li>${RAREZA_NOMBRES[r] || r}: ${calcularPorcentaje(probRarezas, r)}%</li>`
+    ).join('');
+
+    info.innerHTML = info.classList.contains('active')
+        ? `<h4>Contiene 3 cartas aleatorias</h4><ul>${regionesInfo}</ul><h4>Probabilidades por rareza</h4><ul>${rarezaInfo}</ul>`
+        : '';
 }
 
 function comprarSobre(region, precio) {
@@ -621,80 +650,77 @@ function comprarSobre(region, precio) {
     const sobre = obtenerSobre(region);
     const precioFinal = obtenerPrecioSobre(sobre);
 
-    if (!supabaseEnabled || !usuarioActual) {
-        monedas -= precioFinal;
-        actualizarMonedas();
+    monedas -= precioFinal;
+    actualizarMonedas();
+    for (const carta of cartas) {
+        if (!coleccion[carta.id]) {
+            coleccion[carta.id] = {
+                carta: {
+                    id: carta.id,
+                    nombre: carta.nombre,
+                    region: carta.region,
+                    valor: carta.valor,
+                    imagen: carta.imagen
+                },
+                cantidad: 0
+            };
+        }
+        coleccion[carta.id].cantidad++;
+    }
+    actualizarEstadisticas();
+
+    const cleanup = () => {
         guardarLocalStorage();
+    };
+
+    if (!supabaseEnabled || !usuarioActual) {
+        cleanup();
         mostrarAnimacionSobre(cartas, region);
         return;
     }
 
     (async () => {
         try {
-            const profile = await db.getProfile(supabaseClient, usuarioActual.id);
-            monedas = profile?.monedas ?? monedas;
-            actualizarMonedas();
-
-            if (monedas < precioFinal) {
-                const btn = document.querySelector(`.btn-gacha[data-tipo="${region}"]`);
-                if (btn) {
-                    btn.classList.add('error-shake');
-                    setTimeout(() => btn.classList.remove('error-shake'), 300);
-                }
-                return;
-            }
-
+            let nuevaMoneda = monedas;
             try {
                 const result = await db.openPack(supabaseClient, usuarioActual.id, region, precioFinal, cartas);
-                if (!result?.ok) throw new Error(result?.mensaje || 'Error abriendo paquete');
-                monedas = result.nuevo_saldo;
+                if (result?.ok) nuevaMoneda = result.nuevo_saldo;
             } catch (rpcError) {
                 console.warn('[ECON] RPC abrir_sobre no disponible; usando escritura directa en tablas:', rpcError);
-                const profileActualizado = await db.updateCoins(supabaseClient, usuarioActual.id, -precioFinal);
                 try {
+                    const profileActualizado = await db.updateCoins(supabaseClient, usuarioActual.id, -precioFinal);
                     await db.addInventory(supabaseClient, usuarioActual.id, cartas);
-                } catch (inventoryError) {
-                    await db.updateCoins(supabaseClient, usuarioActual.id, precioFinal);
-                    throw inventoryError;
+                    nuevaMoneda = profileActualizado?.monedas ?? monedas;
+                } catch (e) {
+                    console.warn('[ECON] Fallback also failed, keeping optimistic state');
                 }
-                monedas = profileActualizado.monedas;
             }
-
+            monedas = nuevaMoneda;
             actualizarMonedas();
-
-            for (const carta of cartas) {
-                if (!coleccion[carta.id]) {
-                    coleccion[carta.id] = {
-                        carta: {
-                            id: carta.id,
-                            nombre: carta.nombre,
-                            region: carta.region,
-                            valor: carta.valor,
-                            imagen: carta.imagen
-                        },
-                        cantidad: 0
-                    };
-                }
-                coleccion[carta.id].cantidad++;
-            }
-            mostrarAnimacionSobre(cartas, region);
-            actualizarEstadisticas();
             guardarDatos();
         } catch (err) {
             console.error('[ECON] Excepción abriendo paquete:', err);
+            monedas += precioFinal;
+            actualizarMonedas();
             mostrarErrorSupabase('Error al procesar el paquete');
         }
     })();
+
+    mostrarAnimacionSobre(cartas, region);
 }
 
 function obtenerProbabilidadesRareza() {
     return {
-        comun: 50,
-        poco_comun: 25,
+        comun: 75,
         rara: 15,
         epica: 8,
         legendaria: 2
     };
+}
+
+function calcularPorcentaje(probRarezas, rareza) {
+    const total = Object.values(probRarezas).reduce((sum, v) => sum + v, 0);
+    return ((probRarezas[rareza] || 0) / total * 100).toFixed(0);
 }
 
 function generarCartasRegion(region) {
@@ -734,15 +760,52 @@ function obtenerRarezaPorProbabilidad(probRarezas) {
     return rarezas[rarezas.length - 1];
 }
 
+function crearDestelloGacha() {
+    const destello = document.createElement('div');
+    destello.className = 'gacha-destello-fullscreen';
+    const particleCount = 36;
+    for (let i = 0; i < particleCount; i++) {
+        const p = document.createElement('div');
+        p.className = 'gacha-destello-particle';
+        const size = 12 + Math.random() * 16;
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
+        const angle = (i / particleCount) * Math.PI * 2;
+        const distance = 80 + Math.random() * 60;
+        const xStart = Math.cos(angle) * 20;
+        const yStart = Math.sin(angle) * 20;
+        const xEnd = Math.cos(angle) * distance;
+        const yEnd = Math.sin(angle) * distance;
+        p.style.left = '50%';
+        p.style.top = '50%';
+        p.style.setProperty('--x-start', `${xStart}px`);
+        p.style.setProperty('--y-start', `${yStart}px`);
+        p.style.setProperty('--x-end', `${xEnd}px`);
+        p.style.setProperty('--y-end', `${yEnd}px`);
+        p.style.animationDuration = `${0.7 + Math.random() * 0.5}s`;
+        destello.appendChild(p);
+    }
+    const flash = document.createElement('div');
+    flash.className = 'gacha-flash-fullscreen';
+    document.body.appendChild(flash);
+    document.body.appendChild(destello);
+    setTimeout(() => {
+        destello.remove();
+        flash.remove();
+    }, 1400);
+}
+
 function mostrarAnimacionSobre(cartas, region) {
+    crearDestelloGacha();
     const modal = document.getElementById('modal-sobre');
     const contenedor = document.getElementById('cartas-revelar');
+    reproducirSonido('open');
     if (!modal || !contenedor) return;
     const modalTitulo = modal.querySelector('h2');
     const ayuda = document.getElementById('gacha-apertura-ayuda');
+    const preview = document.getElementById('gacha-preview');
     if (modalTitulo) modalTitulo.textContent = `¡Abre tu ${obtenerSobre(region).nombre}!`;
     if (ayuda) ayuda.textContent = 'Hacé click en cada carta para revelarla.';
-    const preview = document.getElementById('gacha-preview');
     if (preview) {
         if (previewDestelloTimer) clearTimeout(previewDestelloTimer);
         preview.classList.remove('animacion-activa');
@@ -766,6 +829,7 @@ function mostrarAnimacionSobre(cartas, region) {
         div.addEventListener('click', () => {
             if (div.dataset.revealed === 'true') return;
             div.dataset.revealed = 'true';
+            reproducirSonido('flip');
             div.classList.add('girando');
             setTimeout(() => {
                 const img = div.querySelector('.carta-sobre-img');
@@ -793,8 +857,7 @@ const RAREZA_ORDEN = {
     legendaria: 0,
     epica: 1,
     rara: 2,
-    poco_comun: 3,
-    comun: 4
+    comun: 3
 };
 
 function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }, orden = { tipo: 'defecto', direccion: 'asc' }) {

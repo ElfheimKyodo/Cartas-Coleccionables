@@ -12,11 +12,10 @@
   --astra: #7b1fa2;
   --solareth: #ff7043;
   --elarion: #2e7d32;
-  --legendaria: linear-gradient(135deg, #ffd700, #f59e0b);
-  --epica: linear-gradient(135deg, #a855f7, #7c3aed);
-  --rara: linear-gradient(135deg, #22c55e, #15803d);
-  --poco_comun: linear-gradient(135deg, #22c55e, #15803d);
-  --comun: linear-gradient(135deg, #9ca3af, #6b7280);
+--legendaria: linear-gradient(135deg, #ffd700, #f59e0b);
+   --epica: linear-gradient(135deg, #a855f7, #7c3aed);
+   --rara: linear-gradient(135deg, #22c55e, #15803d);
+   --comun: linear-gradient(135deg, #9ca3af, #6b7280);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -846,6 +845,67 @@ nav {
   cursor: not-allowed;
 }
 
+.gacha-destello {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+  border-radius: 12px;
+}
+
+.gacha-destello-particle {
+  position: absolute;
+  background: radial-gradient(circle, #ffd700, #ffb300, #ff8c00);
+  border-radius: 50%;
+  box-shadow: 0 0 12px #ffd700, 0 0 24px #ff8c00;
+  animation: gachaDestelloParticle linear forwards;
+  pointer-events: none;
+}
+
+@keyframes gachaDestelloParticle {
+  0% { transform: scale(0) translate(0, 0); opacity: 1; }
+  20% { transform: scale(1.2) translate(var(--x-start, 0), var(--y-start, 0)); opacity: 1; }
+  100% { transform: scale(0) translate(var(--x-end, 0), var(--y-end, 0)); opacity: 0; }
+}
+
+@keyframes gachaFlash {
+  0%, 100% { opacity: 0; }
+  10%, 90% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.gacha-flash-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, rgba(255,215,0,0.7), rgba(255,179,0,0.4), rgba(255,140,0,0.1), transparent);
+  opacity: 0;
+  animation: gachaFlashFullscreen 1.4s ease-out;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes gachaFlashFullscreen {
+  0% { opacity: 0; }
+  10% { opacity: 0.9; }
+  30% { opacity: 1; }
+  70% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+.gacha-destello-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10000;
+}
+
 /* Colección */
 .coleccion-header {
   display: flex;
@@ -1585,7 +1645,6 @@ nav {
 .rareza-legendaria { background: var(--legendaria); }
 .rareza-epica { background: var(--epica); }
 .rareza-rara { background: var(--rara); }
-.rareza-poco_comun { background: var(--poco_comun); }
 .rareza-comun { background: var(--comun); }
 
 /* Rareza pill modal */
@@ -1607,14 +1666,9 @@ nav {
   opacity: 1;
 }
 .rareza-pill-comun {
-  background: #6b7280;
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
-}
-.rareza-pill-poco_comun {
-  background: #15803d;
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
+   background: #6b7280;
+   border-color: rgba(255, 255, 255, 0.25);
+   color: #fff;
 }
 .rareza-pill-rara {
   background: #15803d;
@@ -1643,12 +1697,8 @@ nav {
   border-color: rgba(168, 85, 247, 0.55);
 }
 .carta-item.rareza-rara {
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3), var(--shadow);
-  border-color: rgba(59, 130, 246, 0.45);
-}
-.carta-item.rareza-poco_comun {
-  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.25), var(--shadow);
-  border-color: rgba(34, 197, 94, 0.35);
+   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3), var(--shadow);
+   border-color: rgba(59, 130, 246, 0.45);
 }
 
 /* Detalle de carta mejoras */
