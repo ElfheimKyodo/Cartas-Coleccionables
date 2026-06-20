@@ -1821,17 +1821,86 @@ nav {
 
 /* Modal responsive para detalles */
 @media (max-width: 760px) {
+  .modal.active {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+
+  .modal-contenido {
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0 !important;
+    padding: 24px 14px;
+    border-radius: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #modal-carta .modal-contenido {
+    padding-top: 22px;
+  }
+
+  .cerrar {
+    top: 10px;
+    right: 14px;
+    font-size: 26px;
+  }
+
+  .modal-contenido h2 {
+    padding-right: 34px;
+  }
+
   .carta-detalle-contenedor {
     flex-direction: column;
-    gap: 16px;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
   }
+
   .carta-detalle-imagen {
-    max-height: 45vh;
+    order: 1;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    max-height: 68vh;
+    padding: 12px;
+    overflow: hidden;
   }
+
   .carta-detalle-imagen img {
-    max-height: 40vh;
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 68vh;
+    object-fit: contain;
   }
+
   .carta-detalle-info {
-    padding: 14px;
+    order: 2;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .carta-detalle-info h3 {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid #444;
+    font-size: 18px;
+  }
+
+  .detalle-label,
+  .detalle-value,
+  .carta-texto,
+  .btn-vender,
+  .vender-label {
+    font-size: 13px;
   }
 }
