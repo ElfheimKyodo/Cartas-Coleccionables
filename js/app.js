@@ -804,8 +804,14 @@ function mostrarAnimacionSobre(cartas, region) {
     const modalTitulo = modal.querySelector('h2');
     const ayuda = document.getElementById('gacha-apertura-ayuda');
     const preview = document.getElementById('gacha-preview');
+    const btnColeccionar = modal.querySelector('.btn-coleccionar');
     if (modalTitulo) modalTitulo.textContent = `¡Abre tu ${obtenerSobre(region).nombre}!`;
     if (ayuda) ayuda.textContent = 'Hacé click en cada carta para revelarla.';
+    if (btnColeccionar) {
+        btnColeccionar.disabled = true;
+        btnColeccionar.style.opacity = '0.5';
+        btnColeccionar.style.cursor = 'not-allowed';
+    }
     if (preview) {
         if (previewDestelloTimer) clearTimeout(previewDestelloTimer);
         preview.classList.remove('animacion-activa');
@@ -839,6 +845,12 @@ function mostrarAnimacionSobre(cartas, region) {
                 div.classList.remove('girando');
                 div.classList.add('revelada');
                 div.classList.add('region-' + carta.region);
+                const todasReveladas = contenedor.querySelectorAll('.carta-sobre[data-revealed="false"]').length === 0;
+                if (todasReveladas && btnColeccionar) {
+                    btnColeccionar.disabled = false;
+                    btnColeccionar.style.opacity = '1';
+                    btnColeccionar.style.cursor = 'pointer';
+                }
             }, 220);
         });
         contenedor.appendChild(div);
@@ -848,6 +860,12 @@ function mostrarAnimacionSobre(cartas, region) {
 }
 
 function cerrarModales() {
+    const btnColeccionar = document.querySelector('.btn-coleccionar');
+    if (btnColeccionar) {
+        btnColeccionar.disabled = true;
+        btnColeccionar.style.opacity = '0.5';
+        btnColeccionar.style.cursor = 'not-allowed';
+    }
     document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
     const preview = document.getElementById('gacha-preview');
     if (preview) preview.classList.remove('animacion-activa');

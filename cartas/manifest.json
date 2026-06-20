@@ -179,6 +179,90 @@
       "valor": 15,
       "descripcion": "El Hylodoron es un majestuoso espíritu elemental que se manifiesta en los bosques altos de Hyléia. Este ciervo sagrado posee un cuerpo de luz translúcida en cuyo interior crecen flores luminiscentes, coronado por una imponente cornamenta de pura energía radiante. Como ser pacífico y benevolente, aparece por las noches para guiar a los viajeros perdidos revelando senderos ocultos y creando puentes de luz, al tiempo que su brillo calma el entorno y sana la mente y el alma de quienes lo contemplan.",
       "interprete": "__null__"
+    },
+    {
+      "id": "elarion/lyren",
+      "nombre": "Lyren",
+      "imagen": "cartas/elarion/lyren.png",
+      "region": "elarion",
+      "raza": "Conejo",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Necromante es un hechicero que ha dedicado su vida a estudiar la magia de la muerte y los secretos del más allá. Su apariencia es sombría, con túnicas oscuras y un aura que emana misterio y poder. A pesar de su reputación temible, su objetivo no es el mal, sino el equilibrio entre la vida y la muerte, utilizando sus habilidades para proteger a los vivos y honrar a los muertos.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "elarion/helechino",
+      "nombre": "Helechino",
+      "imagen": "cartas/elarion/helechino.png",
+      "region": "elarion",
+      "raza": "Felino",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Lyren es un conejo místico que habita en los bosques de Elarion. Su pelaje es de un blanco puro con destellos plateados que reflejan la luz de la luna, y sus ojos son de un azul profundo que parecen contener la esencia del cielo nocturno. Este animal es conocido por su agilidad y rapidez, así como por su capacidad para comunicarse con los espíritus del bosque, guiando a los viajeros perdidos hacia la seguridad y protegiendo el equilibrio natural de su entorno.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "elarion/phyllolunaticus",
+      "nombre": "Phyllolunaticus",
+      "imagen": "cartas/elarion/phyllolunaticus.png",
+      "region": "elarion",
+      "raza": "Insecto",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Phyllolunaticus es un insecto nocturno que habita en los bosques de Umbraeth. Su cuerpo está cubierto de hojas fosforescentes que le permiten camuflarse entre la vegetación y atraer a sus presas con su luz hipnótica. Este insecto es conocido por su comportamiento curioso y su capacidad para iluminar el entorno, creando un espectáculo visual durante las noches oscuras.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "elarion/lutrisarcheos",
+      "nombre": "Lutris-Archeos",
+      "imagen": "cartas/elarion/lutrisarcheos.png",
+      "region": "elarion",
+      "raza": "Híbrido",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Phyllolunaticus es un insecto nocturno que habita en los bosques de Umbraeth. Su cuerpo está cubierto de hojas fosforescentes que le permiten camuflarse entre la vegetación y atraer a sus presas con su luz hipnótica. Este insecto es conocido por su comportamiento curioso y su capacidad para iluminar el entorno, creando un espectáculo visual durante las noches oscuras.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "elarion/mantaanthos",
+      "nombre": "Manta-Anthos",
+      "imagen": "cartas/elarion/mantaanthos.png",
+      "region": "elarion",
+      "raza": "Manta",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Phyllolunaticus es un insecto nocturno que habita en los bosques de Umbraeth. Su cuerpo está cubierto de hojas fosforescentes que le permiten camuflarse entre la vegetación y atraer a sus presas con su luz hipnótica. Este insecto es conocido por su comportamiento curioso y su capacidad para iluminar el entorno, creando un espectáculo visual durante las noches oscuras.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "elarion/Cetoaurum",
+      "nombre": "Cetoaurum",
+      "imagen": "cartas/elarion/cetoaurum.png",
+      "region": "elarion",
+      "raza": "Ballena",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Phyllolunaticus es un insecto nocturno que habita en los bosques de Umbraeth. Su cuerpo está cubierto de hojas fosforescentes que le permiten camuflarse entre la vegetación y atraer a sus presas con su luz hipnótica. Este insecto es conocido por su comportamiento curioso y su capacidad para iluminar el entorno, creando un espectáculo visual durante las noches oscuras.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "elarion/Hippocampus",
+      "nombre": "Hippocampus",
+      "imagen": "cartas/elarion/hippocampus.png",
+      "region": "elarion",
+      "raza": "Caballo acuático",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 15,
+      "descripcion": "El Phyllolunaticus es un insecto nocturno que habita en los bosques de Umbraeth. Su cuerpo está cubierto de hojas fosforescentes que le permiten camuflarse entre la vegetación y atraer a sus presas con su luz hipnótica. Este insecto es conocido por su comportamiento curioso y su capacidad para iluminar el entorno, creando un espectáculo visual durante las noches oscuras.",
+      "interprete": "__null__"
     }
   ]
 }
