@@ -522,6 +522,13 @@ function renderizarBannersGacha() {
         { titulo: 'Sobre Genérico', texto: 'Un gacha equilibrado con cartas de todas las regiones.', tipo: 'generic', etiqueta: 'Destacado' };
     bannersMostrar.push(genericBanner);
     
+    const bannersConfig = bannersConfigurados.length > 0 ? bannersConfigurados : [{ titulo: 'Gacha disponible', texto: 'Elige un sobre disponible.' }];
+    for (const banner of bannersConfig) {
+        if (banner.titulo !== 'Sobre Genérico') {
+            bannersMostrar.push(banner);
+        }
+    }
+    
     contenedor.innerHTML = bannersMostrar.map(banner => `
         <div class="gacha-banner-item${banner.tipo === 'generic' ? ' gacha-banner-generic' : ''}">
             <div class="gacha-banner-header">

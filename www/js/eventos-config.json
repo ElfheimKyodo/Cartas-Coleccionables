@@ -1,0 +1,10 @@
+{
+  "banners": [
+    {
+      "titulo": "Sobre Genérico",
+      "texto": "Un gacha equilibrado con cartas de todas las regiones.",
+      "tipo": "generic",
+      "etiqueta": "Destacado"
+    }
+  ]
+}

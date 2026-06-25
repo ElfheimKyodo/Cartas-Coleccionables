@@ -1,4 +1,11 @@
 {
+  "banners": [
+    {
+      "titulo": "Bienvenido a la Tienda de Sobres",
+      "texto": "En el mundo de Elfheim, podrás encontrar todo tipo de personajes, enemigos, bosses, NPCs, localizaciones e items. Para que te sea más divertido descubrir el lore, podrás abrir sobres y desbloquear pequeñas lecturas de cada pequeño apartado de lore. ¡Disfruta de la experiencia y sumérgete en el mundo de Elfheim a aumentas tu adicción a la apertura de sobres!",
+      "disponible": true
+    }
+  ],
   "sobres": [
     {
       "tipo": "generic",
