@@ -15,7 +15,7 @@
       "iconoFa": "fa-solid fa-layer-group",
       "precio": 100,
       "regiones": ["umbraeth", "skjoldheim", "astra", "solareth", "elarion"],
-      "probabilidades": { "comun": 75, "rara": 15, "epica": 8, "legendaria": 2 },
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 25, "legendaria": 1 },
       "descripcion": "Un gacha equilibrado con cartas de todas las regiones.",
       "informacion": "<h4>Contiene 3 cartas aleatorias de todas las regiones</h4>"
     },
@@ -27,7 +27,7 @@
       "iconoFa": "fa-solid fa-moon",
       "precio": 200,
       "regiones": ["umbraeth"],
-      "probabilidades": { "comun": 75, "rara": 15, "epica": 8, "legendaria": 2 },
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 25, "legendaria": 1 },
       "descripcion": "Bajo un cielo de nubes cenicientas se alza un imperio silencioso, un recordatorio constante de que toda existencia tiene su final. Adéntrate en las tierras grises del norte, un territorio dominado por inmensas necrópolis subterráneas, llanuras de cementerios antiguos y una niebla espectral donde resuenan los susurros de los muertos. En este banner temático, la muerte no es un castigo, sino una etapa sagrada. ¡Invoca a los letales aliados y ancestros que custodian el Último Umbral bajo la bendición del dios Dargor!",
       "informacion": "<h4>Contiene 3 cartas aleatorias de Umbraeth</h4>"
     },
@@ -39,7 +39,7 @@
       "iconoFa": "fa-solid fa-snowflake",
       "precio": 200,
       "regiones": ["skjoldheim"],
-      "probabilidades": { "comun": 75, "rara": 15, "epica": 8, "legendaria": 2 },
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 25, "legendaria": 1 },
       "descripcion": "Guerreros, hielo y runas antiguas de Skjoldheim.",
       "informacion": "<h4>Contiene 3 cartas aleatorias de Skjoldheim</h4>"
     },
@@ -51,7 +51,7 @@
       "iconoFa": "fa-solid fa-star",
       "precio": 200,
       "regiones": ["astra"],
-      "probabilidades": { "comun": 75, "rara": 15, "epica": 8, "legendaria": 2 },
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 25, "legendaria": 1 },
       "descripcion": "Donde otros ven desolación, Astra ve potencial. Adéntrate en el colosal desierto industrial del sur, una tierra dominada por forjas alimentadas con magma, trenes blindados y tecnologías capaces de desafiar a la propia naturaleza. En este banner temático, la carne es imperfecta y el metal es la evolución. ¡Consigue a los guardianes e ingenieros que dominan el fuego de las profundidades y desentierra los secretos ocultos bajo la arena!",
       "informacion": "<h4>Contiene 3 cartas aleatorias de Astra</h4>"
     },
@@ -63,7 +63,7 @@
       "iconoFa": "fa-solid fa-dragon",
       "precio": 200,
       "regiones": ["solareth"],
-      "probabilidades": { "comun": 75, "rara": 15, "epica": 8, "legendaria": 2 },
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 25, "legendaria": 1 },
       "descripcion": "Fuego, dragones y linajes solares de Solareth.",
       "informacion": "<h4>Contiene 3 cartas aleatorias de Solareth</h4>"
     },
@@ -75,7 +75,7 @@
       "iconoFa": "fa-solid fa-leaf",
       "precio": 200,
       "regiones": ["elarion"],
-      "probabilidades": { "comun": 75, "rara": 15, "epica": 8, "legendaria": 2 },
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 25, "legendaria": 1 },
       "descripcion": "Naturaleza viva, espíritus y bosques de Elarion.",
       "informacion": "<h4>Contiene 3 cartas aleatorias de Elarion</h4>"
     }

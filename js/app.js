@@ -13,7 +13,9 @@ let monedaTimer = null;
 let sobresConfigurados = [];
 let bannersConfigurados = [];
 let lastClaimServerMs = 0;
+let claimToastShown = false;
 const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
+const PITY_LIMITE = 40;
 const HCAPTCHA_SITE_KEY = '2cd6abf4-851c-4ad6-9d70-29500b6c944c';
 let hcaptchaWidgetId = null;
 let audioCache = {};
@@ -431,6 +433,8 @@ function actualizarBotonMoneda() {
             timerMoneda.textContent = `${mins}m ${secs}s`;
             timerMoneda.classList.remove('reclamable');
         }
+        claimToastShown = false;
+        ocultarToastReclamo();
     } else {
         btnMoneda.disabled = false;
         btnMoneda.innerHTML = '<i class="fa-solid fa-gift"></i> +100';
@@ -441,7 +445,32 @@ function actualizarBotonMoneda() {
             timerMoneda.textContent = 'Reclamable';
             timerMoneda.classList.add('reclamable');
         }
+        if (!claimToastShown) {
+            claimToastShown = true;
+            mostrarToastReclamo();
+        }
     }
+}
+
+let toastTimeout = null;
+
+function mostrarToastReclamo() {
+    const toast = document.getElementById('claim-toast');
+    if (!toast) return;
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toast.classList.add('visible');
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('visible');
+        toastTimeout = null;
+    }, 4000);
+}
+
+function ocultarToastReclamo() {
+    const toast = document.getElementById('claim-toast');
+    if (!toast) return;
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toast.classList.remove('visible');
+    toastTimeout = null;
 }
 
 function animarReclamoMonedas() {
@@ -527,7 +556,9 @@ function obtenerImagenSobre(sobre) {
     if (sobre.cartas && sobre.cartas.length > 0) {
         cartasPermitidas = cartasData.filter(carta => sobre.cartas.includes(carta.id));
     } else {
-        cartasPermitidas = cartasData.filter(carta => sobre.regiones.includes(carta.region));
+        cartasPermitidas = cartasData.filter(carta => {
+            return sobre.regiones.includes(carta.region) || carta.region === 'generic';
+        });
     }
     return cartasPermitidas[0]?.imagen || '';
 }
@@ -535,8 +566,19 @@ function obtenerImagenSobre(sobre) {
 function renderizarBannersGacha() {
     const contenedor = document.getElementById('gacha-banner');
     if (!contenedor) return;
-    const banners = bannersConfigurados.length > 0 ? bannersConfigurados : [{ titulo: 'Gacha disponible', texto: 'Elige un sobre disponible.' }];
-    contenedor.innerHTML = banners.map(banner => `
+    
+    const bannersMostrar = [];
+    const genericBanner = { titulo: 'Sobre Genérico', texto: 'Un gacha equilibrado con cartas de todas las regiones.' };
+    bannersMostrar.push(genericBanner);
+    
+    const bannersConfig = bannersConfigurados.length > 0 ? bannersConfigurados : [{ titulo: 'Gacha disponible', texto: 'Elige un sobre disponible.' }];
+    for (const banner of bannersConfig) {
+        if (banner.titulo !== 'Sobre Genérico') {
+            bannersMostrar.push(banner);
+        }
+    }
+    
+    contenedor.innerHTML = bannersMostrar.map(banner => `
         <div class="gacha-banner-item">
             <strong>${banner.titulo}</strong>
             <span>${banner.texto}</span>
@@ -586,6 +628,7 @@ function actualizarPresentacionGacha() {
     const img = document.getElementById('gacha-preview-img');
     const icono = document.getElementById('gacha-preview-icono');
     const precio = document.getElementById('gacha-precio');
+    const pityEl = document.getElementById('gacha-pity');
     const titulo = document.getElementById('gacha-titulo');
     const descripcion = document.getElementById('gacha-descripcion');
     const btnAbrir = document.getElementById('btn-abrir-gacha');
@@ -612,6 +655,19 @@ function actualizarPresentacionGacha() {
             precio.innerHTML = `<span class="gacha-precio-tachado"><i class="fa-solid fa-coins"></i> ${precioBase}</span> <span class="gacha-precio-final"><i class="fa-solid fa-coins"></i> ${precioFinal}</span> <span class="gacha-oferta">${oferta}% OFF</span>`;
         } else {
             precio.innerHTML = `<i class="fa-solid fa-coins"></i> ${precioFinal}`;
+        }
+    }
+    if (pityEl) {
+        const userId = usuarioActual?.id || 'local';
+        const pityKey = `elfheim_pity_${userId}`;
+        const pityContador = parseInt(localStorage.getItem(pityKey) || '0', 10);
+        const progreso = Math.min(pityContador, PITY_LIMITE);
+        if (progreso >= PITY_LIMITE) {
+            pityEl.innerHTML = '<i class="fa-solid fa-star"></i> <strong>Legendaria</strong> garantizada en: <span class="pity-valor">¡AHORA!</span>';
+            pityEl.className = 'gacha-pity activo';
+        } else {
+            pityEl.innerHTML = `<i class="fa-solid fa-star"></i> <strong>Legendaria</strong> garantizada en: <span class="pity-valor">${progreso}/${PITY_LIMITE}</span>`;
+            pityEl.className = 'gacha-pity';
         }
     }
     if (titulo) titulo.textContent = sobre.nombre;
@@ -668,6 +724,19 @@ function comprarSobre(region, precio) {
         coleccion[carta.id].cantidad++;
     }
     actualizarEstadisticas();
+    actualizarPresentacionGacha();
+
+    const leyendas = cartas.filter(c => c.rareza === 'legendaria');
+    if (leyendas.length > 0) {
+        const nombres = leyendas.map(c => c.nombre).join(', ');
+        crearNotificacionEvento({
+            categoria: 'actualizaciones',
+            tipo: 'success',
+            icono: 'fa-crown',
+            titulo: '¡Legendaria obtenida!',
+            mensaje: `Increíble suerte, obtuviste **${nombres}** en tu última apertura.`
+        });
+    }
 
     const cleanup = () => {
         guardarLocalStorage();
@@ -731,21 +800,54 @@ function generarCartasRegion(region) {
         cartasPermitidas = cartasData.filter(c => sobre.cartas.includes(c.id));
     } else {
         const regionesPermitidas = sobre.regiones || [region];
-        cartasPermitidas = cartasData.filter(c => regionesPermitidas.includes(c.region));
+        cartasPermitidas = cartasData.filter(c => {
+            return regionesPermitidas.includes(c.region) || c.region === 'generic';
+        });
     }
     if (cartasPermitidas.length === 0) return cartasData.length > 0 ? [cartasData[0]] : [];
 
     const probRarezas = sobre.probabilidades || obtenerProbabilidadesRareza();
 
+    const rarezasDisponibles = new Set(cartasPermitidas.map(c => c.rareza));
+    const probRarezasFiltradas = Object.fromEntries(
+        Object.entries(probRarezas).filter(([r]) => rarezasDisponibles.has(r))
+    );
+    const probRarezasFinal = Object.keys(probRarezasFiltradas).length > 0
+        ? probRarezasFiltradas
+        : probRarezas;
+
+    const userId = usuarioActual?.id || 'local';
+    const pityKey = `elfheim_pity_${userId}`;
+    let pityContador = parseInt(localStorage.getItem(pityKey) || '0', 10);
+    const pityActivo = pityContador >= PITY_LIMITE;
+    let tieneLegendaria = false;
+
     for (let i = 0; i < 3; i++) {
-        const rarezaSeleccionada = obtenerRarezaPorProbabilidad(probRarezas);
-        const cartasFiltradas = cartasPermitidas.filter(c => c.rareza === rarezaSeleccionada);
-        if (cartasFiltradas.length > 0) {
-            cartas.push(cartasFiltradas[Math.floor(Math.random() * cartasFiltradas.length)]);
+        let rarezaSeleccionada;
+        if (pityActivo && i === 2) {
+            rarezaSeleccionada = 'legendaria';
         } else {
-            cartas.push(cartasPermitidas[Math.floor(Math.random() * cartasPermitidas.length)]);
+            rarezaSeleccionada = obtenerRarezaPorProbabilidad(probRarezasFinal);
+        }
+        let cartasFiltradas = cartasPermitidas.filter(c => c.rareza === rarezaSeleccionada);
+        if (cartasFiltradas.length > 0) {
+            const carta = cartasFiltradas[Math.floor(Math.random() * cartasFiltradas.length)];
+            cartas.push(carta);
+            if (carta.rareza === 'legendaria') tieneLegendaria = true;
+        } else {
+            const carta = cartasPermitidas[Math.floor(Math.random() * cartasPermitidas.length)];
+            cartas.push(carta);
+            if (carta.rareza === 'legendaria') tieneLegendaria = true;
         }
     }
+
+    if (tieneLegendaria) {
+        pityContador = 0;
+    } else {
+        pityContador++;
+    }
+    localStorage.setItem(pityKey, pityContador.toString());
+
     return cartas;
 }
 
@@ -758,6 +860,187 @@ function obtenerRarezaPorProbabilidad(probRarezas) {
         if (rand <= 0) return rareza;
     }
     return rarezas[rarezas.length - 1];
+}
+
+function crearParticulasVolteo(cartaElement, rareza) {
+    const colorMap = {
+        rara: '#60a5fa',
+        epica: '#a855f7',
+        legendaria: '#fbbf24'
+    };
+    const color = colorMap[rareza] || '#ffffff';
+    const config = {
+        rara:        { cantidad: 32, sizeMin: 4,  sizeMax: 9,  distMin: 20,  distMax: 80,  durMin: 0.3,  durMax: 0.55, flashDur: 0.45, ringDur: 0.5,  glow1: 6,  glow2: 12 },
+        epica:       { cantidad: 50, sizeMin: 6,  sizeMax: 14, distMin: 35,  distMax: 120, durMin: 0.4,  durMax: 0.75, flashDur: 0.6,  ringDur: 0.7,  glow1: 10, glow2: 20 },
+        legendaria:  { cantidad: 80, sizeMin: 10, sizeMax: 24, distMin: 60,  distMax: 170, durMin: 0.55, durMax: 1.0,  flashDur: 0.75, ringDur: 0.9,  glow1: 16, glow2: 32 }
+    }[rareza] || { cantidad: 24, sizeMin: 4, sizeMax: 10, distMin: 20, distMax: 70, durMin: 0.3, durMax: 0.6, flashDur: 0.45, ringDur: 0.5, glow1: 6, glow2: 12 };
+    let container = document.getElementById('global-flip-particles');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'global-flip-particles';
+        Object.assign(container.style, {
+            position: 'fixed',
+            inset: '0',
+            width: '100vw',
+            height: '100vh',
+            pointerEvents: 'none',
+            overflow: 'hidden',
+            zIndex: '99999'
+        });
+        document.body.appendChild(container);
+    }
+
+    const rect = cartaElement.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    if (rareza === 'rara') {
+        crearBurstRadial(container, cx, cy, color, config);
+    } else if (rareza === 'epica') {
+        crearOndasConcentricas(container, cx, cy, color, config);
+    } else if (rareza === 'legendaria') {
+        crearCruzEstelar(container, cx, cy, color, config);
+    }
+}
+
+function crearBurstRadial(container, cx, cy, color, config) {
+    const flash = crearFlash(container, cx, cy, color, config.flashDur);
+    const ring = crearRing(container, cx, cy, color, config.ringDur);
+
+    for (let i = 0; i < config.cantidad; i++) {
+        const angle = (Math.random() - 0.5) * Math.PI;
+        const distance = config.distMin + Math.random() * (config.distMax - config.distMin);
+        const size = config.sizeMin + Math.random() * (config.sizeMax - config.sizeMin);
+        const p = crearParticula(container, color, size, config.glow1, config.glow2, 'rara');
+        p.style.left = `${cx}px`;
+        p.style.top = `${cy}px`;
+        p.style.setProperty('--fx', `${Math.cos(angle) * distance}px`);
+        p.style.setProperty('--fy', `${Math.sin(angle) * distance * 1.3}px`);
+        const dur = config.durMin + Math.random() * (config.durMax - config.durMin);
+        p.style.animation = `flipRadial ${dur}s ease-out forwards`;
+    }
+
+    setTimeout(() => { flash.remove(); ring.remove(); }, Math.max(config.flashDur, config.ringDur) * 1000 + 100);
+}
+
+function crearOndasConcentricas(container, cx, cy, color, config) {
+    const flash = crearFlash(container, cx, cy, color, config.flashDur);
+    const ondas = 3;
+    for (let w = 0; w < ondas; w++) {
+        const ring = document.createElement('div');
+        Object.assign(ring.style, {
+            position: 'absolute',
+            left: `${cx}px`,
+            top: `${cy}px`,
+            width: '0',
+            height: '0',
+            border: `${config.ringWidth + w * 0.5}px solid ${color}`,
+            borderRadius: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            zIndex: '14',
+            animation: `flipRingExpand ${config.ringDur + w * 0.15}s ease-out forwards`,
+            boxShadow: `0 0 ${config.glow1 + w * 4}px ${color}aa, 0 0 ${config.glow2 + w * 8}px ${color}66`,
+            animationDelay: `${w * 0.08}s`
+        });
+        ring.className = 'flip-ring';
+        container.appendChild(ring);
+        setTimeout(() => ring.remove(), (config.ringDur + w * 0.15) * 1000 + 200);
+    }
+
+    const particles = Math.floor(config.cantidad * 0.7);
+    for (let i = 0; i < particles; i++) {
+        const side = Math.random() < 0.5 ? -1 : 1;
+        const distance = config.distMin * 0.8 + Math.random() * (config.distMax * 0.5);
+        const size = config.sizeMin + Math.random() * (config.sizeMax - config.sizeMin);
+        const p = crearParticula(container, color, size, config.glow1, config.glow2, 'epica');
+        p.style.left = `${cx}px`;
+        p.style.top = `${cy}px`;
+        p.style.setProperty('--fx', `${side * distance}px`);
+        p.style.setProperty('--fy', `${(Math.random() - 0.5) * distance * 0.5}px`);
+        const dur = config.durMin + Math.random() * (config.durMax - config.durMin);
+        p.style.animation = `flipRadial ${dur}s ease-out forwards`;
+    }
+
+    setTimeout(() => flash.remove(), config.flashDur * 1000 + 100);
+}
+
+function crearCruzEstelar(container, cx, cy, color, config) {
+    const flash = crearFlash(container, cx, cy, color, config.flashDur);
+    const petalos = 8;
+    for (let p = 0; p < petalos; p++) {
+        const baseAngle = (p / petalos) * Math.PI * 2;
+        const count = Math.floor(config.cantidad / petalos);
+        for (let i = 0; i < count; i++) {
+            const spread = (Math.random() - 0.5) * 0.35;
+            const angle = baseAngle + spread;
+            const dist = config.distMin + Math.random() * (config.distMax - config.distMin);
+            const size = config.sizeMin + Math.random() * (config.sizeMax - config.sizeMin);
+            const part = crearParticula(container, color, size, config.glow1, config.glow2, 'legendaria');
+            part.style.left = `${cx}px`;
+            part.style.top = `${cy}px`;
+            part.style.setProperty('--fx', `${Math.cos(angle) * dist}px`);
+            part.style.setProperty('--fy', `${Math.sin(angle) * dist}px`);
+            const dur = config.durMin + Math.random() * (config.durMax - config.durMin);
+            part.style.animation = `flipStellar ${dur}s cubic-bezier(0.2, 0.8, 0.3, 1) forwards`;
+        }
+    }
+
+    const ring = crearRing(container, cx, cy, color, config.ringDur * 1.2);
+    ring.style.animationDelay = '0.1s';
+    setTimeout(() => { flash.remove(); ring.remove(); }, Math.max(config.flashDur, config.ringDur * 1.2) * 1000 + 150);
+}
+
+function crearFlash(container, cx, cy, color, dur) {
+    const flash = document.createElement('div');
+    flash.className = 'flip-flash';
+    Object.assign(flash.style, {
+        position: 'absolute',
+        left: `${cx - 60}px`,
+        top: `${cy - 60}px`,
+        width: '120px',
+        height: '120px',
+        background: `radial-gradient(circle, ${color}66, transparent 70%)`,
+        pointerEvents: 'none',
+        zIndex: '15',
+        animation: `flipFlashPulse ${dur}s ease-out forwards`
+    });
+    container.appendChild(flash);
+    return flash;
+}
+
+function crearRing(container, cx, cy, color, dur) {
+    const ring = document.createElement('div');
+    ring.className = 'flip-ring';
+    Object.assign(ring.style, {
+        position: 'absolute',
+        left: `${cx}px`,
+        top: `${cy}px`,
+        width: '0px',
+        height: '0px',
+        border: `2px solid ${color}`,
+        borderRadius: '50%',
+        transform: 'translate(-50%, -50%)',
+        pointerEvents: 'none',
+        zIndex: '14',
+        animation: `flipRingExpand ${dur}s ease-out forwards`,
+        boxShadow: `0 0 20px ${color}88, 0 0 40px ${color}44`
+    });
+    container.appendChild(ring);
+    return ring;
+}
+
+function crearParticula(container, color, size, glow1, glow2, rareza) {
+    const p = document.createElement('div');
+    p.className = `flip-particle flip-particle-${rareza}`;
+    p.style.width = `${size}px`;
+    p.style.height = `${size}px`;
+    p.style.background = color;
+    p.style.boxShadow = `0 0 ${glow1 + size * 0.5}px ${color}, 0 0 ${glow2 + size}px ${color}`;
+    p.style.animationDelay = `${Math.random() * 0.08}s`;
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 1200);
+    return p;
 }
 
 function crearDestelloGacha() {
@@ -806,7 +1089,7 @@ function mostrarAnimacionSobre(cartas, region) {
     const preview = document.getElementById('gacha-preview');
     const btnColeccionar = modal.querySelector('.btn-coleccionar');
     if (modalTitulo) modalTitulo.textContent = `¡Abre tu ${obtenerSobre(region).nombre}!`;
-    if (ayuda) ayuda.textContent = 'Hacé click en cada carta para revelarla.';
+    if (ayuda) ayuda.textContent = 'Pulsa en cada carta para revelarla.';
     if (btnColeccionar) {
         btnColeccionar.disabled = true;
         btnColeccionar.style.opacity = '0.5';
@@ -841,7 +1124,17 @@ function mostrarAnimacionSobre(cartas, region) {
                 const img = div.querySelector('.carta-sobre-img');
                 const label = div.querySelector('.carta-sobre-revelar');
                 if (img) img.src = carta.imagen || 'cartas/PORTADA.png';
-                if (label) label.textContent = 'Revelada';
+                if (label) {
+                    const nombreRareza = RAREZA_NOMBRES[carta.rareza] || carta.rareza || 'Común';
+                    const bgRareza = RAREZA_COLORS[carta.rareza] || '#6b7280';
+                    label.textContent = nombreRareza;
+                    label.style.background = bgRareza;
+                    label.style.color = '#fff';
+                }
+                if (carta.rareza && ['rara', 'epica', 'legendaria'].includes(carta.rareza)) {
+                    reproducirSonido(carta.rareza);
+                    crearParticulasVolteo(div, carta.rareza);
+                }
                 div.classList.remove('girando');
                 div.classList.add('revelada');
                 div.classList.add('region-' + carta.region);
@@ -857,6 +1150,7 @@ function mostrarAnimacionSobre(cartas, region) {
     });
 
     modal.classList.add('active');
+    document.body.style.overflowX = 'hidden';
 }
 
 function cerrarModales() {
@@ -867,6 +1161,7 @@ function cerrarModales() {
         btnColeccionar.style.cursor = 'not-allowed';
     }
     document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+    document.body.style.overflowX = '';
     const preview = document.getElementById('gacha-preview');
     if (preview) preview.classList.remove('animacion-activa');
 }
@@ -951,14 +1246,16 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
         const nombreRareza = carta.rareza ? (RAREZA_NOMBRES[carta.rareza] || carta.rareza) : '';
         const bgRareza = carta.rareza ? (RAREZA_COLORS[carta.rareza] || '') : '';
         return `
-            <div class="carta-item ${claseRegion} ${claseRareza}${claseBloqueada}" data-carta-id="${carta.id}">
+            <div class="carta-wrapper">
+                <div class="carta-item ${claseRegion} ${claseRareza}${claseBloqueada}" data-carta-id="${carta.id}">
+                    <img src="${rutaImagen}" alt="${carta.nombre}" 
+                         onerror="this.style.display='none'; this.parentElement.querySelector('.carta-placeholder').style.display='flex';"
+                         loading="lazy">
+                    <div class="carta-placeholder" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:50px; background:rgba(0,0,0,0.3);"><i class="fa-solid fa-gem"></i></div>
+                    ${desbloqueada ? `<div class="carta-cantidad">x${cantidad}</div>` : ''}
+                    <div class="carta-nombre">${carta.nombre}</div>
+                </div>
                 ${nombreRareza ? `<span class="rareza-badge" style="background:${bgRareza}; color:#fff;">${nombreRareza}</span>` : ''}
-                <img src="${rutaImagen}" alt="${carta.nombre}" 
-                     onerror="this.style.display='none'; this.parentElement.querySelector('.carta-placeholder').style.display='flex';"
-                     loading="lazy">
-                <div class="carta-placeholder" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:50px; background:rgba(0,0,0,0.3);"><i class="fa-solid fa-gem"></i></div>
-                ${desbloqueada ? `<div class="carta-cantidad">x${cantidad}</div>` : ''}
-                <div class="carta-nombre">${carta.nombre}</div>
             </div>
         `;
     }).join('');
@@ -1428,6 +1725,13 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                 guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
                 actualizarBotonMoneda();
                 guardarLocalStorage();
+                crearNotificacionEvento({
+                    categoria: 'economia',
+                    tipo: 'success',
+                    icono: 'fa-coins',
+                    titulo: 'Monedas reclamadas',
+                    mensaje: 'Recibiste **+100 monedas** por tu recompensa diaria. Volvé en 1 hora por más.'
+                });
                 return;
             }
 
