@@ -369,7 +369,7 @@ function actualizarBotonMoneda() {
     const serverNow = lastClaimServerMs > 0 ? lastClaimServerMs : now;
     const cooldownMs = 60 * 60 * 1000;
     const remaining = lastClaimServerMs > 0 ? cooldownMs - (now - serverNow) : 0;
-    console.log('[COOLDOWN DEBUG] userId=', userId, 'now=', now, 'lastClaimServerMs=', lastClaimServerMs, 'remaining=', remaining);
+    //console.log('[COOLDOWN DEBUG] userId=', userId, 'now=', now, 'lastClaimServerMs=', lastClaimServerMs, 'remaining=', remaining);
 
     if (remaining > 0) {
         const mins = Math.floor(remaining / 60000);
@@ -460,10 +460,18 @@ function cambiarTab(tab) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     const elemento = document.getElementById(tab);
     if (elemento) {
-        console.log('[STEP] mostrando tab', tab, 'display=', getComputedStyle(elemento).display);
+        console.log('[STEP] mostrando tab', tab, 'display antes=', getComputedStyle(elemento).display);
         elemento.classList.add('active');
+        console.log('[STEP] mostrando tab', tab, 'display despues=', getComputedStyle(elemento).display);
+    } else {
+        console.warn('[STEP] No se encontró el elemento con id', tab);
     }
-    if (tab === 'coleccion') renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+    if (tab === 'coleccion') {
+        console.log('[STEP] renderizando coleccion, cartasData=', cartasData.length, 'coleccionKeys=', Object.keys(coleccion).length);
+        renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+        const grid = document.getElementById('coleccion-grid');
+        console.log('[STEP] coleccion-grid despues de render:', grid ? grid.innerHTML.length : 'no existe');
+    }
 }
 
 function obtenerLogosSobre(sobre) {
@@ -534,34 +542,40 @@ function renderizarBannersGacha() {
 }
 
 function renderizarGachaSobres() {
-    const contenedor = document.getElementById('gacha-sobres');
-    if (!contenedor) return;
+    actualizarDotsGacha();
+    actualizarPresentacionGacha();
+}
 
-    contenedor.innerHTML = obtenerSobresDisponibles().map(sobre => {
-        const logo = obtenerLogoSobre(sobre);
+function navegarSobre(direccion) {
+    const sobres = obtenerSobresDisponibles();
+    if (sobres.length === 0) return;
+    const indice = sobres.findIndex(s => s.tipo === sobreSeleccionado);
+    const nuevoIndice = (indice + direccion + sobres.length) % sobres.length;
+    seleccionarSobre(sobres[nuevoIndice].tipo);
+}
+
+function actualizarDotsGacha() {
+    const contenedor = document.getElementById('gacha-dots');
+    if (!contenedor) return;
+    const sobres = obtenerSobresDisponibles();
+    const indice = sobres.findIndex(s => s.tipo === sobreSeleccionado);
+    contenedor.innerHTML = sobres.map((sobre, i) => {
         const oferta = Number(sobre.oferta || 0);
-        return `
-            <button class="gacha-sobre ${sobre.tipo === sobreSeleccionado ? 'active' : ''} region-${sobre.tipo}" data-tipo="${sobre.tipo}">
-                ${logo ? `<img class="gacha-sobre-logo" src="${logo}" alt="${sobre.nombre}">` : `<i class="${sobre.iconoFa || sobre.icono} gacha-sobre-icono"></i>`}
-                <span class="gacha-sobre-nombre">${sobre.nombre}</span>
-                <span class="gacha-sobre-precio"><i class="fa-solid fa-coins"></i> ${obtenerPrecioSobre(sobre)}</span>
-                ${oferta > 0 ? `<span class="gacha-oferta">${oferta}% OFF</span>` : ''}
-            </button>
-        `;
+        const tieneOferta = oferta > 0;
+        return `<span class="gacha-dot${i === indice ? ' active' : ''}${tieneOferta ? ' gacha-dot-oferta' : ''}" data-tipo="${sobre.tipo}"></span>`;
     }).join('');
 
-    contenedor.querySelectorAll('.gacha-sobre').forEach(btn => {
-        btn.addEventListener('click', () => seleccionarSobre(btn.dataset.tipo));
+    contenedor.querySelectorAll('.gacha-dot').forEach(dot => {
+        dot.addEventListener('click', () => seleccionarSobre(dot.dataset.tipo));
     });
-
-    actualizarPresentacionGacha();
 }
 
 function seleccionarSobre(tipo) {
     sobreSeleccionado = tipo;
     const info = document.getElementById('gacha-info-detalle');
     if (info) info.classList.remove('active');
-    renderizarGachaSobres();
+    actualizarDotsGacha();
+    actualizarPresentacionGacha();
 }
 
 function iniciarRotacionLogoGenerico() {
@@ -1113,7 +1127,11 @@ const RAREZA_ORDEN = {
 
 function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }, orden = { tipo: 'defecto', direccion: 'asc' }) {
     const grid = document.getElementById('coleccion-grid');
-    if (!grid) return;
+    if (!grid) {
+        console.warn('[RENDER] coleccion-grid no encontrado');
+        return;
+    }
+    console.log('[RENDER] renderizando coleccion, filtro=', filtro, 'cartasData=', cartasData.length, 'coleccionKeys=', Object.keys(coleccion).length);
 
     const manifestOrder = {};
     cartasData.forEach((carta, index) => {
@@ -1171,32 +1189,40 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
         return direccion === 'desc' ? -comp : comp;
     });
 
+    console.log('[RENDER] items despues de filtrar/ordenar:', items.length, 'desbloqueadas:', items.filter(i => i.desbloqueada).length);
+
     if (items.length === 0) {
         grid.innerHTML = '<p class="sin-cartas">No hay cartas que coincidan con el filtro.<br>Abre sobres en la pestaña Tienda para comenzar.</p>';
         return;
     }
 
-    grid.innerHTML = items.map(({ carta, cantidad, desbloqueada }) => {
-        const claseRegion = 'region-' + carta.region;
-        const claseRareza = 'rareza-' + (carta.rareza || 'comun');
-        const claseBloqueada = desbloqueada ? '' : ' bloqueada';
-        const rutaImagen = carta.imagen || '';
-        const nombreRareza = carta.rareza ? (RAREZA_NOMBRES[carta.rareza] || carta.rareza) : '';
-        const bgRareza = carta.rareza ? (RAREZA_COLORS[carta.rareza] || '') : '';
-        return `
-            <div class="carta-wrapper">
-                <div class="carta-item ${claseRegion} ${claseRareza}${claseBloqueada}" data-carta-id="${carta.id}">
-                    <img src="${rutaImagen}" alt="${carta.nombre}" 
-                         onerror="this.style.display='none'; this.parentElement.querySelector('.carta-placeholder').style.display='flex';"
-                         loading="lazy">
-                    <div class="carta-placeholder" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:50px; background:rgba(0,0,0,0.3);"><i class="fa-solid fa-gem"></i></div>
-                    ${desbloqueada ? `<div class="carta-cantidad">x${cantidad}</div>` : ''}
-                    <div class="carta-nombre">${carta.nombre}</div>
+    try {
+        grid.innerHTML = items.map(({ carta, cantidad, desbloqueada }) => {
+            const claseRegion = 'region-' + carta.region;
+            const claseRareza = 'rareza-' + (carta.rareza || 'comun');
+            const claseBloqueada = desbloqueada ? '' : ' bloqueada';
+            const rutaImagen = carta.imagen || '';
+            const nombreRareza = carta.rareza ? (RAREZA_NOMBRES[carta.rareza] || carta.rareza) : '';
+            const bgRareza = carta.rareza ? (RAREZA_COLORS[carta.rareza] || '') : '';
+            return `
+                <div class="carta-wrapper">
+                    <div class="carta-item ${claseRegion} ${claseRareza}${claseBloqueada}" data-carta-id="${carta.id}">
+                        <img src="${rutaImagen}" alt="${carta.nombre}" 
+                             onerror="this.style.display='none'; this.parentElement.querySelector('.carta-placeholder').style.display='flex';"
+                             loading="lazy">
+                        <div class="carta-placeholder" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; font-size:50px; background:rgba(0,0,0,0.3);"><i class="fa-solid fa-gem"></i></div>
+                        ${desbloqueada ? `<div class="carta-cantidad">x${cantidad}</div>` : ''}
+                        <div class="carta-nombre">${carta.nombre}</div>
+                    </div>
+                    ${nombreRareza ? `<span class="rareza-badge" style="background:${bgRareza}; color:#fff;">${nombreRareza}</span>` : ''}
                 </div>
-                ${nombreRareza ? `<span class="rareza-badge" style="background:${bgRareza}; color:#fff;">${nombreRareza}</span>` : ''}
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+        console.log('[RENDER] grid.innerHTML length:', grid.innerHTML.length);
+    } catch (e) {
+        console.error('[RENDER] Error generando HTML:', e);
+        grid.innerHTML = '<p class="error-mensaje">Error al mostrar la colección</p>';
+    }
 
     grid.querySelectorAll('.carta-item').forEach(item => {
         item.addEventListener('click', function(e) {
@@ -1547,6 +1573,11 @@ function inicializarUI() {
     cargarEventos().then(() => renderizarBannersGacha());
     renderizarGachaSobres();
     iniciarRotacionLogoGenerico();
+
+    const btnPrev = document.getElementById('gacha-prev');
+    const btnNext = document.getElementById('gacha-next');
+    if (btnPrev) btnPrev.addEventListener('click', () => navegarSobre(-1));
+    if (btnNext) btnNext.addEventListener('click', () => navegarSobre(1));
 
     const btnAbrirGacha = document.getElementById('btn-abrir-gacha');
     if (btnAbrirGacha) {

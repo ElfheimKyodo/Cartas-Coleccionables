@@ -862,13 +862,12 @@ nav {
   margin-right: 4px;
   font-size: 8px;
   font-weight: 800;
-  color: #000;
+  color: #000 !important;
   background: linear-gradient(135deg, #ffeb3b, #ffc107);
   border-radius: 3px;
   box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.2px;
-  animation: pulse 2s infinite;
 }
 
 .gacha-banner-header {
