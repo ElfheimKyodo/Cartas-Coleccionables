@@ -17,6 +17,7 @@ let lastClaimServerMs = 0;
 let claimToastShown = false;
 const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
 const PITY_LIMITE = 40;
+let pityContador = 0;
 let audioCache = {};
 
 function reproducirSonido(nombre) {
@@ -316,6 +317,8 @@ async function cargarDatos() {
             const carta = cartasData.find(c => c.id === item.carta_id);
             if (carta) coleccion[item.carta_id] = { carta, cantidad: item.cantidad };
         }
+
+        await cargarPity();
     } catch (e) {
         const status = e?.status || e?.code;
         const msg = String(e?.message || e);
@@ -327,6 +330,20 @@ async function cargarDatos() {
             console.error('[AUTH] Error cargando datos desde Supabase:', e);
         }
         cargarLocalStorage();
+    }
+}
+
+async function cargarPity() {
+    if (!supabaseEnabled || !usuarioActual) {
+        pityContador = 0;
+        return;
+    }
+    try {
+        const profile = await db.getProfile(supabaseClient, usuarioActual.id);
+        pityContador = Number(profile?.pity_contador ?? 0);
+        if (!Number.isFinite(pityContador)) pityContador = 0;
+    } catch (e) {
+        pityContador = 0;
     }
 }
 
@@ -488,6 +505,24 @@ function ocultarToastReclamo() {
     if (toastTimeout) clearTimeout(toastTimeout);
     toast.classList.remove('visible');
     toastTimeout = null;
+}
+
+function crearNotificacionEvento({ categoria, tipo, icono, titulo, mensaje }) {
+    const toast = document.createElement('div');
+    toast.className = `evento-notificacion evento-${tipo || 'info'}`;
+    toast.innerHTML = `
+        <div class="evento-icono"><i class="fa-solid ${icono || 'fa-circle-info'}"></i></div>
+        <div class="evento-contenido">
+            <strong>${titulo || ''}</strong>
+            <p>${mensaje || ''}</p>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('visible'));
+    setTimeout(() => {
+        toast.classList.remove('visible');
+        toast.addEventListener('transitionend', () => toast.remove());
+    }, 5000);
 }
 
 function animarReclamoMonedas() {
@@ -701,9 +736,6 @@ function actualizarPresentacionGacha() {
         }
     }
     if (pityEl) {
-        const userId = usuarioActual?.id || 'local';
-        const pityKey = `elfheim_pity_${userId}`;
-        const pityContador = parseInt(localStorage.getItem(pityKey) || '0', 10);
         const progreso = Math.min(pityContador, PITY_LIMITE);
         if (progreso >= PITY_LIMITE) {
             pityEl.innerHTML = '<i class="fa-solid fa-star"></i> <strong>Legendaria</strong> garantizada en: <span class="pity-valor">¡AHORA!</span>';
@@ -780,7 +812,8 @@ function comprarSobre(region, precio) {
         return;
     }
 
-    const cartas = generarCartasRegion(region);
+    const resultado = generarCartasRegion(region);
+    const cartas = resultado.cartas;
     const sobre = obtenerSobre(region);
     const precioFinal = obtenerPrecioSobre(sobre);
 
@@ -803,6 +836,15 @@ function comprarSobre(region, precio) {
     }
     actualizarEstadisticas();
     actualizarPresentacionGacha();
+
+    if (resultado.tieneLegendaria) {
+        pityContador = 0;
+    } else {
+        pityContador++;
+    }
+    if (supabaseEnabled && usuarioActual) {
+        db.updatePity(supabaseClient, usuarioActual.id, pityContador).catch(() => {});
+    }
 
     const leyendas = cartas.filter(c => c.rareza === 'legendaria');
     if (leyendas.length > 0) {
@@ -893,7 +935,7 @@ function generarCartasRegion(region) {
             return false;
         });
     }
-    if (cartasPermitidas.length === 0) return cartasData.length > 0 ? [cartasData[0]] : [];
+    if (cartasPermitidas.length === 0) return { cartas: cartasData.length > 0 ? [cartasData[0]] : [], tieneLegendaria: false };
 
     const probRarezas = sobre.probabilidades;
 
@@ -905,9 +947,6 @@ function generarCartasRegion(region) {
         ? probRarezasFiltradas
         : probRarezas;
 
-    const userId = usuarioActual?.id || 'local';
-    const pityKey = `elfheim_pity_${userId}`;
-    let pityContador = parseInt(localStorage.getItem(pityKey) || '0', 10);
     const pityActivo = pityContador >= PITY_LIMITE;
     let tieneLegendaria = false;
 
@@ -923,6 +962,16 @@ function generarCartasRegion(region) {
             const carta = cartasFiltradas[Math.floor(Math.random() * cartasFiltradas.length)];
             cartas.push(carta);
             if (carta.rareza === 'legendaria') tieneLegendaria = true;
+        } else if (rarezaSeleccionada === 'legendaria') {
+            const legendariasGlobales = cartasData.filter(c => c.rareza === 'legendaria');
+            if (legendariasGlobales.length > 0) {
+                const carta = legendariasGlobales[Math.floor(Math.random() * legendariasGlobales.length)];
+                cartas.push(carta);
+                tieneLegendaria = true;
+            } else {
+                const carta = cartasPermitidas[Math.floor(Math.random() * cartasPermitidas.length)];
+                cartas.push(carta);
+            }
         } else {
             const carta = cartasPermitidas[Math.floor(Math.random() * cartasPermitidas.length)];
             cartas.push(carta);
@@ -930,14 +979,7 @@ function generarCartasRegion(region) {
         }
     }
 
-    if (tieneLegendaria) {
-        pityContador = 0;
-    } else {
-        pityContador++;
-    }
-    localStorage.setItem(pityKey, pityContador.toString());
-
-    return cartas;
+    return { cartas, tieneLegendaria };
 }
 
 function obtenerRarezaPorProbabilidad(probRarezas) {
@@ -1343,7 +1385,7 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
             const bgRareza = carta.rareza ? (RAREZA_COLORS[carta.rareza] || '') : '';
             return `
                 <div class="carta-wrapper">
-                    <div class="carta-item ${claseRegion} ${claseRareza}${claseBloqueada}" data-carta-id="${carta.id}">
+                    <div class="carta-item ${claseRegion} ${claseRareza}${claseBloqueada}" data-carta-id="${carta.id}" data-rareza="${carta.rareza || 'comun'}">
                         <img src="${rutaImagen}" alt="${carta.nombre}" 
                              onerror="this.style.display='none'; this.parentElement.querySelector('.carta-placeholder').style.display='flex';"
                              loading="lazy">
@@ -1365,8 +1407,21 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
         item.addEventListener('click', function(e) {
             e.stopPropagation();
             const cartaId = this.dataset.cartaId;
+            const rareza = this.dataset.rareza;
             const cartaElement = this;
             if (cartaElement.classList.contains('bloqueada')) return;
+            if (rareza === 'legendaria') {
+                const cartaData = cartasData.find(c => c.id === cartaId);
+                const nombre = cartaData ? cartaData.nombre : cartaId;
+                reproducirSonido('legendaria');
+                crearNotificacionEvento({
+                    categoria: 'actualizaciones',
+                    tipo: 'success',
+                    icono: 'fa-crown',
+                    titulo: '¡Leyenda en tu colección!',
+                    mensaje: `**${nombre}** brilla con poder legendario.`
+                });
+            }
             mostrarDetalle(cartaId);
         });
     });
@@ -2137,6 +2192,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const session = await auth.getSession(supabaseClient);
             usuarioActual = session?.user ?? null;
         }
+    }
+
+    if (usuarioActual) {
+        await cargarDatos();
     }
 
     inicializarUI();

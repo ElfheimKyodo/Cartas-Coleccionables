@@ -95,10 +95,10 @@ const db = {
     async getProfile(client, userId) {
         const { data, error } = await client
             .from('profiles')
-            .select('monedas, updated_at')
+            .select('monedas, updated_at, pity_contador')
             .eq('id', userId)
             .single();
-        if (error && error.code !== 'PGRST116') throw error;
+        if (error) throw error;
         return data;
     },
 
@@ -144,6 +144,20 @@ const db = {
             .select('monedas, updated_at')
             .single();
         if (error) throw error;
+        return data;
+    },
+
+    async updatePity(client, userId, contador) {
+        const { data, error } = await client
+            .from('profiles')
+            .update({ pity_contador: contador })
+            .eq('id', userId)
+            .select('pity_contador')
+            .single();
+        if (error) {
+            console.error('[PITY] Error actualizando pity en Supabase:', error);
+            throw error;
+        }
         return data;
     },
 
