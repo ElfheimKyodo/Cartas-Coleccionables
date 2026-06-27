@@ -89,11 +89,11 @@
                             <h3 id="gacha-titulo"></h3>
                             <h4>Descripción del gacha</h4>
                             <p id="gacha-descripcion"></p>
+                            <div id="gacha-pity" class="gacha-pity"></div>
                             <div class="gacha-acciones">
                                 <button id="btn-abrir-gacha" class="btn-gacha abrir">Abrir sobre</button>
                                 <button id="btn-info-gacha" class="btn-gacha secundario">Información</button>
                             </div>
-                            <div id="gacha-pity" class="gacha-pity"></div>
                             <div id="gacha-info-detalle" class="gacha-info-detalle"></div>
                         </div>
                     </div>
@@ -157,6 +157,21 @@
             <p id="gacha-apertura-ayuda" class="gacha-apertura-ayuda">Pulsa en cada carta para revelarla.</p>
             <div id="cartas-revelar" class="cartas-revelar"></div>
             <button class="btn-coleccionar">Coleccionar</button>
+        </div>
+    </div>
+
+    <div id="modal-gacha-info" class="modal">
+        <div class="modal-contenido gacha-info-modal">
+            <span class="cerrar">&times;</span>
+            <div class="gacha-info-header">
+                <h2 id="gacha-info-modal-titulo"></h2>
+                <div class="gacha-info-tabs">
+                    <button class="gacha-info-tab active" data-tab="probabilidades">Probabilidades</button>
+                    <button class="gacha-info-tab" data-tab="cartas">Cartas</button>
+                </div>
+            </div>
+            <div id="gacha-info-tab-probabilidades" class="gacha-info-tab-content active"></div>
+            <div id="gacha-info-tab-cartas" class="gacha-info-tab-content"></div>
         </div>
     </div>
 

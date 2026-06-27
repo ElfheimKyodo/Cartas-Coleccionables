@@ -653,9 +653,13 @@ function actualizarPresentacionGacha() {
 
 function toggleInformacionGacha() {
     const sobre = obtenerSobre(sobreSeleccionado);
-    const info = document.getElementById('gacha-info-detalle');
-    if (!info) return;
-    info.classList.toggle('active');
+    const modal = document.getElementById('modal-gacha-info');
+    const titulo = document.getElementById('gacha-info-modal-titulo');
+    const tabProb = document.getElementById('gacha-info-tab-probabilidades');
+    const tabCartas = document.getElementById('gacha-info-tab-cartas');
+    if (!modal || !titulo || !tabProb || !tabCartas) return;
+
+    titulo.textContent = sobre.nombre;
 
     const probRarezas = sobre.probabilidades;
     const regionesInfo = sobre.regiones.map(r => `<li>${REGION_NOMBRES[r] || r}</li>`).join('');
@@ -663,9 +667,28 @@ function toggleInformacionGacha() {
         `<li>${RAREZA_NOMBRES[r] || r}: ${calcularPorcentaje(probRarezas, r)}%</li>`
     ).join('');
 
-    info.innerHTML = info.classList.contains('active')
-        ? `<h4>Contiene 3 cartas aleatorias</h4><ul>${regionesInfo}</ul><h4>Probabilidades por rareza</h4><ul>${rarezaInfo}</ul>`
-        : '';
+    tabProb.innerHTML = `<h4>Contiene 3 cartas aleatorias</h4><ul>${regionesInfo}</ul><h4>Probabilidades por rareza</h4><ul>${rarezaInfo}</ul>`;
+
+    let cartasPosibles = [];
+    if (sobre.cartas && sobre.cartas.length > 0) {
+        cartasPosibles = cartasData.filter(c => sobre.cartas.includes(c.id));
+    } else {
+        const regionesPermitidas = sobre.regiones || [sobreSeleccionado];
+        cartasPosibles = cartasData.filter(c => {
+            return regionesPermitidas.includes(c.region) || c.region === 'generic';
+        });
+    }
+
+    tabCartas.innerHTML = cartasPosibles.length > 0
+        ? `<div class="gacha-info-cartas-grid">${cartasPosibles.map(carta => `
+            <div class="gacha-info-carta-item">
+                <img src="${carta.imagen}" alt="${carta.nombre}" loading="lazy" onerror="this.src='cartas/PORTADA.png'">
+                <span class="gacha-info-carta-nombre">${carta.nombre}</span>
+            </div>
+          `).join('')}</div>`
+        : '<p class="sin-cartas">No hay cartas registradas para este sobre.</p>';
+
+    modal.classList.add('active');
 }
 
 function comprarSobre(region, precio) {
@@ -1610,6 +1633,17 @@ function inicializarUI() {
     if (btnInfoGacha) {
         btnInfoGacha.addEventListener('click', toggleInformacionGacha);
     }
+
+    document.querySelectorAll('.gacha-info-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.tab;
+            document.querySelectorAll('.gacha-info-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.gacha-info-tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            const content = document.getElementById(`gacha-info-tab-${target}`);
+            if (content) content.classList.add('active');
+        });
+    });
 
     document.querySelectorAll('.filtro-btn').forEach(btn => {
         btn.addEventListener('click', () => {

@@ -4,7 +4,7 @@
       "id": "evento-salida",
       "titulo": "¡Evento de Salida!",
       "texto": "¡Bienvenido al inicio del gacha, jugador! Disfruta de descuentos especiales por la salida del gacha y un regalo de bienvenida solo por iniciar sesión. ¡No te lo pierdas!",
-      "tipo": "umbraeth",
+      "tipo": "",
       "etiqueta": "EVENTO",
       "visibilidad": {
         "mostrarBanner": true,
@@ -17,7 +17,7 @@
         "fondo": "#0f172a",
         "fondoGradiente": "linear-gradient(135deg, #0f172a, #1e293b)",
         "texto": "#ffff00",
-        "textoSecundario": "#94a3b8",
+        "textoSecundario": "#ffffff",
         "etiqueta": "#fbbf24",
         "etiquetaTexto": "#1a1200",
         "borde": "#fbbf24",
@@ -25,6 +25,32 @@
         "destello": "#fbbf24"
       },
       "prioridad": 1
+    },
+    {
+      "id": "evento-monedas",
+      "titulo": "¡Evento de Monedas!",
+      "texto": "¡Gana monedas extras en tu primera sesión! Solo por iniciar sesión, podrás ganar 1000 monedas para empezar a probar los sobres.",
+      "tipo": "",
+      "etiqueta": "EVENTO",
+      "visibilidad": {
+        "mostrarBanner": true,
+        "mostrarEtiqueta": true,
+        "mostrarTexto": true,
+        "mostrarIcono": true,
+        "mostrarFondo": true
+      },
+      "colores": {
+        "fondo": "#174569",
+        "fondoGradiente": "linear-gradient(135deg, #174569, #0894ff)",
+        "texto": "#ffff00",
+        "textoSecundario": "#ffffff",
+        "etiqueta": "#fbbf24",
+        "etiquetaTexto": "#1a1200",
+        "borde": "#fbbf24",
+        "sombra": "rgba(251, 191, 36, 0.3)",
+        "destello": "#fbbf24"
+      },
+      "prioridad": 5
     }
   ],
   "configuracionGlobal": {

@@ -769,7 +769,7 @@ nav {
 }
 
 .gacha-pity {
-  margin: 16px auto 0;
+  margin: 8px 0 0;
   max-width: 380px;
   padding: 10px 18px;
   border-radius: 12px;
@@ -1490,6 +1490,131 @@ nav {
 #modal-sobre h2 {
   font-size: clamp(26px, 4vw, 44px);
   margin-bottom: 8px;
+}
+
+.gacha-info-modal {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.gacha-info-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  padding-bottom: 4px;
+}
+
+.gacha-info-header h2 {
+  color: var(--gold);
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+
+.gacha-info-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gacha-info-tab-content {
+  display: none;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.gacha-info-tab-content.active {
+  display: block;
+}
+
+.gacha-info-tab {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.2s;
+}
+
+.gacha-info-tab:hover {
+  color: var(--text);
+}
+
+.gacha-info-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.gacha-info-tab-content {
+  display: none;
+}
+
+.gacha-info-tab-content.active {
+  display: block;
+}
+
+.gacha-info-cartas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.gacha-info-carta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.gacha-info-carta-item img {
+  width: 100%;
+  aspect-ratio: 825/1425;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  background: var(--surface-light);
+}
+
+.gacha-info-carta-nombre {
+  font-size: 10px;
+  text-align: center;
+  color: var(--text-secondary);
+  line-height: 1.2;
+  max-height: 2.4em;
+  overflow: hidden;
+}
+
+.gacha-info-modal h4 {
+  color: var(--gold);
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 16px 0 6px;
+}
+
+.gacha-info-modal ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gacha-info-modal li {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  margin: 4px 0;
 }
 
 .gacha-apertura-ayuda {
