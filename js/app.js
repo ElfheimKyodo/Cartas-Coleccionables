@@ -19,6 +19,17 @@ const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
 const PITY_LIMITE = 40;
 let audioCache = {};
 
+function reproducirSonido(nombre) {
+    if (!audioCache[nombre]) {
+        const audio = new Audio(`sounds/${nombre}.mp3`);
+        audio.preload = 'auto';
+        audioCache[nombre] = audio;
+    }
+    const audio = audioCache[nombre];
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+}
+
 const REGIONES = ['umbraeth', 'skjoldheim', 'astra', 'solareth', 'elarion'];
 const REGION_NOMBRES = {
     umbraeth: 'Umbraeth',
