@@ -835,28 +835,14 @@ function comprarSobre(region, precio) {
         coleccion[carta.id].cantidad++;
     }
     actualizarEstadisticas();
-    actualizarPresentacionGacha();
 
     if (resultado.tieneLegendaria) {
         pityContador = 0;
     } else {
         pityContador++;
     }
-    if (supabaseEnabled && usuarioActual) {
-        db.updatePity(supabaseClient, usuarioActual.id, pityContador).catch(() => {});
-    }
 
-    const leyendas = cartas.filter(c => c.rareza === 'legendaria');
-    if (leyendas.length > 0) {
-        const nombres = leyendas.map(c => c.nombre).join(', ');
-        crearNotificacionEvento({
-            categoria: 'actualizaciones',
-            tipo: 'success',
-            icono: 'fa-crown',
-            titulo: '¡Legendaria obtenida!',
-            mensaje: `Increíble suerte, obtuviste **${nombres}** en tu última apertura.`
-        });
-    }
+    actualizarPresentacionGacha();
 
     const cleanup = () => {
         guardarLocalStorage();
@@ -895,6 +881,9 @@ function comprarSobre(region, precio) {
             monedas = nuevaMoneda;
             actualizarMonedas();
             guardarDatos();
+            if (usuarioActual) {
+                db.updatePity(supabaseClient, usuarioActual.id, pityContador).catch(e => console.warn('[PITY] No se pudo sincronizar pity:', e));
+            }
         } catch (err) {
             console.error('[ECON] Excepción abriendo paquete:', err);
             monedas += precioFinal;
@@ -1265,6 +1254,15 @@ function mostrarAnimacionSobre(cartas, region) {
                 if (carta.rareza && ['rara', 'epica', 'legendaria'].includes(carta.rareza)) {
                     reproducirSonido(carta.rareza);
                     crearParticulasVolteo(div, carta.rareza);
+                }
+                if (carta.rareza === 'legendaria') {
+                    crearNotificacionEvento({
+                        categoria: 'actualizaciones',
+                        tipo: 'success',
+                        icono: 'fa-crown',
+                        titulo: '¡Leyenda revelada!',
+                        mensaje: `**${carta.nombre}** ha aparecido en tu apertura.`
+                    });
                 }
                 div.classList.remove('girando');
                 div.classList.add('revelada');
