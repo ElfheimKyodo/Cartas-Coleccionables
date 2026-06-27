@@ -761,7 +761,15 @@ function comprarSobre(region, precio) {
         try {
             let nuevaMoneda = monedas;
             try {
-                const result = await db.openPack(supabaseClient, usuarioActual.id, region, precioFinal, cartas);
+                const cartasUnicas = [];
+                const idsVistos = new Set();
+                for (const c of cartas) {
+                    if (!idsVistos.has(c.id)) {
+                        idsVistos.add(c.id);
+                        cartasUnicas.push(c);
+                    }
+                }
+                const result = await db.openPack(supabaseClient, usuarioActual.id, region, precioFinal, cartasUnicas);
                 if (result?.ok) nuevaMoneda = result.nuevo_saldo;
             } catch (rpcError) {
                 console.warn('[ECON] RPC abrir_sobre no disponible; usando escritura directa en tablas:', rpcError);
