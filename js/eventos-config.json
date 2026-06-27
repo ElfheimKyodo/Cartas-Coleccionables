@@ -1,10 +1,45 @@
 {
   "banners": [
     {
-      "titulo": "Sobre Genérico",
-      "texto": "Un gacha equilibrado con cartas de todas las regiones.",
-      "tipo": "generic",
-      "etiqueta": "Destacado"
+      "id": "evento-salida",
+      "titulo": "¡Evento de Salida!",
+      "texto": "¡Bienvenido al inicio del gacha, jugador! Disfruta de descuentos especiales por la salida del gacha y un regalo de bienvenida solo por iniciar sesión. ¡No te lo pierdas!",
+      "tipo": "umbraeth",
+      "etiqueta": "EVENTO",
+      "visibilidad": {
+        "mostrarBanner": true,
+        "mostrarEtiqueta": true,
+        "mostrarTexto": true,
+        "mostrarIcono": true,
+        "mostrarFondo": true
+      },
+      "colores": {
+        "fondo": "#0f172a",
+        "fondoGradiente": "linear-gradient(135deg, #0f172a, #1e293b)",
+        "texto": "#ffff00",
+        "textoSecundario": "#94a3b8",
+        "etiqueta": "#fbbf24",
+        "etiquetaTexto": "#1a1200",
+        "borde": "#fbbf24",
+        "sombra": "rgba(251, 191, 36, 0.3)",
+        "destello": "#fbbf24"
+      },
+      "prioridad": 1
     }
-  ]
+  ],
+  "configuracionGlobal": {
+    "duracionDias": 7,
+    "mostrarSoloActivos": true,
+    "coloresPorDefecto": {
+      "fondo": "#1e293b",
+      "fondoGradiente": "linear-gradient(135deg, #1e293b, #0f172a)",
+      "texto": "#f8fafc",
+      "textoSecundario": "#cbd5e1",
+      "etiqueta": "#64748b",
+      "etiquetaTexto": "#ffffff",
+      "borde": "#64748b",
+      "sombra": "rgba(100, 116, 139, 0.3)",
+      "destello": "#64748b"
+    }
+  }
 }

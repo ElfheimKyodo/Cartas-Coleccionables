@@ -525,20 +525,35 @@ function renderizarBannersGacha() {
     const contenedor = document.getElementById('gacha-banner');
     if (!contenedor) return;
     
-    const bannersMostrar = [];
-    const genericBanner = eventosConfigurados.find(b => b.tipo === 'generic') || 
-        { titulo: 'Sobre Genérico', texto: 'Un gacha equilibrado con cartas de todas las regiones.', tipo: 'generic', etiqueta: 'Destacado' };
-    bannersMostrar.push(genericBanner);
+    const bannersMostrar = eventosConfigurados.length > 0
+        ? eventosConfigurados.filter(banner => banner.visibilidad?.mostrarBanner !== false)
+        : [{ titulo: 'Sobre Genérico', texto: 'Un gacha equilibrado con cartas de todas las regiones.', tipo: 'generic', etiqueta: 'Destacado' }];
     
-    contenedor.innerHTML = bannersMostrar.map(banner => `
-        <div class="gacha-banner-item${banner.tipo === 'generic' ? ' gacha-banner-generic' : ''}">
-            <div class="gacha-banner-header">
-                ${banner.etiqueta ? `<span class="gacha-banner-etiqueta">${banner.etiqueta}</span>` : ''}
-                <strong>${banner.titulo}</strong>
+    bannersMostrar.sort((a, b) => (a.prioridad || 999) - (b.prioridad || 999));
+    
+    contenedor.innerHTML = bannersMostrar.map(banner => {
+        const vis = banner.visibilidad || {};
+        const cols = banner.colores || {};
+        const estilos = [];
+        if (cols.fondoGradiente) estilos.push(`background: ${cols.fondoGradiente}`);
+        else if (cols.fondo) estilos.push(`background: ${cols.fondo}`);
+        if (cols.borde) estilos.push(`border: 2px solid ${cols.borde}`);
+        if (cols.sombra) estilos.push(`box-shadow: 0 4px 12px ${cols.sombra}`);
+        
+        const estiloStr = estilos.length > 0 ? ` style="${estilos.join('; ')};"` : '';
+        
+        const etiquetaClase = vis.mostrarAnimacion ? 'gacha-banner-etiqueta anime-glow' : 'gacha-banner-etiqueta';
+        
+        return `
+            <div class="gacha-banner-item${banner.tipo === 'generic' ? ' gacha-banner-generic' : ''}" data-evento-id="${banner.id || ''}"${estiloStr}>
+                <div class="gacha-banner-header">
+                    ${vis.mostrarEtiqueta !== false && banner.etiqueta ? `<span class="${etiquetaClase}" style="background: ${cols.etiqueta || '#64748b'}; color: ${cols.etiquetaTexto || '#fff'};">${banner.etiqueta}</span>` : ''}
+                    <strong style="color: ${cols.texto || '#f8fafc'};">${banner.titulo}</strong>
+                </div>
+                ${vis.mostrarTexto !== false ? `<span style="color: ${cols.textoSecundario || cols.texto || '#cbd5e1'};">${banner.texto}</span>` : ''}
             </div>
-            <span>${banner.texto}</span>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function renderizarGachaSobres() {
