@@ -2243,12 +2243,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         refresh_token: refreshToken
                     });
                     usuarioActual = session.user ?? null;
-                    window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-                    if (usuarioActual) {
-                        await cargarDatos();
-                    }
                 } catch (err) {
                     console.error('[AUTH] Error aplicando sesión OAuth:', err);
+                }
+                window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+                if (usuarioActual) {
+                    await cargarDatos();
                 }
             }
         }
