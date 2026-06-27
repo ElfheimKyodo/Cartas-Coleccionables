@@ -157,6 +157,148 @@ body {
   border-color: #5865F2;
 }
 
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 60%, #000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.loading-screen.oculto {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-inner {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.loading-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #ffc107;
+  border-right-color: rgba(255, 193, 7, 0.3);
+  animation: spin 1.2s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.4));
+}
+
+.loading-circle-inner {
+  position: absolute;
+  inset: 15px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-bottom-color: rgba(255, 193, 7, 0.6);
+  border-left-color: rgba(255, 193, 7, 0.2);
+  animation: spin 1.8s linear infinite reverse;
+}
+
+.loading-rune {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rune-line {
+  position: absolute;
+  width: 2px;
+  height: 60%;
+  background: linear-gradient(to bottom, transparent, rgba(255, 193, 7, 0.5), transparent);
+  animation: rune-pulse 2s ease-in-out infinite;
+}
+
+.r1 {
+  transform: rotate(0deg);
+}
+.r2 {
+  transform: rotate(120deg);
+  animation-delay: 0.6s;
+}
+.r3 {
+  transform: rotate(240deg);
+  animation-delay: 1.2s;
+}
+
+.loading-title {
+  position: absolute;
+  bottom: 40px;
+  color: #ffc107;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+.loading-subtitle {
+  position: absolute;
+  bottom: 22px;
+  color: #b0b0b0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  animation: fade-pulse 2s ease-in-out infinite;
+  width: 100%;
+  text-align: center;
+}
+
+.loading-bar-container {
+  position: absolute;
+  bottom: -20px;
+  width: 160px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ffc107, #ff9800);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+.loading-status {
+  position: absolute;
+  bottom: -45px;
+  width: 200px;
+  text-align: center;
+  color: #888;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rune-pulse {
+  0%, 100% { opacity: 0.4; height: 60%; }
+  50% { opacity: 1; height: 75%; }
+}
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 /* Header */
 header {
   display: flex;

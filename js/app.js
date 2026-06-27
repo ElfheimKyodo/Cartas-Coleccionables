@@ -158,6 +158,75 @@ async function cargarConfiguracionSobres() {
     }
 }
 
+async function precargarAssets() {
+    const statusEl = document.getElementById('loading-status');
+    const barEl = document.getElementById('loading-bar');
+
+    const sounds = ['open', 'flip', 'claim', 'epica', 'legendaria', 'rara', 'comun'];
+
+    const manifestResp = await fetch('cartas/manifest.json').catch(() => null);
+    let images = [];
+    if (manifestResp?.ok) {
+        const manifest = await manifestResp.json();
+        images = (manifest.cartas || []).map(c => c.imagen).filter(Boolean);
+    }
+    const extraImages = [
+        'cartas/PORTADA.png',
+        'cartas/logo_generic.png',
+        'cartas/umbraeth/logo_umbraeth.png',
+        'cartas/skjoldheim/logo_skjoldheim.png',
+        'cartas/astra/logo_astra.png',
+        'cartas/solareth/logo_solareth.png',
+        'cartas/elarion/logo_elarion.png'
+    ];
+    const todasImagenes = Array.from(new Set([...images, ...extraImages]));
+
+    const assets = [
+        ...todasImagenes.map(src => ({ tipo: 'imagen', src })),
+        ...sounds.map(src => ({ tipo: 'sonido', src: `sounds/${src}.mp3` }))
+    ];
+
+    let cargadas = 0;
+    const total = assets.length;
+
+    if (statusEl) statusEl.textContent = `Cargando ${total} assets...`;
+
+    const maxWait = new Promise(resolve => setTimeout(() => {
+        if (barEl) barEl.style.width = '100%';
+        if (statusEl) statusEl.textContent = 'Continuando...';
+        resolve();
+    }, 4000));
+
+    await Promise.race([
+        Promise.all(assets.map(asset => {
+            return new Promise(resolve => {
+                const el = document.createElement(asset.tipo === 'imagen' ? 'img' : 'audio');
+                el.onload = el.onloadeddata = () => {
+                    cargadas++;
+                    const pct = Math.round((cargadas / total) * 100);
+                    if (barEl) barEl.style.width = pct + '%';
+                    if (statusEl) statusEl.textContent = `Cargando ${cargadas}/${total} assets...`;
+                    resolve();
+                };
+                el.onerror = () => {
+                    cargadas++;
+                    const pct = Math.round((cargadas / total) * 100);
+                    if (barEl) barEl.style.width = pct + '%';
+                    if (statusEl) statusEl.textContent = `Cargando ${cargadas}/${total} assets...`;
+                    resolve();
+                };
+                el.src = asset.src;
+                if (asset.tipo === 'sonido') {
+                    el.preload = 'auto';
+                }
+            });
+        })),
+        maxWait
+    ]);
+
+    return true;
+}
+
 async function cargarEventos() {
     try {
         const response = await fetch('js/eventos-config.json');
@@ -2025,8 +2094,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('[GLOBAL ERROR]', msg, 'at', url + ':' + line + ':' + col, 'err=', err);
     };
     inicializarSupabase();
+
+    const safetyTimer = setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        const barEl = document.getElementById('loading-bar');
+        const statusEl = document.getElementById('loading-status');
+        if (barEl) barEl.style.width = '100%';
+        if (statusEl) statusEl.textContent = '¡Listo! (fallback)';
+        if (loadingScreen) loadingScreen.classList.add('oculto');
+    }, 12000);
+
+    await precargarAssets();
     await cargarCartas();
     await cargarConfiguracionSobres();
+
+    clearTimeout(safetyTimer);
 
     if (supabaseEnabled && supabaseClient) {
         const hash = window.location.hash;
@@ -2059,4 +2141,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     inicializarUI();
     setUsuario(usuarioActual);
+
+    const loadingScreen = document.getElementById('loading-screen');
+    const statusEl = document.getElementById('loading-status');
+    const barEl = document.getElementById('loading-bar');
+    if (barEl) barEl.style.width = '100%';
+    if (statusEl) statusEl.textContent = '¡Listo!';
+
+    setTimeout(() => {
+        if (loadingScreen) loadingScreen.classList.add('oculto');
+    }, 500);
+
 });
