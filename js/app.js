@@ -17,61 +17,7 @@ let lastClaimServerMs = 0;
 let claimToastShown = false;
 const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
 const PITY_LIMITE = 40;
-const HCAPTCHA_SITE_KEY = '2cd6abf4-851c-4ad6-9d70-29500b6c944c';
-let hcaptchaWidgetId = null;
 let audioCache = {};
-
-function cargarSonido(nombre) {
-    if (audioCache[nombre]) return audioCache[nombre];
-    try {
-        const audio = new Audio(`sounds/${nombre}.mp3`);
-        audioCache[nombre] = audio;
-        return audio;
-    } catch (e) {
-        console.warn('No se pudo cargar sonido:', nombre, e);
-        return null;
-    }
-}
-
-function reproducirSonido(nombre) {
-    const audio = cargarSonido(nombre);
-    if (audio) {
-        audio.currentTime = 0;
-        audio.play().catch(e => console.debug('Audio play failed:', e));
-    }
-}
-
-function inicializarHCaptcha() {
-    if (!HCAPTCHA_SITE_KEY) {
-        console.warn('[HCAPTCHA] HCAPTCHA_SITE_KEY está vacío.');
-        return;
-    }
-    if (hcaptchaWidgetId !== null) return;
-    if (!window.hcaptcha) {
-        console.warn('[HCAPTCHA] El script de hCaptcha aún no cargó.');
-        return;
-    }
-    const contenedor = document.getElementById('hcaptcha-container');
-    if (!contenedor) {
-        console.warn('[HCAPTCHA] No existe #hcaptcha-container.');
-        return;
-    }
-    hcaptchaWidgetId = window.hcaptcha.render(contenedor, {
-        sitekey: HCAPTCHA_SITE_KEY,
-        theme: 'dark',
-        size: 'normal'
-    });
-}
-
-function obtenerTokenHCaptcha() {
-    if (!HCAPTCHA_SITE_KEY || !window.hcaptcha || hcaptchaWidgetId === null) return '';
-    return window.hcaptcha.getResponse(hcaptchaWidgetId) || '';
-}
-
-function resetHCaptcha() {
-    if (!HCAPTCHA_SITE_KEY || !window.hcaptcha || hcaptchaWidgetId === null) return;
-    window.hcaptcha.reset(hcaptchaWidgetId);
-}
 
 const REGIONES = ['umbraeth', 'skjoldheim', 'astra', 'solareth', 'elarion'];
 const REGION_NOMBRES = {
@@ -1460,36 +1406,35 @@ function setUsuario(user) {
 
     if (user) {
         overlay.style.display = 'none';
-        authForm.style.display = 'none';
+        if (authForm) authForm.style.display = 'none';
         actualizarEstadoPerfil();
         if (profileTrigger) profileTrigger.style.display = 'flex';
         if (profileMenu && profileUsername) {
             profileUsername.textContent = 'Cargando...';
         }
-cargarDatos().then(() => {
-             actualizarMonedas();
-             actualizarEstadisticas();
-             renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
-         }).catch(err => {
-             console.error('[AUTH] Error al cargar datos:', err);
-         });
-         actualizarUsernameDesdePerfil().catch(err => {
-             console.error('[AUTH] Error al cargar username:', err);
-         });
-     } else {
-         overlay.style.display = 'flex';
-         authForm.style.display = 'flex';
-         if (profileTrigger) profileTrigger.style.display = 'none';
-         if (profileMenu) profileMenu.style.display = 'none';
-         closeProfileMenu();
-         cerrarModalProfile();
-         cerrarModalPassword();
-         coleccion = {};
-         monedas = 0;
-         actualizarMonedas();
-         actualizarEstadisticas();
-         renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
-     }
+ cargarDatos().then(() => {
+              actualizarMonedas();
+              actualizarEstadisticas();
+              renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+          }).catch(err => {
+              console.error('[AUTH] Error al cargar datos:', err);
+          });
+          actualizarUsernameDesdePerfil().catch(err => {
+              console.error('[AUTH] Error al cargar username:', err);
+          });
+      } else {
+          overlay.style.display = 'flex';
+          if (authForm) authForm.style.display = 'flex';
+          if (profileTrigger) profileTrigger.style.display = 'none';
+          if (profileMenu) profileMenu.style.display = 'none';
+          closeProfileMenu();
+          cerrarModalProfile();
+          coleccion = {};
+          monedas = 0;
+          actualizarMonedas();
+          actualizarEstadisticas();
+          renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+      }
 }
 
 function actualizarEstadoPerfil() {
@@ -1543,16 +1488,6 @@ function cerrarModalProfile() {
     if (modal) modal.classList.remove('active');
 }
 
-function openModalPassword() {
-    const modal = document.getElementById('modal-password');
-    if (modal) modal.classList.add('active');
-}
-
-function cerrarModalPassword() {
-    const modal = document.getElementById('modal-password');
-    if (modal) modal.classList.remove('active');
-}
-
 async function editarPerfil(username) {
     if (!usuarioActual || !supabaseClient) return;
     const { error } = await supabaseClient
@@ -1568,115 +1503,14 @@ async function editarPerfil(username) {
     cerrarModalProfile();
 }
 
-async function cambiarPassword(newPassword) {
-    if (!usuarioActual || !supabaseClient) return;
-    try {
-        await auth.updatePassword(supabaseClient, newPassword);
-        cerrarModalPassword();
-    } catch (e) {
-        console.error('[AUTH] Error cambiando contraseña:', e);
-        mostrarErrorPassword(e.message || 'Error al cambiar contraseña');
-    }
-}
-
 function mostrarErrorPerfil(msg) {
     const el = document.getElementById('edit-profile-error');
-    if (el) el.textContent = msg;
-}
-
-function mostrarErrorPassword(msg) {
-    const el = document.getElementById('password-error');
     if (el) el.textContent = msg;
 }
 
 function mostrarErrorSupabase(msg) {
     const el = document.getElementById('auth-error');
     if (el) el.textContent = msg;
-}
-
-function mostrarModoRegister() {
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-        if (tab.dataset.auth === 'register') tab.classList.add('active');
-        else tab.classList.remove('active');
-    });
-    const usernameField = document.getElementById('auth-username');
-    const passwordField = document.getElementById('auth-password');
-    const submitBtn = document.querySelector('.auth-submit');
-    if (usernameField) usernameField.style.display = 'block';
-    if (passwordField) passwordField.autocomplete = 'new-password';
-    if (submitBtn) submitBtn.textContent = 'Registrarse';
-}
-
-function mostrarModoLogin() {
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-        if (tab.dataset.auth === 'login') tab.classList.add('active');
-        else tab.classList.remove('active');
-    });
-    const usernameField = document.getElementById('auth-username');
-    const passwordField = document.getElementById('auth-password');
-    const submitBtn = document.querySelector('.auth-submit');
-    if (usernameField) usernameField.style.display = 'none';
-    if (passwordField) passwordField.autocomplete = 'current-password';
-    if (submitBtn) submitBtn.textContent = 'Entrar';
-}
-
-function validarEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function onAuthSubmit(e) {
-    e.preventDefault();
-    const username = document.getElementById('auth-username')?.value.trim() || '';
-    const email = document.getElementById('auth-email')?.value.trim() || '';
-    const password = document.getElementById('auth-password')?.value || '';
-    const errorEl = document.getElementById('auth-error');
-    const esRegister = document.querySelector('.auth-tab[data-auth="register"]').classList.contains('active');
-
-    if (esRegister && !username) {
-        errorEl.textContent = 'Ingresá un nombre de usuario';
-        return;
-    }
-    if (!validarEmail(email)) {
-        errorEl.textContent = 'Ingresá un correo válido';
-        return;
-    }
-    if (!password) {
-        errorEl.textContent = 'Ingresá una contraseña';
-        return;
-    }
-    if (HCAPTCHA_SITE_KEY && !obtenerTokenHCaptcha()) {
-        errorEl.textContent = 'Completá el captcha';
-        return;
-    }
-
-    errorEl.textContent = 'Cargando...';
-    procesarAuth(esRegister, username, email, password, obtenerTokenHCaptcha());
-}
-
-async function procesarAuth(esRegister, username, email, password, captchaToken = '') {
-    const errorEl = document.getElementById('auth-error');
-    try {
-        const client = supabaseClient;
-        if (!client) throw new Error('Supabase no configurado');
-        if (esRegister) {
-            if (!username) throw new Error('Ingresá un nombre de usuario');
-            const result = await auth.signUp(client, email, password, username, captchaToken);
-            console.log('[AUTH] signUp result:', result);
-            if (!result.user) throw new Error('No se pudo crear el usuario');
-            resetHCaptcha();
-            setUsuario(result.user);
-        } else {
-            if (!validarEmail(email)) throw new Error('Ingresá un correo válido');
-            const result = await auth.signIn(client, email, password, captchaToken);
-            console.log('[AUTH] signIn result:', result);
-            resetHCaptcha();
-            setUsuario(result.user);
-        }
-    } catch (err) {
-        console.error('[AUTH] Error completo:', err);
-        resetHCaptcha();
-        errorEl.textContent = err.message || 'Error de autenticación';
-    }
 }
 
 function inicializarUI() {
@@ -1977,30 +1811,6 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
         });
     }
 
-    const loginTabBtn = document.querySelector('.auth-tab[data-auth="login"]');
-    const registerTabBtn = document.querySelector('.auth-tab[data-auth="register"]');
-
-    if (loginTabBtn) {
-        loginTabBtn.addEventListener('click', () => {
-            mostrarModoLogin();
-            const errorEl = document.getElementById('auth-error');
-            if (errorEl) errorEl.textContent = '';
-        });
-    }
-
-    if (registerTabBtn) {
-        registerTabBtn.addEventListener('click', () => {
-            mostrarModoRegister();
-            const errorEl = document.getElementById('auth-error');
-            if (errorEl) errorEl.textContent = '';
-        });
-    }
-
-    const authForm = document.getElementById('auth-form');
-    if (authForm) {
-        authForm.addEventListener('submit', onAuthSubmit);
-    }
-
     const profileTrigger = document.getElementById('profile-trigger');
     if (profileTrigger) {
         profileTrigger.addEventListener('click', (e) => {
@@ -2014,14 +1824,6 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
         btnEditProfile.addEventListener('click', () => {
             closeProfileMenu();
             openModalProfile();
-        });
-    }
-
-    const btnChangePassword = document.getElementById('btn-change-password');
-    if (btnChangePassword) {
-        btnChangePassword.addEventListener('click', () => {
-            closeProfileMenu();
-            openModalPassword();
         });
     }
 
@@ -2189,29 +1991,6 @@ const profileSync = document.getElementById('profile-sync');
         });
     }
 
-    const formChangePassword = document.getElementById('form-change-password');
-    if (formChangePassword) {
-        formChangePassword.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newP = document.getElementById('new-password').value;
-            const confirmP = document.getElementById('confirm-password').value;
-            const errorEl = document.getElementById('password-error');
-            if (!newP || !confirmP) {
-                mostrarErrorPassword('Completá ambos campos');
-                return;
-            }
-            if (newP !== confirmP) {
-                mostrarErrorPassword('Las contraseñas no coinciden');
-                return;
-            }
-            if (newP.length < 6) {
-                mostrarErrorPassword('Mínimo 6 caracteres');
-                return;
-            }
-            cambiarPassword(newP);
-        });
-    }
-
     document.addEventListener('click', (e) => {
         const modal = document.getElementById('modal-user');
         const trigger = document.getElementById('profile-trigger');
@@ -2261,6 +2040,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     inicializarUI();
     setUsuario(usuarioActual);
-    inicializarHCaptcha();
-    window.addEventListener("load", inicializarHCaptcha);
 });

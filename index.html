@@ -6,27 +6,18 @@
     <title>Colección de Cartas - Elfheim</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body>
     <div id="auth-overlay" class="auth-overlay">
         <div class="auth-box">
             <h2>Colección de Cartas</h2>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-auth="login">Iniciar Sesión</button>
-                <button class="auth-tab" data-auth="register">Registrarse</button>
-            </div>
-            <form id="auth-form" class="auth-form">
-                <input type="text" id="auth-username" placeholder="Nombre de usuario" minlength="2" maxlength="30" autocomplete="username" style="display:none;">
-                <input type="email" id="auth-email" placeholder="Email" required autocomplete="email">
-                <input type="password" id="auth-password" placeholder="Contraseña" required minlength="6" autocomplete="current-password">
-                <div id="hcaptcha-container" class="hcaptcha-container" style="margin:14px 0;"></div>
-                <button type="submit" class="auth-submit">Entrar</button>
+            <div id="auth-form" class="auth-form">
                 <button type="button" id="discord-signin" class="discord-signin-btn">
                     <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e3d80db9971f10a9757c99_Symbol.svg" alt="Discord" width="20" height="20">
                     Discord
                 </button>
-            </form>
+            </div>
+            <p class="auth-notice">Iniciá sesión con Discord para ingresar de forma segura. Nunca compartas tu correo ni contraseña aquí: evitamos la filtración de datos y accesos fraudulentos.</p>
             <p id="auth-error" class="auth-error"></p>
         </div>
     </div>
@@ -61,7 +52,6 @@
                 <button id="btn-edit-profile" class="user-menu-btn"><i class="fa-solid fa-pen-to-square"></i> Editar Perfil</button>
                 <button id="profile-sync" class="user-menu-btn"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
                 <button id="profile-reset" class="user-menu-btn danger"><i class="fa-solid fa-trash-can"></i> Resetear Cartas</button>
-                <button id="btn-change-password" class="user-menu-btn"><i class="fa-solid fa-lock"></i> Cambiar Contraseña</button>
             </div>
             <div class="user-menu-divider"></div>
             <button id="profile-logout" class="user-menu-btn logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
@@ -241,19 +231,6 @@
                 <button type="submit" class="auth-submit">Guardar Cambios</button>
             </form>
             <p id="edit-profile-error" class="auth-error"></p>
-        </div>
-    </div>
-
-    <div id="modal-password" class="modal">
-        <div class="modal-contenido">
-            <span class="cerrar">&times;</span>
-            <h2>Cambiar Contraseña</h2>
-            <form id="form-change-password" class="auth-form">
-                <input type="password" id="new-password" placeholder="Nueva contraseña" required minlength="6" autocomplete="new-password">
-                <input type="password" id="confirm-password" placeholder="Confirmar contraseña" required minlength="6" autocomplete="new-password">
-                <button type="submit" class="auth-submit">Actualizar Contraseña</button>
-            </form>
-            <p id="password-error" class="auth-error"></p>
         </div>
     </div>
 

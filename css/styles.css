@@ -126,6 +126,14 @@ body {
   min-height: 20px;
 }
 
+.auth-notice {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .discord-signin-btn {
   width: 100%;
   padding: 12px;
