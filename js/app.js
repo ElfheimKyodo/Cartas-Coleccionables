@@ -100,6 +100,47 @@ const CATEGORIA_NOMBRES = {
     localizacion: 'Localizacion',
     item: 'Item'
 };
+const RAREZA_ICONS = {
+    comun: 'fa-gem',
+    rara: 'fa-circle',
+    epica: 'fa-sparkles',
+    legendaria: 'fa-star'
+};
+const REGION_ICONS = {
+    umbraeth: 'fa-moon',
+    skjoldheim: 'fa-shield-halved',
+    astra: 'fa-star',
+    solareth: 'fa-sun',
+    elarion: 'fa-tree',
+    generic: 'fa-layer-group'
+};
+const CATEGORIA_ICONS = {
+    personaje: 'fa-user',
+    enemigo: 'fa-skull',
+    boss: 'fa-crown',
+    localizacion: 'fa-map-marker-alt',
+    item: 'fa-box'
+};
+const RAZA_ICONS = {
+    // Se pueden agregar iconos específicos por raza
+};
+const MINERAL_REGIONES = {
+    hierro: ['umbraeth', 'skjoldheim', 'astra', 'solareth', 'elarion'],
+    carbon: ['umbraeth', 'astra', 'solareth', 'elarion'],
+    cobre: ['astra', 'solareth', 'elarion'],
+    plata: ['skjoldheim', 'solareth', 'elarion'],
+    oro: ['solareth', 'astra', 'elarion'],
+    plomo: ['umbraeth', 'astra', 'solareth'],
+    hierronegro: ['umbraeth', 'astra'],
+    hieloeterno: ['skjoldheim'],
+    piedralunar: ['skjoldheim'],
+    bronce: ['astra', 'solareth', 'elarion'],
+    obsidiana: ['astra'],
+    cuarzo: ['astra', 'solareth', 'elarion'],
+    oroblanco: ['solareth'],
+    ambar: ['elarion'],
+    raizdehierro: ['elarion']
+};
 
 function obtenerClaveUltimoReclamo(userId = usuarioActual?.id || 'local') {
     return `${LAST_CLAIM_STORAGE_KEY}_${String(userId || 'local')}`;
@@ -662,7 +703,8 @@ function toggleInformacionGacha() {
     titulo.textContent = sobre.nombre;
 
     const probRarezas = sobre.probabilidades;
-    const regionesInfo = sobre.regiones.map(r => `<li>${REGION_NOMBRES[r] || r}</li>`).join('');
+    const regionIcons = { umbraeth: 'fa-moon', skjoldheim: 'fa-shield-halved', astra: 'fa-star', solareth: 'fa-sun', elarion: 'fa-tree', generic: 'fa-layer-group' };
+    const regionesInfo = sobre.regiones.map(r => `<li><i class="fa-solid ${regionIcons[r] || 'fa-question'}" style="margin-right:6px;color:var(--gold);"></i>${REGION_NOMBRES[r] || r}</li>`).join('');
     const rarezaInfo = Object.entries(probRarezas).map(([r, w]) => 
         `<li>${RAREZA_NOMBRES[r] || r}: ${calcularPorcentaje(probRarezas, r)}%</li>`
     ).join('');
@@ -674,8 +716,19 @@ function toggleInformacionGacha() {
         cartasPosibles = cartasData.filter(c => sobre.cartas.includes(c.id));
     } else {
         const regionesPermitidas = sobre.regiones || [sobreSeleccionado];
+        const esSobreGenerico = sobre.tipo === 'generic';
         cartasPosibles = cartasData.filter(c => {
-            return regionesPermitidas.includes(c.region) || c.region === 'generic';
+            if (regionesPermitidas.includes(c.region)) return true;
+            if (c.region === 'generic') {
+                // En el sobre genérico, incluir todos los minerales
+                if (esSobreGenerico) return true;
+                const mineralKey = c.id.split('/')[1];
+                if (MINERAL_REGIONES[mineralKey]) {
+                    return MINERAL_REGIONES[mineralKey].includes(sobreSeleccionado);
+                }
+                return true;
+            }
+            return false;
         });
     }
 
@@ -790,8 +843,20 @@ function generarCartasRegion(region) {
         cartasPermitidas = cartasData.filter(c => sobre.cartas.includes(c.id));
     } else {
         const regionesPermitidas = sobre.regiones || [region];
+        const esSobreGenerico = sobre.tipo === 'generic';
         cartasPermitidas = cartasData.filter(c => {
-            return regionesPermitidas.includes(c.region) || c.region === 'generic';
+            if (regionesPermitidas.includes(c.region)) return true;
+            if (c.region === 'generic') {
+                // En el sobre genérico, incluir todos los minerales
+                if (esSobreGenerico) return true;
+                const mineralRegiones = MINERAL_REGIONES;
+                const mineralKey = c.id.split('/')[1];
+                if (mineralRegiones[mineralKey]) {
+                    return mineralRegiones[mineralKey].includes(region);
+                }
+                return true;
+            }
+            return false;
         });
     }
     if (cartasPermitidas.length === 0) return cartasData.length > 0 ? [cartasData[0]] : [];
@@ -1163,7 +1228,7 @@ const RAREZA_ORDEN = {
     comun: 3
 };
 
-function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }, orden = { tipo: 'defecto', direccion: 'asc' }) {
+function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }, orden = { tipo: 'rareza', direccion: 'asc' }) {
     const grid = document.getElementById('coleccion-grid');
     if (!grid) {
         console.warn('[RENDER] coleccion-grid no encontrado');
@@ -1298,15 +1363,35 @@ function mostrarDetalle(cartaId) {
     const valorEl = document.getElementById('carta-detalle-valor');
     const descripcionEl = document.getElementById('carta-detalle-descripcion');
     const interpreteEl = document.getElementById('carta-detalle-interprete');
-    if (regionEl) regionEl.textContent = REGION_NOMBRES[carta.region] || carta.region;
-    if (categoriaEl) categoriaEl.textContent = CATEGORIA_NOMBRES[carta.categoria] || carta.categoria || '—';
-    if (razaEl) razaEl.textContent = carta.raza || '—';
+    if (regionEl) {
+        const regionIcon = REGION_ICONS[carta.region] || 'fa-question';
+        const regionNombre = REGION_NOMBRES[carta.region] || carta.region;
+        regionEl.innerHTML = `<i class="fa-solid ${regionIcon}" style="margin-right:4px; color:var(--gold);"></i>${regionNombre}`;
+    }
+    if (categoriaEl) {
+        const categoriaIcon = CATEGORIA_ICONS[carta.categoria] || 'fa-question';
+        const categoriaNombre = CATEGORIA_NOMBRES[carta.categoria] || carta.categoria || '—';
+        categoriaEl.innerHTML = `<i class="fa-solid ${categoriaIcon}" style="margin-right:4px; color:var(--gold);"></i>${categoriaNombre}`;
+    }
+    if (razaEl) {
+        const razaRow = razaEl.closest('.detalle-item');
+        if (carta.raza === '__null__') {
+            if (razaRow) razaRow.style.display = 'none';
+        } else {
+            if (razaRow) razaRow.style.display = '';
+            const razaIcon = RAZA_ICONS[carta.raza] || 'fa-dragon';
+            const razaNombre = carta.raza || '—';
+            razaEl.innerHTML = `<i class="fa-solid ${razaIcon}" style="margin-right:4px; color:var(--gold);"></i>${razaNombre}`;
+        }
+    }
     if (rarezaEl) {
         const key = carta.rareza || 'comun';
         const label = RAREZA_NOMBRES[key] || key;
         const bg = RAREZA_COLORS[key] || '#6b7280';
+        const iconKey = key;
+        const iconClass = RAREZA_ICONS[iconKey] || 'fa-gem';
         const style = bg.includes('gradient') ? `background:${bg}; color:#1a1200; font-weight:900;` : `background:${bg}; color:#fff;`;
-        rarezaEl.innerHTML = `<span class="rareza-pill ${'rareza-pill-' + key}" style="${style}">${label}</span>`;
+        rarezaEl.innerHTML = `<span class="rareza-pill ${'rareza-pill-' + key}" style="${style}"><i class="fa-solid ${iconClass}" style="margin-right:4px;"></i>${label}</span>`;
     }
     if (valorEl) valorEl.textContent = carta.valor != null ? `${carta.valor} monedas` : '—';
     if (descripcionEl) descripcionEl.textContent = carta.descripcion || '—';
@@ -1687,8 +1772,8 @@ if (btnBuscarFiltro && inputFiltroValor && selectFiltroTipo) {
              const valor = inputFiltroValor.value.trim();
              const selectOrdenTipo = document.getElementById('orden-tipo');
              const selectOrdenDireccion = document.getElementById('orden-direccion');
-             const ordenTipo = selectOrdenTipo ? selectOrdenTipo.value : 'defecto';
-             const ordenDireccion = selectOrdenDireccion ? selectOrdenDireccion.value : 'asc';
+const ordenTipo = selectOrdenTipo ? selectOrdenTipo.value : 'rareza';
+const ordenDireccion = selectOrdenDireccion ? selectOrdenDireccion.value : 'asc';
              renderizarColeccion(filtroRegion, { campo, valor }, { tipo: ordenTipo, direccion: ordenDireccion });
          });
      }

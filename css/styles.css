@@ -27,6 +27,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  overflow-x: hidden;
 }
 
 /* Auth overlay */
@@ -39,6 +40,7 @@ body {
   justify-content: center;
   z-index: 2000;
   animation: fadeIn 0.3s;
+  overflow-x: hidden;
 }
 
 .auth-box {
@@ -48,6 +50,8 @@ body {
   box-shadow: var(--shadow);
   max-width: 420px;
   width: 90%;
+  max-height: 95vh;
+  overflow-y: auto;
 }
 
 .auth-box h2 {
@@ -432,6 +436,7 @@ nav {
 /* Sobres */
 .sobres-container {
   margin-bottom: 30px;
+  overflow-x: hidden;
 }
 
 .sobres-container h2 {
@@ -451,6 +456,7 @@ nav {
   border: 1px solid rgba(255, 193, 7, 0.25);
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45);
   position: relative;
+  overflow: hidden;
 }
 
 .gacha-stage::before {
@@ -1432,12 +1438,14 @@ nav {
   background: rgba(0,0,0,0.85);
   z-index: 1000;
   animation: fadeIn 0.3s;
+  overflow-x: hidden;
 }
 
 .modal.active {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
 }
 
 .modal-contenido h2 {
@@ -1452,7 +1460,9 @@ nav {
   border-radius: 15px;
   max-width: 95vw;
   width: 1200px;
+  min-width: 0;
   max-height: 95vh;
+  overflow-x: hidden;
   overflow-y: auto;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   position: relative;
@@ -1521,6 +1531,8 @@ nav {
 
 .gacha-info-tab-content {
   display: none;
+  min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   flex: 1 1 auto;
   min-height: 0;
@@ -2098,24 +2110,25 @@ nav {
 
 /* Rareza badges grilla */
 .rareza-badge {
-  position: relative;
-  top: auto;
-  left: auto;
-  transform: none;
-  width: 100%;
-  display: block;
-  text-align: center;
-  margin-top: 4px;
-  padding: 3px 6px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: #fff;
-  z-index: 2;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+   position: relative;
+   top: auto;
+   left: auto;
+   transform: none;
+   width: 100%;
+   display: block;
+   text-align: center;
+   margin-top: 4px;
+   padding: 3px 6px;
+   border-radius: 999px;
+   font-size: 10px;
+   font-weight: 900;
+   letter-spacing: 0.6px;
+   text-transform: uppercase;
+   color: #fff;
+   z-index: 2;
+   box-shadow: 0 2px 8px rgba(0,0,0,0.45);
 }
+
 .rareza-legendaria { background: var(--legendaria); }
 .rareza-epica { background: var(--epica); }
 .rareza-rara { background: var(--rara); }
@@ -2255,6 +2268,23 @@ nav {
 
 /* Modal responsive para detalles */
 @media (max-width: 760px) {
+  .auth-overlay {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .auth-box {
+    width: 100%;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 24px 16px;
+    border-radius: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
   .modal.active {
     align-items: flex-start !important;
     justify-content: flex-start !important;
@@ -2272,7 +2302,25 @@ nav {
   }
 
   #modal-carta .modal-contenido {
+    max-width: 500px;
     padding-top: 22px;
+  }
+
+  .user-menu-modal,
+  .gacha-info-modal,
+  #modal-sobre .modal-contenido,
+  #modal-profile .modal-contenido,
+  #modal-password .modal-contenido {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 24px 16px;
+    border-radius: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .cerrar {
@@ -2336,6 +2384,35 @@ nav {
   .btn-vender,
   .vender-label {
     font-size: 13px;
+  }
+
+  .gacha-stage {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .cartas-revelar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 16px 0 12px;
+  }
+
+  .carta-sobre,
+  .carta-sobre.revelada {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .btn-coleccionar {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  #modal-sobre h2 {
+    font-size: 22px;
   }
 }
 
