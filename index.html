@@ -69,6 +69,7 @@
                 <button id="btn-edit-profile" class="user-menu-btn"><i class="fa-solid fa-pen-to-square"></i> Editar Perfil</button>
                 <button id="profile-sync" class="user-menu-btn"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
                 <button id="profile-reset" class="user-menu-btn danger"><i class="fa-solid fa-trash-can"></i> Resetear Cartas</button>
+                <button id="profile-change-password" class="user-menu-btn"><i class="fa-solid fa-key"></i> Cambiar Contraseña</button>
             </div>
             <div class="user-menu-divider"></div>
             <button id="profile-logout" class="user-menu-btn logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
@@ -247,6 +248,19 @@
                 <button type="submit" class="auth-submit">Guardar Cambios</button>
             </form>
             <p id="edit-profile-error" class="auth-error"></p>
+        </div>
+    </div>
+
+    <div id="modal-change-password" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2>Cambiar Contraseña</h2>
+            <form id="form-change-password" class="auth-form">
+                <input type="password" id="new-password" placeholder="Nueva contraseña" required minlength="6">
+                <input type="password" id="confirm-password" placeholder="Confirmar contraseña" required minlength="6">
+                <button type="submit" class="auth-submit">Actualizar Contraseña</button>
+            </form>
+            <p id="change-password-error" class="auth-error"></p>
         </div>
     </div>
 

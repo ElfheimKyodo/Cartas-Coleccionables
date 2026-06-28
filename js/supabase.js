@@ -95,21 +95,31 @@ const db = {
     async getProfile(client, userId) {
         const { data, error } = await client
             .from('profiles')
-            .select('monedas, updated_at, pity_contador, username')
+            .select('monedas, updated_at, pity_contador, username, must_change_password')
             .eq('id', userId)
-            .single();
-        if (error) throw error;
-        return data;
+            .maybeSingle();
+        if (error) {
+            if (error.code === 'PGRST116' || error.code === 406 || error.code === 400 || error.status === 406 || error.status === 400) {
+                return null;
+            }
+            throw error;
+        }
+        return data || null;
     },
 
     async getProfileByUsername(client, username) {
         const { data, error } = await client
             .from('profiles')
-            .select('id, monedas, updated_at, pity_contador, username')
+            .select('id, monedas, updated_at, pity_contador, username, must_change_password')
             .eq('username', username)
-            .single();
-        if (error) return null;
-        return data;
+            .maybeSingle();
+        if (error) {
+            if (error.code === 'PGRST116' || error.code === 406 || error.code === 400 || error.status === 406 || error.status === 400) {
+                return null;
+            }
+            throw error;
+        }
+        return data || null;
     },
 
     async getInventory(client, userId) {
@@ -397,6 +407,18 @@ const auth = {
             throw error;
         }
         console.log('[AUTH] signUp success:', data);
+        if (data.user) {
+            const { error: profileError } = await client
+                .from('profiles')
+                .upsert({
+                    id: data.user.id,
+                    username: username || email.split('@')[0],
+                    must_change_password: true
+                }, { onConflict: 'id' });
+            if (profileError) {
+                console.error('[AUTH] profile upsert error after signup:', profileError);
+            }
+        }
         return { user: data.user ?? null, session: data.session ?? null };
     },
 

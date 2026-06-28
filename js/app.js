@@ -169,7 +169,7 @@ async function precargarAssets() {
     const statusEl = document.getElementById('loading-status');
     const barEl = document.getElementById('loading-bar');
 
-    const sounds = ['open', 'flip', 'claim', 'epica', 'legendaria', 'rara', 'comun'];
+    const sounds = ['open', 'flip', 'claim', 'epica', 'legendaria', 'rara'];
 
     const manifestResp = await fetch('cartas/manifest.json').catch(() => null);
     let images = [];
@@ -300,7 +300,7 @@ async function cargarDatos() {
     try {
         const profile = await db.getProfile(supabaseClient, usuarioActual.id);
         console.log('[COOLDOWN] profile:', profile);
-        monedas = profile?.monedas ?? 50;
+        monedas = profile?.monedas ?? 500;
 
         if (profile?.updated_at) {
             const parsed = Date.parse(profile.updated_at);
@@ -328,10 +328,13 @@ async function cargarDatos() {
     } catch (e) {
         const status = e?.status || e?.code;
         const msg = String(e?.message || e);
-        const esErrorSupabase = status === 406 || status === 'PGRST106' || status === 403 || /PGRST/.test(msg) || /row-level security/.test(msg) || /Forbidden/.test(msg);
+        const esFilaNoEncontrada = status === 406 || status === 'PGRST116' || /PGRST116/.test(msg) || /no rows were returned|not found/.test(msg);
+        const esErrorSupabase = status === 'PGRST106' || status === 403 || /PGRST/.test(msg) || /row-level security/.test(msg) || /Forbidden/.test(msg);
         if (esErrorSupabase) {
             console.warn('[AUTH] Supabase no accesible por errores de backend; usando localStorage.');
             supabaseEnabled = false;
+        } else if (esFilaNoEncontrada) {
+            console.warn('[AUTH] Fila no encontrada en Supabase; se continuará sin desactivar Supabase.');
         } else {
             console.error('[AUTH] Error cargando datos desde Supabase:', e);
         }
@@ -358,12 +361,12 @@ function cargarLocalStorage() {
         const guardado = localStorage.getItem('elfheim_coleccion');
         if (guardado) coleccion = JSON.parse(guardado);
         const monedasGuardadas = localStorage.getItem('elfheim_monedas');
-        monedas = monedasGuardadas ? parseInt(monedasGuardadas) : 50;
+        monedas = monedasGuardadas ? parseInt(monedasGuardadas) : 500;
         lastClaimServerMs = leerUltimoReclamoLocal(usuarioActual?.id || 'local');
     } catch (e) {
         console.error('Error cargando localStorage:', e);
         coleccion = {};
-        monedas = 50;
+        monedas = 500;
     }
 }
 
@@ -1553,7 +1556,8 @@ function setUsuario(user) {
         actualizarUsernameDesdePerfil().catch(err => {
             console.error('[AUTH] Error al cargar username:', err);
         });
-    } else {
+    }
+    else {
         overlay.style.display = 'flex';
         if (authForm) authForm.style.display = 'flex';
         if (profileTrigger) profileTrigger.style.display = 'none';
@@ -1562,6 +1566,29 @@ function setUsuario(user) {
         monedas = 0;
         actualizarMonedas();
         actualizarEstadisticas();
+    }
+}
+
+async function crearPerfilSiNoExiste() {
+    if (!supabaseEnabled || !usuarioActual || !supabaseClient) return null;
+    try {
+        const perfil = await db.getProfile(supabaseClient, usuarioActual.id);
+        if (!perfil) {
+            await supabaseClient
+                .from('profiles')
+                .upsert({
+                    id: usuarioActual.id,
+                    username: usuarioActual.username || usuarioActual.email?.split('@')[0] || 'Usuario',
+                    monedas: 500,
+                    pity_contador: 0,
+                    must_change_password: true
+                }, { onConflict: 'id' });
+            return { must_change_password: true };
+        }
+        return perfil;
+    } catch (e) {
+        console.warn('[AUTH] No se pudo verificar/crear perfil inicial:', e);
+        return null;
     }
 }
 
@@ -1627,6 +1654,54 @@ async function editarPerfil(username) {
     const usernameEl = document.getElementById('user-menu-username');
     if (usernameEl) usernameEl.textContent = username;
     cerrarModalProfile();
+}
+
+function abrirModalCambioContrasena() {
+    const modal = document.getElementById('modal-change-password');
+    if (!modal) return;
+    modal.classList.add('active');
+    const errorEl = document.getElementById('change-password-error');
+    if (errorEl) errorEl.textContent = '';
+    document.getElementById('new-password').value = '';
+    document.getElementById('confirm-password').value = '';
+}
+
+function cerrarModalCambioContrasena() {
+    const modal = document.getElementById('modal-change-password');
+    if (modal) modal.classList.remove('active');
+}
+
+async function cambiarContrasena(e) {
+    e.preventDefault();
+    const errorEl = document.getElementById('change-password-error');
+    if (!errorEl) return;
+    const nueva = document.getElementById('new-password');
+    const confirmar = document.getElementById('confirm-password');
+    if (!usuarioActual || !supabaseClient) {
+        errorEl.textContent = 'No hay sesión activa';
+        return;
+    }
+    if (nueva.value !== confirmar.value) {
+        errorEl.textContent = 'Las contraseñas no coinciden';
+        return;
+    }
+    if (nueva.value.length < 6) {
+        errorEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
+        return;
+    }
+    try {
+        errorEl.textContent = 'Actualizando...';
+        await auth.updatePassword(supabaseClient, nueva.value);
+        await supabaseClient
+            .from('profiles')
+            .update({ must_change_password: false })
+            .eq('id', usuarioActual.id);
+        usuarioActual.must_change_password = false;
+        cerrarModalCambioContrasena();
+    } catch (err) {
+        console.error('[AUTH] Error cambiando contraseña:', err);
+        errorEl.textContent = err.message || 'Error al cambiar contraseña';
+    }
 }
 
 function mostrarErrorPerfil(msg) {
@@ -1953,6 +2028,14 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
         });
     }
 
+    const profileChangePassword = document.getElementById('profile-change-password');
+    if (profileChangePassword) {
+        profileChangePassword.addEventListener('click', () => {
+            closeProfileMenu();
+            abrirModalCambioContrasena();
+        });
+    }
+
     const profileLogout = document.getElementById('profile-logout');
     if (profileLogout) {
         profileLogout.addEventListener('click', async () => {
@@ -1981,6 +2064,11 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             }
             setUsuario(null);
         });
+    }
+
+    const formChangePassword = document.getElementById('form-change-password');
+    if (formChangePassword) {
+        formChangePassword.addEventListener('submit', cambiarContrasena);
     }
 
 function resetearColeccion() {
@@ -2075,6 +2163,16 @@ const profileSync = document.getElementById('profile-sync');
                 if (error) throw error;
                 data.user.username = username;
                 errorEl.textContent = '';
+                try {
+                    const { error: profileError } = await supabaseClient
+                        .from('profiles')
+                        .upsert({ id: data.user.id, username, must_change_password: true }, { onConflict: 'id' });
+                    if (profileError) {
+                        console.warn('[AUTH] profile upsert after login:', profileError);
+                    }
+                } catch (profileError) {
+                    console.warn('[AUTH] profile upsert after login:', profileError);
+                }
                 setUsuario(data.user);
             } catch (err) {
                 console.error('[AUTH] Login error:', err);
@@ -2182,16 +2280,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!usuarioActual) {
-            const session = await auth.getSession(supabaseClient);
-            usuarioActual = session?.user ?? null;
-            if (usuarioActual) {
-                const { username } = await db.getProfile(supabaseClient, usuarioActual.id);
-                if (username) {
+            try {
+                const session = await auth.getSession(supabaseClient);
+                usuarioActual = session?.user ?? null;
+                if (usuarioActual) {
+                    const perfil = await db.getProfile(supabaseClient, usuarioActual.id);
+                    const username = perfil?.username || usuarioActual.email?.split('@')[0] || 'Usuario';
                     usuarioActual.username = username;
-                } else {
-                    usuarioActual.username = usuarioActual.email?.split('@')[0] || 'Usuario';
+                    usuarioActual.must_change_password = perfil?.must_change_password || false;
                 }
+            } catch (err) {
+                console.error('[AUTH] Error recuperando sesión:', err);
+                usuarioActual = null;
             }
+        } else if (usuarioActual) {
+            const perfil = await db.getProfile(supabaseClient, usuarioActual.id);
+            usuarioActual.must_change_password = perfil?.must_change_password || false;
+        }
+
+        if (usuarioActual?.must_change_password) {
+            setTimeout(() => abrirModalCambioContrasena(), 800);
         }
     }
 
