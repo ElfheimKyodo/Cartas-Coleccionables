@@ -95,7 +95,7 @@ const db = {
     async getProfile(client, userId) {
         const { data, error } = await client
             .from('profiles')
-            .select('monedas, updated_at, pity_contador')
+            .select('monedas, updated_at, pity_contador, username')
             .eq('id', userId)
             .single();
         if (error) throw error;
@@ -103,7 +103,13 @@ const db = {
     },
 
     async getProfileByUsername(client, username) {
-        throw new Error('Búsqueda por username deshabilitada por política de seguridad');
+        const { data, error } = await client
+            .from('profiles')
+            .select('id, monedas, updated_at, pity_contador, username')
+            .eq('username', username)
+            .single();
+        if (error) return null;
+        return data;
     },
 
     async getInventory(client, userId) {
@@ -359,6 +365,24 @@ const db = {
             .single();
         if (profileError && profileError.code !== 'PGRST116') throw profileError;
         return { ok: true, nuevo_saldo: 0 };
+    },
+
+    async requestApproval(client, username, email) {
+        const { error } = await client
+            .from('pending_approvals')
+            .insert({ username, email, created_at: new Date().toISOString() });
+        if (error) throw error;
+        return { ok: true };
+    },
+
+    async isUserApproved(client, username) {
+        const { data, error } = await client
+            .from('profiles')
+            .select('approved')
+            .eq('username', username)
+            .single();
+        if (error) return false;
+        return data?.approved === true;
     }
 };
 
@@ -373,15 +397,6 @@ const auth = {
             throw error;
         }
         console.log('[AUTH] signUp success:', data);
-        if (data.user) {
-            const { data: profileData, error: profileError } = await client
-                .from('profiles')
-                .upsert({
-                    id: data.user.id,
-                    username: username || email.split('@')[0]
-                }, { onConflict: 'id' });
-            if (profileError) console.error('[AUTH] profile upsert error:', profileError);
-        }
         return { user: data.user ?? null, session: data.session ?? null };
     },
 

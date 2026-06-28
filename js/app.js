@@ -51,6 +51,12 @@ const RAREZA_COLORS = {
     epica: '#7c3aed',
     legendaria: 'linear-gradient(135deg, #f59e0b, #ffd700)'
 };
+const RAREZA_ORDEN = {
+    legendaria: 0,
+    epica: 1,
+    rara: 2,
+    comun: 3
+};
 const CATEGORIA_NOMBRES = {
     personaje: 'Personaje',
     enemigo: 'Enemigo',
@@ -790,6 +796,8 @@ function toggleInformacionGacha() {
         });
     }
 
+    cartasPosibles.sort((a, b) => (RAREZA_ORDEN[a.rareza] || 99) - (RAREZA_ORDEN[b.rareza] || 99));
+
     tabCartas.innerHTML = cartasPosibles.length > 0
         ? `<div class="gacha-info-cartas-grid">${cartasPosibles.map(carta => `
             <div class="gacha-info-carta-item">
@@ -897,7 +905,7 @@ function comprarSobre(region, precio) {
 
 function calcularPorcentaje(probRarezas, rareza) {
     const total = Object.values(probRarezas).reduce((sum, v) => sum + v, 0);
-    return ((probRarezas[rareza] || 0) / total * 100).toFixed(0);
+    return ((probRarezas[rareza] || 0) / total * 100).toFixed(2);
 }
 
 function generarCartasRegion(region) {
@@ -936,7 +944,8 @@ function generarCartasRegion(region) {
         ? probRarezasFiltradas
         : probRarezas;
 
-    const pityActivo = pityContador >= PITY_LIMITE;
+    const tieneLegendariaEnSobre = probRarezasFinal.hasOwnProperty('legendaria');
+    const pityActivo = pityContador >= PITY_LIMITE && tieneLegendariaEnSobre;
     let tieneLegendaria = false;
 
     for (let i = 0; i < 3; i++) {
@@ -1261,7 +1270,7 @@ function mostrarAnimacionSobre(cartas, region) {
                         tipo: 'success',
                         icono: 'fa-crown',
                         titulo: '¡Leyenda revelada!',
-                        mensaje: `**${carta.nombre}** ha aparecido en tu apertura.`
+                        mensaje: `<strong>${carta.nombre}</strong> ha aparecido en tu apertura.`
                     });
                 }
                 div.classList.remove('girando');
@@ -1294,13 +1303,6 @@ function cerrarModales() {
     const preview = document.getElementById('gacha-preview');
     if (preview) preview.classList.remove('animacion-activa');
 }
-
-const RAREZA_ORDEN = {
-    legendaria: 0,
-    epica: 1,
-    rara: 2,
-    comun: 3
-};
 
 function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre', valor: '' }, orden = { tipo: 'rareza', direccion: 'asc' }) {
     const grid = document.getElementById('coleccion-grid');
@@ -1409,16 +1411,7 @@ function renderizarColeccion(filtro = 'todas', filtroAvanzado = { campo: 'nombre
             const cartaElement = this;
             if (cartaElement.classList.contains('bloqueada')) return;
             if (rareza === 'legendaria') {
-                const cartaData = cartasData.find(c => c.id === cartaId);
-                const nombre = cartaData ? cartaData.nombre : cartaId;
                 reproducirSonido('legendaria');
-                crearNotificacionEvento({
-                    categoria: 'actualizaciones',
-                    tipo: 'success',
-                    icono: 'fa-crown',
-                    titulo: '¡Leyenda en tu colección!',
-                    mensaje: `**${nombre}** brilla con poder legendario.`
-                });
             }
             mostrarDetalle(cartaId);
         });
@@ -1542,47 +1535,39 @@ function setUsuario(user) {
     const overlay = document.getElementById('auth-overlay');
     const authForm = document.getElementById('auth-form');
     const profileTrigger = document.getElementById('profile-trigger');
-    const profileMenu = document.getElementById('profile-menu');
-    const profileUsername = document.getElementById('profile-username');
+    const usernameEl = document.getElementById('user-menu-username');
 
     if (user) {
         overlay.style.display = 'none';
         if (authForm) authForm.style.display = 'none';
         actualizarEstadoPerfil();
         if (profileTrigger) profileTrigger.style.display = 'flex';
-        if (profileMenu && profileUsername) {
-            profileUsername.textContent = 'Cargando...';
-        }
- cargarDatos().then(() => {
-              actualizarMonedas();
-              actualizarEstadisticas();
-              renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
-          }).catch(err => {
-              console.error('[AUTH] Error al cargar datos:', err);
-          });
-          actualizarUsernameDesdePerfil().catch(err => {
-              console.error('[AUTH] Error al cargar username:', err);
-          });
-      } else {
-          overlay.style.display = 'flex';
-          if (authForm) authForm.style.display = 'flex';
-          if (profileTrigger) profileTrigger.style.display = 'none';
-          if (profileMenu) profileMenu.style.display = 'none';
-          closeProfileMenu();
-          cerrarModalProfile();
-          coleccion = {};
-          monedas = 0;
-          actualizarMonedas();
-          actualizarEstadisticas();
-          renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
-      }
+        if (usernameEl) usernameEl.textContent = user.username || 'Usuario';
+        cargarDatos().then(() => {
+            actualizarMonedas();
+            actualizarEstadisticas();
+            renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+        }).catch(err => {
+            console.error('[AUTH] Error al cargar datos:', err);
+        });
+        actualizarUsernameDesdePerfil().catch(err => {
+            console.error('[AUTH] Error al cargar username:', err);
+        });
+    } else {
+        overlay.style.display = 'flex';
+        if (authForm) authForm.style.display = 'flex';
+        if (profileTrigger) profileTrigger.style.display = 'none';
+        document.getElementById('modal-user')?.classList.remove('active');
+        coleccion = {};
+        monedas = 0;
+        actualizarMonedas();
+        actualizarEstadisticas();
+    }
 }
 
 function actualizarEstadoPerfil() {
     const usernameEl = document.getElementById('user-menu-username');
-    const emailEl = document.getElementById('user-menu-email');
     if (usernameEl) usernameEl.textContent = usuarioActual?.username || 'Usuario';
-    if (emailEl) emailEl.textContent = usuarioActual?.email || '';
 }
 
 async function cargarUsernamePerfil() {
@@ -1617,7 +1602,6 @@ function openModalProfile() {
     const modal = document.getElementById('modal-profile');
     if (!modal) return;
     modal.classList.add('active');
-    document.getElementById('edit-email') && (document.getElementById('edit-email').value = usuarioActual?.email || '');
     cargarUsernamePerfil().then(name => {
         const input = document.getElementById('edit-username');
         if (input) input.value = name || '';
@@ -1640,7 +1624,8 @@ async function editarPerfil(username) {
         return;
     }
     usuarioActual.username = username;
-    document.getElementById('profile-username').textContent = username;
+    const usernameEl = document.getElementById('user-menu-username');
+    if (usernameEl) usernameEl.textContent = username;
     cerrarModalProfile();
 }
 
@@ -2073,17 +2058,27 @@ const profileSync = document.getElementById('profile-sync');
         });
     }
 
-    const discordBtn = document.getElementById('discord-signin');
-    if (discordBtn) {
-        discordBtn.addEventListener('click', async () => {
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
             const errorEl = document.getElementById('auth-error');
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
             try {
-                errorEl.textContent = 'Conectando con Discord...';
+                errorEl.textContent = 'Iniciando sesión...';
                 if (!supabaseClient) throw new Error('Supabase no configurado');
-                await auth.signInWithGoogle(supabaseClient);
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: `${username}@elfheim.com`,
+                    password
+                });
+                if (error) throw error;
+                data.user.username = username;
+                errorEl.textContent = '';
+                setUsuario(data.user);
             } catch (err) {
-                console.error('[AUTH] Discord error:', err);
-                errorEl.textContent = err.message || 'Error con Discord';
+                console.error('[AUTH] Login error:', err);
+                errorEl.textContent = err.message || 'Error al iniciar sesión';
             }
         });
     }
@@ -2189,6 +2184,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!usuarioActual) {
             const session = await auth.getSession(supabaseClient);
             usuarioActual = session?.user ?? null;
+            if (usuarioActual) {
+                const { username } = await db.getProfile(supabaseClient, usuarioActual.id);
+                if (username) {
+                    usuarioActual.username = username;
+                } else {
+                    usuarioActual.username = usuarioActual.email?.split('@')[0] || 'Usuario';
+                }
+            }
         }
     }
 

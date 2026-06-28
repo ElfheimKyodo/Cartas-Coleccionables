@@ -26,16 +26,15 @@
         </div>
     </div>
 
-    <div id="auth-overlay" class="auth-overlay">
+<div id="auth-overlay" class="auth-overlay">
         <div class="auth-box">
-            <h2>Colección de Cartas</h2>
-            <div id="auth-form" class="auth-form">
-                <button type="button" id="discord-signin" class="discord-signin-btn">
-                    <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e3d80db9971f10a9757c99_Symbol.svg" alt="Discord" width="20" height="20">
-                    Discord
-                </button>
-            </div>
-            <p class="auth-notice">Iniciá sesión con Discord para ingresar de forma segura. Nunca compartas tu correo ni contraseña aquí: evitamos la filtración de datos y accesos fraudulentos.</p>
+            <h2>Inicia sesión</h2>
+            <form id="login-form" class="auth-form">
+                <input type="text" id="login-username" placeholder="Usuario" required minlength="3" maxlength="30">
+                <input type="password" id="login-password" placeholder="Contraseña" required minlength="6">
+                <button type="submit" class="auth-submit">Entrar</button>
+            </form>
+            <p class="auth-notice">Contacta al administrador para registrar tu usuario.</p>
             <p id="auth-error" class="auth-error"></p>
         </div>
     </div>
@@ -245,7 +244,6 @@
             <h2>Editar Perfil</h2>
             <form id="form-edit-profile" class="auth-form">
                 <input type="text" id="edit-username" placeholder="Nombre de usuario" required minlength="2" maxlength="30">
-                <input type="email" id="edit-email" placeholder="Email" disabled>
                 <button type="submit" class="auth-submit">Guardar Cambios</button>
             </form>
             <p id="edit-profile-error" class="auth-error"></p>

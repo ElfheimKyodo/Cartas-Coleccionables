@@ -599,6 +599,30 @@
       "valor": 15,
       "descripcion": "La raíz de hierro es un enigmático recurso procedente de la región de Elarion, conocido popularmente por ser una de las pocas cosas que logran que los herreros y los druidas discutan durante horas, ya que se parece a la madera, se trabaja casi como metal y nadie se pone de acuerdo sobre qué es realmente. Con un valor comercial establecido en 220 monedas por segmento tratado, este material híbrido es un componente ideal para la manufactura de arcos, bastones, armaduras ligeras y herramientas élficas. En el plano de los atributos y mecánicas de juego, otorga una excelente resistencia natural frente a la humedad, la putrefacción y el desgaste natural, presentando como única debilidad y contrapartida su vulnerabilidad ante el fuego intenso.",
       "interprete": "__null__"
+    },
+    {
+      "id": "skjoldheim/eirik",
+      "nombre": "Eirik",
+      "imagen": "cartas/skjoldheim/eirik.png",
+      "region": "skjoldheim",
+      "raza": "__null__",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 15,
+      "descripcion": "Eirik Frostmane, apodado \"El Unicornio del Norte\", es un imponente centauro de 24 años de Skjoldheim. Con un pelaje blanco invernal y un resistente cuerno de marfil, posee una fuerza colosal capaz de derribar murallas; sin embargo, rechaza el combate. Tras sufrir el rechazo en su infancia, un viejo granjero le enseñó que el cultivo salva más vidas que las armas. Con manos callosas y una mirada melancólica, dedica su vida y su fuerza bruta a labrar la tierra, trabajando días enteros sin descanso para garantizar alimento y combatir el hambre cuando los crudos inviernos destruyen las cosechas del reino.",
+      "interprete": "Binary star"
+    },
+    {
+      "id": "skjoldheim/muchen",
+      "nombre": "Mùchén",
+      "imagen": "cartas/skjoldheim/muchen.png",
+      "region": "skjoldheim",
+      "raza": "__null__",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 15,
+      "descripcion": "Astrid Frostmane, conocida como \"La Doncella de Hielo\", es una centaura de 22 años de Skjoldheim. Con un pelaje grisáceo y un cuerno de marfil, posee una fuerza formidable y habilidades mágicas que le permiten manipular el hielo. Tras la muerte de su familia en un ataque enemigo, juró proteger a su pueblo y se convirtió en una líder respetada. Su determinación y valentía la han llevado a enfrentarse a numerosos desafíos, siempre buscando la paz y la prosperidad para su gente.",
+      "interprete": "Luna"
     }
   ]
 }

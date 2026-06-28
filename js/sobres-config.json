@@ -8,7 +8,7 @@
       "iconoFa": "fa-solid fa-layer-group",
       "precio": 100,
       "regiones": ["umbraeth", "skjoldheim", "astra", "solareth", "elarion"],
-      "probabilidades": { "comun": 100, "rara": 50, "epica": 25, "legendaria": 1 },
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 20, "legendaria": 1 },
       "descripcion": "Un gacha equilibrado con cartas de todas las regiones.",
       "informacion": "<h4>Contiene 3 cartas aleatorias de todas las regiones</h4>"
     },
