@@ -127,11 +127,27 @@ body {
 }
 
 .auth-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   color: var(--text-secondary);
-  text-align: center;
-  margin-top: 14px;
+  text-align: left;
+  margin-top: 16px;
   font-size: 13px;
   line-height: 1.5;
+  background: var(--surface-light);
+  padding: 12px 14px;
+  border-radius: 10px;
+  border-left: 3px solid var(--gold);
+}
+.auth-notice i {
+  color: var(--gold);
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.auth-notice strong {
+  color: var(--text);
 }
 
 .h-captcha {
