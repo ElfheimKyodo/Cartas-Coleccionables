@@ -709,6 +709,47 @@ function iniciarRotacionLogoGenerico() {
     logoGachaTimer = null;
 }
 
+async function aplicarFondoStage(region) {
+    const stage = document.querySelector('.gacha-stage');
+    if (!stage) return;
+    const src = `cartas/${region}/fondo-stage.png`;
+    console.log('[FONDO STAGE] region=', region, 'src=', src);
+    const existe = await new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = src;
+    });
+    console.log('[FONDO STAGE] existe=', existe);
+    if (existe) {
+        stage.style.setProperty('--fondo-stage', `url(${src})`);
+        stage.classList.add('con-fondo-stage');
+    } else {
+        stage.style.removeProperty('--fondo-stage');
+        stage.classList.remove('con-fondo-stage');
+    }
+}
+
+async function aplicarFondoSobre(elemento, region) {
+    if (!elemento) return;
+    const src = `cartas/${region}/fondo-sobre.png`;
+    console.log('[FONDO SOBRE] region=', region, 'src=', src);
+    const existe = await new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = src;
+    });
+    console.log('[FONDO SOBRE] existe=', existe);
+    if (existe) {
+        elemento.style.backgroundImage = `url(${src})`;
+        elemento.classList.add('con-fondo');
+    } else {
+        elemento.style.backgroundImage = '';
+        elemento.classList.remove('con-fondo');
+    }
+}
+
 function actualizarPresentacionGacha() {
     const sobre = obtenerSobre(sobreSeleccionado);
     const preview = document.getElementById('gacha-preview');
@@ -725,7 +766,9 @@ function actualizarPresentacionGacha() {
 
     if (preview) {
         preview.className = `gacha-preview region-${sobre.tipo}`;
+        aplicarFondoSobre(preview, sobre.tipo);
     }
+    aplicarFondoStage(sobre.tipo);
     if (img) {
         actualizarSrcConTransicion(img, logoSrc, `${sobre.nombre} logo`);
         img.style.display = logoSrc ? 'block' : 'none';
@@ -799,7 +842,7 @@ function toggleInformacionGacha() {
         });
     }
 
-    cartasPosibles.sort((a, b) => (RAREZA_ORDEN[a.rareza] || 99) - (RAREZA_ORDEN[b.rareza] || 99));
+    cartasPosibles.sort((a, b) => (RAREZA_ORDEN[a.rareza] ?? 99) - (RAREZA_ORDEN[b.rareza] ?? 99));
 
     tabCartas.innerHTML = cartasPosibles.length > 0
         ? `<div class="gacha-info-cartas-grid">${cartasPosibles.map(carta => `
@@ -1585,6 +1628,12 @@ async function crearPerfilSiNoExiste() {
                 }, { onConflict: 'id' });
             return { must_change_password: true };
         }
+        if (!perfil.auth_email && usuarioActual.email) {
+            await supabaseClient
+                .from('profiles')
+                .update({ auth_email: usuarioActual.email })
+                .eq('id', usuarioActual.id);
+        }
         return perfil;
     } catch (e) {
         console.warn('[AUTH] No se pudo verificar/crear perfil inicial:', e);
@@ -2156,21 +2205,18 @@ const profileSync = document.getElementById('profile-sync');
             try {
                 errorEl.textContent = 'Iniciando sesión...';
                 if (!supabaseClient) throw new Error('Supabase no configurado');
+                const email = username.includes('@') ? username : `${username}@elfheim.com`;
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email: `${username}@elfheim.com`,
+                    email,
                     password
                 });
                 if (error) throw error;
                 data.user.username = username;
                 errorEl.textContent = '';
-                try {
-                    const { error: profileError } = await supabaseClient
-                        .from('profiles')
-                        .upsert({ id: data.user.id, username, must_change_password: true }, { onConflict: 'id' });
-                    if (profileError) {
-                        console.warn('[AUTH] profile upsert after login:', profileError);
-                    }
-                } catch (profileError) {
+                const { error: profileError } = await supabaseClient
+                    .from('profiles')
+                    .upsert({ id: data.user.id, username }, { onConflict: 'id' });
+                if (profileError) {
                     console.warn('[AUTH] profile upsert after login:', profileError);
                 }
                 setUsuario(data.user);
@@ -2183,7 +2229,26 @@ const profileSync = document.getElementById('profile-sync');
 
     document.querySelectorAll('.cerrar').forEach(boton => {
         boton.addEventListener('click', () => {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.modal').forEach(m => {
+                m.classList.remove('active');
+                if (m.id === 'modal-sobre') {
+                    const contenido = m.querySelector('.modal-contenido');
+                    if (contenido) {
+                        contenido.style.backgroundImage = '';
+                        contenido.classList.remove('con-fondo');
+                    }
+                    const stage = document.querySelector('.gacha-stage');
+                    if (stage) {
+                        stage.style.removeProperty('--fondo-stage');
+                        stage.classList.remove('con-fondo-stage');
+                    }
+                    const preview = document.getElementById('gacha-preview');
+                    if (preview) {
+                        preview.style.backgroundImage = '';
+                        preview.classList.remove('con-fondo');
+                    }
+                }
+            });
             closeProfileMenu();
         });
     });
@@ -2197,6 +2262,23 @@ const profileSync = document.getElementById('profile-sync');
         modal.addEventListener('click', event => {
             if (event.target === modal) {
                 modal.classList.remove('active');
+                if (modal.id === 'modal-sobre') {
+                    const contenido = modal.querySelector('.modal-contenido');
+                    if (contenido) {
+                        contenido.style.backgroundImage = '';
+                        contenido.classList.remove('con-fondo');
+                    }
+                    const stage = document.querySelector('.gacha-stage');
+                    if (stage) {
+                        stage.style.removeProperty('--fondo-stage');
+                        stage.classList.remove('con-fondo-stage');
+                    }
+                    const preview = document.getElementById('gacha-preview');
+                    if (preview) {
+                        preview.style.backgroundImage = '';
+                        preview.classList.remove('con-fondo');
+                    }
+                }
                 closeProfileMenu();
             }
         });
