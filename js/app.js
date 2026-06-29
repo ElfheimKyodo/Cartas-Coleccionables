@@ -1537,10 +1537,10 @@ function mostrarDetalle(cartaId) {
     const btnVender = document.getElementById('btn-vender');
     const inputVender = document.getElementById('vender-cantidad');
     if (btnVender && inputVender) {
-        const maxVenta = Math.max(1, data.cantidad - 1);
+        const maxVenta = data.cantidad;
         inputVender.value = 1;
         inputVender.max = maxVenta;
-        btnVender.disabled = data.cantidad <= 1;
+        btnVender.disabled = data.cantidad < 1;
     }
     const modalCarta = document.getElementById('modal-carta');
     modalCarta.dataset.cartaId = cartaId;
@@ -1587,6 +1587,7 @@ function setUsuario(user) {
         overlay.style.display = 'none';
         if (authForm) authForm.style.display = 'none';
         actualizarEstadoPerfil();
+        actualizarInfoUsuario();
         if (profileTrigger) profileTrigger.style.display = 'flex';
         if (usernameEl) usernameEl.textContent = user.username || 'Usuario';
         cargarDatos().then(() => {
@@ -1605,6 +1606,8 @@ function setUsuario(user) {
         if (authForm) authForm.style.display = 'flex';
         if (profileTrigger) profileTrigger.style.display = 'none';
         document.getElementById('modal-user')?.classList.remove('active');
+        const emailElLogout = document.getElementById('user-menu-email');
+        if (emailElLogout) emailElLogout.textContent = '';
         coleccion = {};
         monedas = 0;
         actualizarMonedas();
@@ -1644,6 +1647,24 @@ async function crearPerfilSiNoExiste() {
 function actualizarEstadoPerfil() {
     const usernameEl = document.getElementById('user-menu-username');
     if (usernameEl) usernameEl.textContent = usuarioActual?.username || 'Usuario';
+    actualizarInfoUsuario();
+}
+
+function actualizarInfoUsuario() {
+    const emailEl = document.getElementById('user-menu-email');
+    if (!emailEl) return;
+    if (!usuarioActual) {
+        emailEl.textContent = '';
+        return;
+    }
+    const usuario = usuarioActual;
+    const emailPart = usuario.email ? `<span>${escapeHtml(usuario.email)}</span>` : '';
+    const uuidPart = usuario.id ? `<br><span>${escapeHtml(usuario.id)}</span>` : '';
+    emailEl.innerHTML = emailPart + uuidPart;
+}
+
+function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 async function cargarUsernamePerfil() {
@@ -1978,6 +1999,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
 
     const btnVender = document.getElementById('btn-vender');
     const panelVenta = document.getElementById('vender-panel');
+    panelVentaGlobal = panelVenta;
     if (btnVender && panelVenta) {
         btnVender.addEventListener('click', () => {
             panelVenta.classList.toggle('open');
@@ -1987,12 +2009,16 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
     const btnConfirmarVenta = document.getElementById('btn-confirmar-venta');
     if (btnConfirmarVenta) {
         btnConfirmarVenta.addEventListener('click', async () => {
+            console.log('[VENTA] Click confirmar venta');
             const modal = document.getElementById('modal-carta');
             const cartaId = modal?.dataset?.cartaId;
             const valor = parseInt(modal?.dataset?.valor || '0', 10);
             const input = document.getElementById('vender-cantidad');
             const cantidad = parseInt(input?.value || '1', 10);
-            if (!cartaId || !Number.isFinite(valor) || !Number.isFinite(cantidad) || cantidad <= 0) return;
+            if (!cartaId || !Number.isFinite(valor) || !Number.isFinite(cantidad) || cantidad <= 0) {
+                console.warn('[VENTA] Validación fallida', cartaId, valor, cantidad);
+                return;
+            }
             const item = coleccion[cartaId];
             if (!item || (!supabaseEnabled && item.cantidad <= cantidad)) return;
 
@@ -2023,13 +2049,13 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             actualizarEstadisticas();
             renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
             if (panelVenta) {
-                panelVenta.style.display = 'none';
+                panelVenta.classList.remove('open');
                 panelVenta.dataset.abierto = '0';
             }
             const itemActualizado = coleccion[cartaId];
             const cantidadTexto = document.getElementById('carta-detalle-cantidad');
             if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${itemActualizado?.cantidad ?? 0}`;
-            if (btnVender) btnVender.disabled = !itemActualizado || itemActualizado.cantidad <= 1;
+            if (btnVender) btnVender.disabled = !itemActualizado || itemActualizado.cantidad < 1;
         });
     }
 
@@ -2041,7 +2067,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             const modal = document.getElementById('modal-carta');
             const cartaId = modal?.dataset?.cartaId;
             const item = cartaId ? coleccion[cartaId] : null;
-            const max = item ? Math.max(1, item.cantidad - 1) : 1;
+            const max = item ? item.cantidad : 1;
             let valor = parseInt(inputVender.value || '1', 10);
             if (Number.isFinite(valor)) {
                 inputVender.value = Math.min(max, valor + 1);
@@ -2127,9 +2153,10 @@ function resetearColeccion() {
     localStorage.removeItem('elfheim_coleccion');
     localStorage.removeItem('elfheim_monedas');
     localStorage.removeItem(obtenerClaveUltimoReclamo(usuarioActual?.id));
-    actualizarMonedas();
-    actualizarEstadisticas();
-    renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+            actualizarMonedas();
+            actualizarEstadisticas();
+            renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+            console.log('[VENTA] Venta completada', cartaId, cantidad, valor);
     actualizarBotonMoneda();
     if (monedaTimer) {
         clearInterval(monedaTimer);

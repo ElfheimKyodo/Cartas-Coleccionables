@@ -8,7 +8,7 @@
       "raza": "Súcubo",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Súcubo del reino de Umbraeth, Lilith es una figura tan seductora como peligrosa. Tras una vida marcada por el abandono y la supervivencia en las sombras, convirtió su encanto en arma y su dolor en poder. Elegante, astuta y egocéntrica, se mueve entre la manipulación y la protección de los suyos como si ambas fueran la misma cosa. Detrás de su sonrisa provocadora se esconde una voluntad implacable: nunca vuelve a ser la débil que un día fue.",
       "interprete": "Fadia"
     },
@@ -20,7 +20,7 @@
       "raza": "Elfo Solar",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Vaelisse Meneldor es una elfa solar del reino de Astra que, aunque oculta su edad real afirmando ser muy joven, destaca por su larga cabellera rubio cenizo, ojos verde olivo y una sonrisa pícara. Es una herrera incansable cuyo taller nunca se apaga; debido a esto, suele vestir ropa práctica manchada de hollín y carbón, aunque se arregla siempre que la situación lo permite. Además de forjar, dedica su tiempo a redactar un bestiario sobre las debilidades de los monstruos y guarda el misterio de una espada que jamás terminó para un viejo amigo llamado Rayne.",
       "interprete": "Vaelisse"
     },
@@ -32,7 +32,7 @@
       "raza": "Nereida",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Irukka es una druida y emisaria del agua de belleza etérea, caracterizada por su piel clara, ojos verdes y una larga cabellera lila adornada con conchas y perlas. Es una persona amable, paciente y curiosa que viaja por los reinos registrando el estado de los ríos en su diario y hablando con los peces. Prefiere resolver los conflictos mediante el diálogo, le encantan los lagos tranquilos y la lluvia suave, y detesta profundamente la contaminación, las sequías y la crueldad innecesaria.",
       "interprete": "Monique"
     },
@@ -44,7 +44,7 @@
       "raza": "Humano",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Cassius Ferrant, apodado \"El vacío\", es un robusto joven de Skjoldheim con cabello oscuro, mechones plateados y una cálida sonrisa. A diferencia de sus tres prodigiosos hermanos, nació completamente desprovisto de magia, ganándose el desprecio de su padre, quien lo nombró así por considerarlo un \"hueco\" y anunció falsamente su muerte ante la sociedad. Pese a ser ocultado y repudiado, Cassius irradia una energía alegre, y se niega firmemente a matar al sostener que decidir sobre la vida de los demás no es algo que él deba controlar, diferenciándose por completo de la crueldad paterna.",
       "interprete": "Anubis"
     },
@@ -56,7 +56,7 @@
       "raza": "Humano",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Raven es un imponente guerrero de ojos ámbar y piel morena, marcado por cicatrices y un brazo izquierdo mecánico que reemplaza al que perdió combatiendo contra su hermana menor. Su cabeza tiene precio por haber eliminado a criminales y políticos corruptos, lo que provoca que su propia hermana lo persiga como cazarrecompensas. Marcado por una tragedia familiar en su infancia, es un experto en técnicas con la katana como el Iaidō. Actualmente recorre el mundo buscando aumentar su poder y encontrar la legendaria espada de su padre, la Yamato.",
       "interprete": "Son Of Sparda"
     },
@@ -68,7 +68,7 @@
       "raza": "Serafín",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Dio Brando es un apuesto serafín de cabello rubio, ojos rojos y tres puntos en la oreja izquierda que simbolizan la maldad. Tras una infancia miserable con un tutor abusivo, descubrió que no era humano y lo asesinó para liberarse. Con gran intelecto y elegancia, se convirtió en sacerdote para ganar poder sobre las masas con la meta de alcanzar el cielo por sus propias manos. Posee una misteriosa máscara, una cicatriz en el cuello, una marca de estrella en la nuca y unas alas que le frustran profundamente al no saber cómo usarlas.",
       "interprete": "Logic"
     },
@@ -80,7 +80,7 @@
       "raza": "Humano",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Henryk es un joven e idealista paladín que viste una armadura tan elegante como protectora, reflejo de sus nobles pensamientos. Su vocación nació del acto bondadoso de un viejo soldado que le salvó la vida cuando era un bebé y que hoy en día es su maestro. Aunque estuvo cerca de cumplir su sueño al unirse a un grupo de mercenarios, sus planes cambiaron radicalmente cuando un noble resentido lo incriminó en un crimen que no cometió. Ahora, despojado de esa oportunidad, se centra en nuevas metas: limpiar su nombre, enorgullecer a su maestro y hacer justicia contra aquel que lo deshonró.",
       "interprete": "Cuervo"
     },
@@ -92,7 +92,7 @@
       "raza": "Serafín",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Han, es una serafín de Solareth con una apariencia melancólica, caracterizada por su cabello castaño dorado, pequeñas alas en la cabeza y seis majestuosas alas blancas en la espalda. Viste ropajes de seda marfil adornados con abundantes joyas y cruces doradas. Aunque nació como una ciudadana común en el plano mortal, al descubrir su linaje místico abrazó la vocación de sus ancestros por el orden y la justicia. Tras años de preparación, se convirtió en Juez Inquisidor, dedicando su vida a mediar conflictos y aplicar una justicia implacable para erradicar la corrupción del mundo.",
       "interprete": "Hanabi"
     },
@@ -104,7 +104,7 @@
       "raza": "Híbrido",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Eriska, apodada \"Speedy Leaf\", es una pequeña híbrida humana-ratón de Skjoldheim que mide tan solo 50 cm. Nacida en una comunidad oculta de madrigueras, desde sus primeros meses de vida demostró ser una hábil ladrona que asaltaba a exploradores para conseguir recursos para su pueblo. Aunque respetaba la regla de jamás robar a su propia gente, fue acusada falsamente de traición y de robar un botín por otro ratón. Al no tener pruebas para defenderse, abandonó su aldea vistiendo una pequeña capa verde, símbolo de respeto que reciben los suyos al marcharse. Actualmente cuenta con un cartel de se busca por su cabeza.",
       "interprete": "Mai"
     },
@@ -116,7 +116,7 @@
       "raza": "Dragonfolk",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Aurel Kerosene, el \"Rey de las Cenizas\", es un imponente monarca de la raza Dragonfolk en Astra, distinguido por su cabello pelirrojo, ojos rojos de pupilas alargadas y escamas en su piel pálida. Viste túnicas ligeras con joyería de oro y suele caminar descalzo. Originalmente era un investigador ajeno a la política y obsesionado con la tecnología subterránea; sin embargo, se convirtió en héroe nacional al salvar al reino de una catástrofe volcánica estabilizando sus núcleos de energía con un proyecto experimental propio. Este logro le otorgó una inesperada popularidad y títulos que terminaron por llevarlo al trono, una coronación que todavía no logra comprender.",
       "interprete": "Kerosene"
     },
@@ -128,7 +128,7 @@
       "raza": "Humano",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Emil Norton es un joven de 20 años de Elarion, de cabello peinado hacia atrás, ojos verdes y ropa sencilla de cuero. De origen humilde, creció explorando pacíficamente los bosques de su reino debido a su fascinación por la naturaleza. Para poder defenderse en sus viajes, aprendió a usar la espada de forma autodidacta; aunque no es el más experto, posee la habilidad suficiente para protegerse y mantiene siempre el deseo de seguir aprendiendo.",
       "interprete": "ThaZeriod"
     },
@@ -140,7 +140,7 @@
       "raza": "Vampiro",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Grimoult, conocido como \"El Archiduque\", es un vampiro de 100 años (con apariencia de 60) proveniente del reino de Umbraeth. Es un hombre alto, fornido y de aura seria e intimidante, que viste prendas largas y elegantes, luce una gran barba y carece por completo de humanidad. En su juventud se obsesionó con la inmortalidad tras años de estudiar las artes mágicas prohibidas. Lejos de desanimarse al cruzarse con un vampiro que lo transformó, se emocionó por haber alcanzado su ansiado anhelo; desde entonces, financiado por sus riquezas como vendedor de vino, pasa los años encerrado en su castillo devorando libros de literatura y diversos tipos de magia.",
       "interprete": "Baldwim"
     },
@@ -152,7 +152,7 @@
       "raza": "Serafín",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Lune D. Brionac, apodada \"La hija más cercana a Dios\", es una joven de 19 años de la raza Santo proveniente del reino de Solareth. De figura delgada, piel blanca y cabello cano de largas hebras, destaca por vestir ropajes claros y livianos. Perdió la vista a muy temprana edad, pero su ceguera se convirtió en el origen de un don extraordinario: prodigiosas habilidades curativas y de apoyo nacidas de su deseo de proteger a los demás. Su compasión inquebrantable, pureza de corazón y bondad casi divina la han convertido en una figura venerada y en una luz de esperanza dedicada a aliviar el dolor ajeno.",
       "interprete": "Lune"
     },
@@ -164,7 +164,7 @@
       "raza": "Gólem",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "El Golem Guardián es una criatura ancestral y pacífica nacida de la tierra misma, cuyo propósito es proteger y nutrir el equilibrio del bosque en lugar de servir para la guerra. Este ser, que funciona como un ecosistema andante de roca antigua cubierto de musgo y líquenes, posee una paciencia geológica que le permite integrarse con el paisaje hasta que la naturaleza requiere su ayuda de forma totalmente protectora y no agresiva. Más allá de su rol físico, es venerado por los habitantes del bosque como un sabio maestro de superación personal, ya que su presencia guía a quienes buscan su ayuda a entrenar la resistencia del cuerpo, calmar la mente a través del enfoque presente y sintonizar el alma con los ciclos naturales para alcanzar la paz absoluta.",
       "interprete": "__null__"
     },
@@ -176,7 +176,7 @@
       "raza": "Ciervo Místico",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "El Hylodoron es un majestuoso espíritu elemental que se manifiesta en los bosques altos de Hyléia. Este ciervo sagrado posee un cuerpo de luz translúcida en cuyo interior crecen flores luminiscentes, coronado por una imponente cornamenta de pura energía radiante. Como ser pacífico y benevolente, aparece por las noches para guiar a los viajeros perdidos revelando senderos ocultos y creando puentes de luz, al tiempo que su brillo calma el entorno y sana la mente y el alma de quienes lo contemplan.",
       "interprete": "__null__"
     },
@@ -188,7 +188,7 @@
       "raza": "Conejo",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "El Lyren es un pacífico ser mítico de Elarion que fusiona de forma única características de conejo y ave. Destaca por sus grandes \"orejas-pluma\" de color verde esmeralda, las cuales utiliza para planear levemente y mantener el equilibrio al saltar por los árboles de Hyléia. Este tímido lagomorfo se caracteriza por su pelaje suave de lomo marrón, vientre blanco, una llamativa gorguera verde lima y una cola turquesa, habitando los claros del bosque donde se alimenta de bayas y hongos luminiscentes.",
       "interprete": "__null__"
     },
@@ -200,7 +200,7 @@
       "raza": "Felino",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "El Helechino, es un minúsculo y escurridizo felino místico nacido de la simbiosis entre la flora ancestral y un espíritu del bosque en Hyléia. Esta codiciada criatura destaca por su pelaje verde lima que imita al musgo, sus orejas de hoja, ojos ambarinos y una imponente cola de helecho arqueada ideal para comunicarse y camuflarse. Conseguir su compañía exige un titánico rito de paciencia y confianza en libertad —que incluye meditación espiritual profunda y la recolección de esporas peligrosas—, por lo que llevar a este adorable compañero en el hombro es considerado un símbolo de estatus supremo y fuerza espiritual inquebrantable en Elarion.",
       "interprete": "__null__"
     },
@@ -212,7 +212,7 @@
       "raza": "Insecto",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "El Phyllolunaticus es un insecto nocturno que habita en los bosques de Umbraeth. Su cuerpo está cubierto de hojas fosforescentes que le permiten camuflarse entre la vegetación y atraer a sus presas con su luz hipnótica. Este insecto es conocido por su comportamiento curioso y su capacidad para iluminar el entorno, creando un espectáculo visual durante las noches oscuras.",
       "interprete": "__null__"
     },
@@ -224,7 +224,7 @@
       "raza": "Híbrido",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "El Lutris-Archeos es una pequeña y asustadiza criatura que habita entre las dos Pontéias, asemejando a una nutria estilizada con rasgos puramente marinos. Considerado uno de los \"ojos secretos\" de las profundidades, posee un cuerpo flexible de tonos celestes, cian y violeta profundo, enormes ojos oscuros adaptados a la penumbra y una vistosa cola bífida que le otorga un nado hidrodinámico ideal para escabullirse. Al ser un animal pacífico cuyo único mecanismo de defensa es la huida, ganarse su confianza para que revele los antiguos secretos del océano requiere una paciencia infinita: el jugador debe permanecer completamente inmóvil bajo el agua y ofrecerle pequeños regalos brillantes, como perlas o esporas luminosas, hasta lograr que emita un silbido agudo de aceptación.",
       "interprete": "__null__"
     },
@@ -236,7 +236,7 @@
       "raza": "Manta",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "La Manta-Anthos, es una dócil criatura marina apodada el «jardinero de coral», pieza clave para las granjas hidropónicas y la industria textil de Nueva Pontéia. Su asombrosa anatomía combina una base de color turquesa y cian brillante con vistosas ramificaciones de coral carmesí, naranja y oro, complementada por una hilera dorsal de conchas que almacenan nutrientes y grandes ojos amarillos que irradian mansedumbre. Al aletear por los campos guiada por los armónicos silbatos de los agricultores, esparce una brillante bruma dorada de bio-partículas y esporas que funciona como un fertilizante ultrapotente, duplicando la velocidad de crecimiento de los cultivos. Este servicial comportamiento no solo ayuda a limpiar sus corales de parásitos, sino que ofrece uno de los espectáculos visuales y turísticos más hermosos de la capital al trabajar al unísono durante el atardecer.",
       "interprete": "__null__"
     },
@@ -248,7 +248,7 @@
       "raza": "Ballena",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "La Cetoaurum, o Ballena de Filigrana, es una colosal y serena criatura de Nueva Pontéia que personifica el lujo, el brillo y la gracia de la ciudad. Físicamente destaca por su cuerpo de alabastro que simula mármol fino, un vientre con surcos geométricos que brillan con una intensa luz dorada y un constante séquito de pequeños peces resplandecientes. Debido a su nado extremadamente pausado, transita de forma segura sobre las altas cúpulas, actuando como un faro celestial que ilumina los mercados con un brillo cálido mientras emite cantos melódicos y profundos. Su majestuosidad la ha convertido en la musa suprema de la alta costura local, inspirando a los sastres a replicar sus hermosos patrones áureos con hilos de luz y nácar en las telas más exclusivas de Elarion.",
       "interprete": "__null__"
     },
@@ -260,7 +260,7 @@
       "raza": "Caballo acuático",
       "categoria": "NPC",
       "rareza": "rara",
-      "valor": 15,
+      "valor": 10,
       "descripcion": "El hippocampus es una majestuosa criatura marina de Pontéia que evolucionó de feroz corcel de guerra a símbolo supremo de lujo y distinción social. Físicamente, este imponente híbrido destaca por su fluida melena azul celeste, su coraza de escamas oscuras, ojos azul neón y una poderosa cola serpentina de gran velocidad. Tras un adiestramiento que limó su agresividad ancestral, hoy es el mayor indicador de estatus en la ciudad, siendo el medio de transporte predilecto de la nobleza y el protagonista indiscutible de los desfiles de alta costura submarina engalanado con nácar pulido.",
       "interprete": "__null__"
     },
@@ -272,7 +272,7 @@
       "raza": "Híbrido",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Rei Ling es una híbrida humana de 19 años de Skjoldheim, caracterizada por sus orejas felinas, cola moteada y cabello plateado de camuflaje. Criada en altas montañas bajo la ley de \"matar o morir\", fue entrenada desde niña para cazar grandes presas y soportar climas extremos. Su vida cambió al caer por un precipicio tras desviarse persiguiendo un aroma misterioso; tras quedar herida, hambrienta y sola a la intemperie, ahora lucha por sobrevivir en un mundo desconocido mientras intenta regresar a su hogar.",
       "interprete": "Unky"
     },
@@ -284,7 +284,7 @@
       "raza": "Emberfolk",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Korven Sootmark, conocido como \"El Escudo del Rey\" o \"Mano de Astra\", es un Emberfolk de 576 años originario de Astra, imponente por sus dos metros de altura, su cabello plateado hasta la cintura y una piel con vetas de carbón y placas metálicas integradas. Tras la caída en desgracia de su familia militar en Astra, fue desterrado siendo muy joven y enviado a Skjoldheim, donde entrenó durante décadas como escudero y espadachín buscando ganarse la vida de forma estable. Marcado por las cicatrices de su duro entrenamiento militar y su exilio, su destino da un vuelco total el día en que recibe una misteriosa carta con una sola línea escrita bajo el sello oficial de la familia Real de Astra.",
       "interprete": "Nicholas"
     },
@@ -296,7 +296,7 @@
       "raza": "Elfo Solar",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Apôllindor Saethryn K’aon Arxindas de Duinor Sorvael Tharindel (o solamente Apollo) es un Elfo Solar de Solareth con aproximadamente siete siglos de edad, de la cual no existe ningún registro documental. Es un elfo esbelto de rasgos afilados, ojos ámbar, orejas puntiagudas con pendientes y cabello castaño oscuro con mechones sueltos. Viste capas funcionales superpuestas con bordados mágicos de hojas y flores que acumulan siglos de desgaste, acompañadas por botas arrugadas, un bolso lleno de pergaminos y múltiples accesorios de caza y alquimia. Su principal distintivo es su bastón de raíz viviente de madera oscura y retorcida, brotado de hojas y flores de su época como aprendiz de druida, al cual llama afectuosamente \"el palo\".",
       "interprete": "Apollo"
     },
@@ -308,7 +308,7 @@
       "raza": "Elfo Oscuro",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Elphen Lillian Westen, conocida como la \"Necro Bruja\", es una Elfa Oscura nigromante de Umbraeth. Tiene la piel extremadamente pálida, ojos rojos con ojeras y cabello verde azulado, además de vestir un clásico traje negro de bruja. Es una maga muy culta y talentosa que habla con un vocabulario complejo; sin embargo, también es sumamente introvertida, estricta con las reglas y carece casi por completo de habilidades sociales o carisma.",
       "interprete": "Frill"
     },
@@ -320,7 +320,7 @@
       "raza": "Serafín",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Orion, también conocida como la \"Ruina de la Familia\", es una humana de 35 años de Solareth que destaca por su imponente estatura de 2.04 metros. Fue una espadachina prodigio célebre por su letal técnica de quemaduras \"Lævateinn\". Sin embargo, su arrogancia la llevó a rechazar una orden familiar de perder un duelo contra un noble, a quien terminó humillando en combate. En represalia por su insubordinación, la nobleza la incriminó en un asesinato y le impuso un sello permanente que drena sus fuerzas y debilita sus poderes, convirtiéndola en el objeto de burla de la sociedad.",
       "interprete": "BB's story maker"
     },
@@ -332,7 +332,7 @@
       "raza": "Valkiria",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Toph Beifong, llamada \"La bandida ciega\", es una valquiria de 21 años de Solareth, de baja estatura y físico robusto. Ciega de nacimiento, escapó de la jaula de oro de su familia noble para participar en combates clandestinos y buscar su libertad. Aprendió a percibir el entorno mediante vibraciones, perfeccionando un control de la tierra único; su \"visión\" depende de sus pies, siendo perfecta sobre roca o metal, borrosa en la arena, y obligándola a usar el oído en superficies de madera.",
       "interprete": "Ada Wong"
     },
@@ -344,7 +344,7 @@
       "raza": "Valkiria",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Elara, o simplemente \"Ela\", es una valquiria de 21 años de Solareth, de belleza clásica, ojos azules y cabello dorado recogido en un moño. Es una respetada historiadora y destacada caballero templario de la Orden del Sol, armada con una armadura de acero y una gran destreza estratégica con la espada. Aunque posee una limitada comprensión de la magia que la hace vulnerable a hechizos enemigos, compensa esta debilidad con un talento innato para canalizar la energía del sol; esto le permite usar magia de potenciación para imbuir fuerza sobrenatural, curar heridas y proteger a sus aliados en el campo de batalla.",
       "interprete": "Tain"
     },
@@ -356,7 +356,7 @@
       "raza": "Emberfolk",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Janemba, el \"Diablillo lujoso\", es un Emberfolk de 21 años de Astra. De aspecto humanoide rojizo surgido de un yacimiento de rubí y mármol, posee orejas puntiagudas, una larga cola, ojos amarillos y una armadura de mármol y topacio. Nació en una mina tras el sacrificio del líder herrero Fallen, quien destruyó con sus manos un peligroso artefacto de fuego morado para frenar una revuelta por codicia. Rescatado como un infante por una ayudante llamada Magnolia durante el posterior colapso de los túneles, Janemba creció bajo su cuidado, albergando en su interior el misterioso poder latente de aquel fuego.",
       "interprete": "Fogman"
     },
@@ -368,7 +368,7 @@
       "raza": "Humano",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Karin es una humana de 19 años originaria del gélido reino de Skjoldheim que actualmente desea un alias. Es una joven alta y atlética con un rostro pálido, ojos celestes brillantes y una larga cabellera rojiza desordenada. Suele vestir prendas oscuras de cuero reforzado con armadura ligera, una capa rojiza y un sombrero de ala ancha que priorizan la movilidad. En combate porta dos armas complementarias: \"Luz\", una espada ropera larga, estilizada y letal con una compleja guarda metálica, y \"Ceniza\", una daga de hoja ancha, robusta y enegrecida para el combate cercano. Es una persona sumamente reservada que solo comparte su pasado con personas de su genuina confianza o de manera accidental en conversaciones casuales.",
       "interprete": "Miss Astrea"
     },
@@ -380,7 +380,7 @@
       "raza": "Humano",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "La humana Bodil, de 26 años de Solareth y conocida bajo el alias de “Ella”, es una sirvienta y boticaria de aspecto demacrado con heterocromía, provocada por una brutal paliza en su niñez. Entregada por sus padres a los 7 años para saldar deudas de juego, creció bajo abusos aristocráticos mientras aprendía botánica en secreto con el médico de la casa, quien la recomendó antes de morir. Con las manos maltratadas y una mirada vacía, cura no por bondad, sino porque la medicina es el único legado que posee en una dolorosa realidad de la que sigue adelante solo por miedo a morir.",
       "interprete": "Bepo"
     },
@@ -392,7 +392,7 @@
       "raza": "Humano",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "La Dragonfolk Adeline Santorino, de 18 años de Astra, conocida bajo el alias de Adele, es una joven noble con cabello rosa melocotón y grandes ojos rojos. Hija única y mimada del adinerado Fabrizio Santorino, aprovechó sus privilegios para convertirse en Historiadora tras estudiar Arqueología y Antropología. Deseosa de demostrar que obtuvo su título por mérito propio y no por el dinero de su padre, fomenta la creación de equipamiento práctico para explorar lugares olvidados mientras rechaza por completo el matrimonio, segura del sustento económico que su progenitor le garantiza de por vida.",
       "interprete": "Lilia"
     },
@@ -404,7 +404,7 @@
       "raza": "Espíritu",
       "categoria": "personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Lirael Thalorien, conocida como Lira, es una Espíritu de 187 años originaria del reino de Elarion, con una figura esbelta, piel clara de brillo iridiscente, cabello rubio platino largo y ojos azul celeste luminosos. Nació en lo profundo de Hyléia como la manifestación de un espíritu puro elegida para ser sacerdotisa, destino que cumplió custodiando el manantial sagrado en absoluta soledad durante casi dos siglos. Sin embargo, una oscura corrupción comenzó a extenderse por sus aguas sagradas y a consumir su propia esencia vital. Al sentir cómo se debilitaba, Lirael tomó la determinación de abandonar su aislamiento para recorrer el mundo exterior en busca de una cura para salvar su hogar y descubrir su verdadero propósito en la tierra.",
       "interprete": "Kao"
     },
@@ -416,7 +416,7 @@
       "raza": "DIOS",
       "categoria": "NPC",
       "rareza": "legendaria",
-      "valor": 15,
+      "valor": 150,
       "descripcion": "Thalassa es la deidad creadora y patrona absoluta de Elarion, caracterizada por una imponente silueta de sirena con piel azul pálido, una corona de abismo, cabello blanco esponjoso y una cola con constelaciones brillantes. A pesar de su inmenso poder divino y de portar un gran tridente de piedra oscura con el que esculpió el mundo, posee el corazón de una niña eterna, inocente y caprichosa que aborrece la solemnidad, prefiere las risas o los dulces y busca siempre la felicidad de sus creaciones. Sin embargo, esta faceta alegre esconde un rechazo absoluto hacia la muerte y la decadencia, lo que la lleva a prohibir tajantemente cualquier viaje a las oscuras ruinas de la Vieja Pontéia y a desatar un llanto capaz de partir el océano si la sombra de la muerte acecha su ecosistema.",
       "interprete": "Fadia"
     },
@@ -428,7 +428,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El hierro, conocido popularmente como \"el viejo confiable\", es un mineral de rareza común que se extrae en las regiones de Umbraeth, Skjoldheim, Astra, Solareth y Elarion. Con un valor comercial de 20 monedas por lingote, este versátil material destaca por su capacidad para resistir golpes moderados y un uso constante, lo que lo vuelve indispensable en la forja de herramientas, espadas comunes, armaduras sencillas, clavos y herrajes; sin embargo, posee una clara debilidad ante la humedad prolongada, la cual provoca óxido.",
       "interprete": "__null__"
     },
@@ -440,7 +440,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El carbón es un mineral de rareza común procedente de las regiones de Umbraeth, Astra, Solareth y Elarion, considerado indispensable para el funcionamiento de las forjas y hornos. Con un valor comercial de 5 monedas por saco, este material se utiliza principalmente para alimentar hornos, procesar minerales, fabricar acero y realizar fundiciones. Entre sus propiedades destaca su gran resistencia a las temperaturas elevadas durante la combustión, teniendo como principal contraparte o debilidad el hecho de que se consume rápidamente.",
       "interprete": "__null__"
     },
@@ -452,7 +452,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El cobre es un mineral de rareza común procedente de las regiones de Astra, Solareth y Elarion, descrito como maleable y sorprendentemente útil. Con un precio de 15 monedas por lingote, se utiliza principalmente para la creación de conductores mágicos, monedas, utensilios domésticos y aleaciones como el bronce. Entre sus propiedades, destaca su resistencia a la corrosión moderada, aunque su principal debilidad radica en que es demasiado blando para el armamento serio.",
       "interprete": "__null__"
     },
@@ -464,7 +464,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "La plata es un metal de rareza común originario de Skjoldheim, Solareth y Elarion, valorado en 30 monedas por lingote y calificado como \"demasiado elegante\". Se emplea principalmente en la confección de reliquias religiosas, joyería, objetos ceremoniales y armas contra criaturas oscuras debido a su capacidad para resistir la corrupción menor y ciertas energías malignas. No obstante, comparte con el cobre la debilidad de ser un material blando que se deforma con facilidad.",
       "interprete": "__null__"
     },
@@ -476,7 +476,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El oro es un mineral de rareza común originario de Solareth, Astra y Elarion, es un mineral brillante, costoso y completamente inútil a nivel práctico. Valorado en 50 monedas por lingote, se destina a la creación de coronas, joyería, monedas de alto valor, decoración ceremonial y conductores mágicos refinados gracias a su excelente resistencia a la corrosión y al paso del tiempo. Sin embargo, su gran debilidad es que resulta extremadamente blando.",
       "interprete": "__null__"
     },
@@ -488,7 +488,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El plomo es un mineral que procede de Umbraeth, Astra y de algunas minas profundas de Solareth. Descrito como \"pesado, aburrido y extrañamente útil\", tiene un precio elevado de 120 monedas por lingote y se utiliza específicamente en la fabricación de escudos especializados, contenedores mágicos, sellos de protección y cámaras de almacenamiento gracias a su propiedad única de resistir maldiciones y radiación. Su principal debilidad radica en que es extremadamente pesado.",
       "interprete": "__null__"
     },
@@ -500,7 +500,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El hierro negro es un recurso mineral procedente de Umbraeth y de las regiones montañosas de Astra, descrito de forma humorística como un \"hierro que decidió volverse más terco\". Con un valor comercial de 180 monedas por lingote, se emplea de manera primordial para forjar armas pesadas, armaduras, puertas fortificadas y estructuras defensivas gracias a su excelente capacidad para resistir impactos fuertes y un desgaste prolongado. Por otro lado, su mayor debilidad radica en su poca flexibilidad.",
       "interprete": "__null__"
     },
@@ -512,7 +512,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El hielo eterno es un recurso único que procede exclusivamente de la región de Skjoldheim. Definido como \"un material curioso\" que destaca por el hecho de que \"nunca se derrite\", tiene un elevado valor comercial de 250 monedas por fragmento. Se utiliza principalmente en la manufactura de catalizadores mágicos, reliquias, armas imbuidas con frío y núcleos de artefactos gracias a su propiedad innata para resistir el calor y los cambios climáticos. No obstante, su principal debilidad frente a otros materiales radica en su vulnerabilidad ante los golpes contundentes.",
       "interprete": "__null__"
     },
@@ -524,7 +524,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "La piedra lunar es un objeto de artesanía procedente de la región de Skjoldheim con un coste de 220 monedas por pieza. Su trasfondo nos revela que es un material que resplandece bajo el influjo nocturno, ideal para la forja de bastones, reliquias, joyería y catalizadores. En términos de reglas y mecánicas de juego, otorga al portador una sólida resistencia contra magias mentales y alteraciones psíquicas, contrarrestada por una debilidad estructural si se expone de forma prolongada a una luz solar intensa.",
       "interprete": "__null__"
     },
@@ -536,7 +536,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El bronce es una aleación de cobre e hierro originaria de las regiones de Astra, Solareth y Elarion, descrita popularmente como la prueba definitiva de que mezclar cosas a veces sale bien. Con un valor de mercado establecido en 140 monedas por lingote, este metal se convierte en un recurso esencial e idóneo para la forja y manufactura de armas, escudos, herramientas de trabajo y armaduras ligeras. En el apartado técnico y de combate, destaca por su valiosa capacidad para resistir la humedad y la corrosión moderada, aunque presenta como principal contrapartida y debilidad una menor dureza si se le compara con el acero.",
       "interprete": "__null__" 
     },
@@ -548,7 +548,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "La obsidiana es un recurso de naturaleza hermosa, cortante y traicionera que procede exclusivamente de la región de Astra. Con un valor comercial fijado en 200 monedas por fragmento refinado, este material es un componente ideal para la elaboración de armas punzantes y utensilios sagrados como dagas, puntas de lanza, flechas y diversas herramientas rituales. En el ámbito de sus atributos y mecánicas de juego, destaca por su excelente capacidad para resistir el desgaste del filo, aunque presenta como gran contrapartida estructural la fragilidad de su propia composición.",
       "interprete": "__null__"
     },
@@ -560,7 +560,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El cuarzo es un mineral místico proveniente de Astra, Solareth y Elarion, descrito de manera simple como una piedra bonita, a pesar de que los magos insistan en complicar su explicación técnica. Con un valor de mercado de 150 monedas por cristal refinado, se convierte en un recurso indispensable para la manufactura de iluminadores mágicos, cristales de almacenamiento, catalizadores e instrumentos de precisión. En cuanto a sus propiedades mecánicas, posee una excelente resistencia natural ante la energía arcana constante, mostrando como principal debilidad la vulnerabilidad estructural ante impactos fuertes y caídas.",
       "interprete": "__null__"
     },
@@ -572,7 +572,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El oro blanco es un metal precioso procedente en exclusiva de Solareth, catalogado con la irónica advertencia de que \"si el oro normal ya atrae problemas, este atrae problemas más caros\". Con un elevado valor de mercado de 250 monedas por lingote, este suntuoso material es un componente idóneo para la elaboración de joyería fina, reliquias religiosas, adornos ceremoniales y conductores mágicos refinados. En el aspecto de sus cualidades místicas y mecánicas de juego, otorga una excelente resistencia natural frente a la corrupción y las alteraciones mágicas menores, mostrando como principal contrapartida y debilidad el ser sumamente costoso de reparar y difícil de reemplazar si sufre daños.",
       "interprete": "__null__"
     },
@@ -584,7 +584,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "El ámbar es un material orgánico procedente exclusivamente de la región de Elarion, cuya enigmática naturaleza se define popularmente bajo la premisa de que \"no es exactamente una piedra, no es exactamente madera, pero funciona\". Con un coste comercial de 180 monedas por pieza, es un componente idóneo para la confección de talismanes, joyería, reliquias naturales y para la conservación de esencias. En lo que respecta a sus propiedades y mecánicas de juego, destaca por su excelente capacidad para resistir el deterioro orgánico y el paso del tiempo, manifestando como contrapartida una marcada debilidad y vulnerabilidad ante entornos de calor extremo.",
       "interprete": "__null__"
     },
@@ -596,7 +596,7 @@
       "raza": "__null__",
       "categoria": "Material",
       "rareza": "comun",
-      "valor": 15,
+      "valor": 5,
       "descripcion": "La raíz de hierro es un enigmático recurso procedente de la región de Elarion, conocido popularmente por ser una de las pocas cosas que logran que los herreros y los druidas discutan durante horas, ya que se parece a la madera, se trabaja casi como metal y nadie se pone de acuerdo sobre qué es realmente. Con un valor comercial establecido en 220 monedas por segmento tratado, este material híbrido es un componente ideal para la manufactura de arcos, bastones, armaduras ligeras y herramientas élficas. En el plano de los atributos y mecánicas de juego, otorga una excelente resistencia natural frente a la humedad, la putrefacción y el desgaste natural, presentando como única debilidad y contrapartida su vulnerabilidad ante el fuego intenso.",
       "interprete": "__null__"
     },
@@ -608,7 +608,7 @@
       "raza": "__null__",
       "categoria": "Personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Eirik Frostmane, apodado \"El Unicornio del Norte\", es un imponente centauro de 24 años de Skjoldheim. Con un pelaje blanco invernal y un resistente cuerno de marfil, posee una fuerza colosal capaz de derribar murallas; sin embargo, rechaza el combate. Tras sufrir el rechazo en su infancia, un viejo granjero le enseñó que el cultivo salva más vidas que las armas. Con manos callosas y una mirada melancólica, dedica su vida y su fuerza bruta a labrar la tierra, trabajando días enteros sin descanso para garantizar alimento y combatir el hambre cuando los crudos inviernos destruyen las cosechas del reino.",
       "interprete": "Binary star"
     },
@@ -620,7 +620,7 @@
       "raza": "__null__",
       "categoria": "Personaje",
       "rareza": "epica",
-      "valor": 15,
+      "valor": 35,
       "descripcion": "Astrid Frostmane, conocida como \"La Doncella de Hielo\", es una centaura de 22 años de Skjoldheim. Con un pelaje grisáceo y un cuerno de marfil, posee una fuerza formidable y habilidades mágicas que le permiten manipular el hielo. Tras la muerte de su familia en un ataque enemigo, juró proteger a su pueblo y se convirtió en una líder respetada. Su determinación y valentía la han llevado a enfrentarse a numerosos desafíos, siempre buscando la paz y la prosperidad para su gente.",
       "interprete": "Luna"
     }
