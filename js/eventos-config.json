@@ -3,7 +3,7 @@
     {
       "id": "evento-salida",
       "titulo": "¡Evento de Salida!",
-      "texto": "¡Bienvenido al inicio del gacha, jugador! Disfruta de descuentos especiales por la salida del gacha y un regalo de bienvenida solo por iniciar sesión. ¡No te lo pierdas!",
+      "texto": "¡Bienvenido al inicio del gacha! Cuando inicies sesión, recibirás un regalo de bienvenida de 500 monedas para empezar a hacer tiradas. Para más tiradas, tendrás que entrar cada hora a reclamar 100 monedas.",
       "tipo": "",
       "etiqueta": "EVENTO",
       "visibilidad": {
@@ -33,7 +33,7 @@
       "tipo": "",
       "etiqueta": "EVENTO",
       "visibilidad": {
-        "mostrarBanner": true,
+        "mostrarBanner": false,
         "mostrarEtiqueta": true,
         "mostrarTexto": true,
         "mostrarIcono": true,
