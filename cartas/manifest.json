@@ -593,7 +593,7 @@
       "nombre": "Eirik",
       "imagen": "cartas/skjoldheim/eirik.png",
       "region": "skjoldheim",
-      "raza": "__null__",
+      "raza": "Híbrido",
       "categoria": "Personaje",
       "rareza": "epica",
       "valor": 35,
@@ -605,12 +605,36 @@
       "nombre": "Mùchén",
       "imagen": "cartas/skjoldheim/muchen.png",
       "region": "skjoldheim",
-      "raza": "__null__",
+      "raza": "Híbrido",
       "categoria": "Personaje",
       "rareza": "epica",
       "valor": 35,
       "descripcion": "Astrid Frostmane, conocida como \"La Doncella de Hielo\", es una centaura de 22 años de Skjoldheim. Con un pelaje grisáceo y un cuerno de marfil, posee una fuerza formidable y habilidades mágicas que le permiten manipular el hielo. Tras la muerte de su familia en un ataque enemigo, juró proteger a su pueblo y se convirtió en una líder respetada. Su determinación y valentía la han llevado a enfrentarse a numerosos desafíos, siempre buscando la paz y la prosperidad para su gente.",
       "interprete": "Luna"
+    },
+    {
+      "id": "umbraeth/jericho",
+      "nombre": "Jericho",
+      "imagen": "cartas/umbraeth/jericho.png",
+      "region": "umbraeth",
+      "raza": "Liche",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Jericho, la liche de edad desconocida originaria del reino de Umbraeth y conocida bajo el alias de Sleep, es una entidad de apariencia delgada, tez pálida, ojos violetas y cabellos grisáceos a violáceos que suele vestir ropajes ceremoniales y ocultar su rostro tras velos. Considerada un mito viviente en los valles montañosos, se manifiesta con un aura entrañable de muerte y misterio. Su principal peligro radica en su canto funesto: una melodía dulce, acogedora y a la vez desgarradora como la muerte misma. Aquellos necios que se ven cegados por la belleza de sus canciones e ignoran sus advertencias, terminan sumergidos en un falso éxtasis; aceptar su letal \"amor\" condena a cualquier mortal a una espiral interminable de sufrimiento hasta el fin de sus días, atrapados en el dulce abrazo de la muerte.",
+      "interprete": "Cherry"
+    },
+    {
+      "id": "skjoldheim/hannahliz",
+      "nombre": "Hannah",
+      "imagen": "cartas/skjoldheim/hannahliz.png",
+      "region": "skjoldheim",
+      "raza": "Híbrido",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Hannah-Liz, la Híbrido Animal de 56 años originaria de los páramos helados de Skjoldheim y conocida bajo el alias de Vulpes Lagopus, es una espadachina mercenaria de tez albina, grandes ojos rojos y vestiduras orientales rojas y negras. A los 16 años dejó su tribu para unirse a una caravana mercante. En agradecimiento a sus compañeros, a quienes consideró su familia, saldó una deuda de honor entrenando arduamente desde los 20 años en el arte de la espada hasta convertir su hoja ligera en una extensión de su cuerpo. Tras despedirse de la caravana a los 34 años por motivos de salud, comenzó una nueva vida independiente. Ágil y letal, combate armada con una katana y 4 dagas ocultas entre sus ropajes, lista para desenvainar en cualquier momento.",
+      "interprete": "Cherry"
     }
   ]
 }
