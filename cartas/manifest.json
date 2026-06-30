@@ -361,18 +361,6 @@
       "interprete": "Fogman"
     },
     {
-      "id": "skjoldheim/karin",
-      "nombre": "Karin",
-      "imagen": "cartas/skjoldheim/karin.png",
-      "region": "skjoldheim",
-      "raza": "Humano",
-      "categoria": "personaje",
-      "rareza": "epica",
-      "valor": 35,
-      "descripcion": "Karin es una humana de 19 años originaria del gélido reino de Skjoldheim que actualmente desea un alias. Es una joven alta y atlética con un rostro pálido, ojos celestes brillantes y una larga cabellera rojiza desordenada. Suele vestir prendas oscuras de cuero reforzado con armadura ligera, una capa rojiza y un sombrero de ala ancha que priorizan la movilidad. En combate porta dos armas complementarias: \"Luz\", una espada ropera larga, estilizada y letal con una compleja guarda metálica, y \"Ceniza\", una daga de hoja ancha, robusta y enegrecida para el combate cercano. Es una persona sumamente reservada que solo comparte su pasado con personas de su genuina confianza o de manera accidental en conversaciones casuales.",
-      "interprete": "Miss Astrea"
-    },
-    {
       "id": "solareth/bodil",
       "nombre": "Bodil",
       "imagen": "cartas/solareth/bodil.png",
