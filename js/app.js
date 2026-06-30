@@ -1699,6 +1699,11 @@ function openModalProfile() {
     const modal = document.getElementById('modal-profile');
     if (!modal) return;
     modal.classList.add('active');
+    const emailDisplay = document.getElementById('profile-email-display');
+    if (emailDisplay && usuarioActual?.email) {
+        const emailParts = usuarioActual.email.split('@');
+        emailDisplay.textContent = emailParts[0] || usuarioActual.email;
+    }
     cargarUsernamePerfil().then(name => {
         const input = document.getElementById('edit-username');
         if (input) input.value = name || '';
@@ -1734,6 +1739,11 @@ function abrirModalCambioContrasena() {
     if (errorEl) errorEl.textContent = '';
     document.getElementById('new-password').value = '';
     document.getElementById('confirm-password').value = '';
+}
+
+function establecerMensajePassword(texto) {
+    const warningEl = document.getElementById('password-warning-text');
+    if (warningEl) warningEl.textContent = texto;
 }
 
 function cerrarModalCambioContrasena() {

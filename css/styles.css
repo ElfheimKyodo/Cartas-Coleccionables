@@ -150,6 +150,71 @@ body {
   color: var(--text);
 }
 
+.profile-info-text {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-secondary);
+  text-align: left;
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--surface-light);
+  padding: 12px 14px;
+  border-radius: 10px;
+  border-left: 3px solid var(--gold);
+}
+.profile-info-text i {
+  color: var(--gold);
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.profile-info-text strong {
+  color: var(--text);
+}
+
+.custom-warning-text {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  background: var(--surface-light);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.profile-info-textarea {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-secondary);
+  text-align: left;
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--surface-light);
+  padding: 12px 14px;
+  border-radius: 10px;
+  border-left: 3px solid var(--gold);
+}
+.profile-info-textarea i {
+  color: var(--gold);
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.profile-info-textarea span {
+  flex: 1;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .h-captcha {
   margin: 15px 0;
   min-height: 80px;

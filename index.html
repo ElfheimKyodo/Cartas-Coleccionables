@@ -243,6 +243,7 @@
         <div class="modal-contenido">
             <span class="cerrar">&times;</span>
             <h2>Editar Perfil</h2>
+            <div class="profile-info-text"><i class="fa-solid fa-circle-info"></i><span>RECUERDA: Esto solo cambia visualmente tu nombre de usuario, para iniciar sesión tendrás que utilizar el usuario antes de @elfheim.com (en tu caso: <strong id="profile-email-display"></strong>)</span></div>
             <form id="form-edit-profile" class="auth-form">
                 <input type="text" id="edit-username" placeholder="Nombre de usuario" required minlength="2" maxlength="30">
                 <button type="submit" class="auth-submit">Guardar Cambios</button>
@@ -255,6 +256,7 @@
         <div class="modal-contenido">
             <span class="cerrar">&times;</span>
             <h2>Cambiar Contraseña</h2>
+            <div class="profile-info-text"><i class="fa-solid fa-circle-info"></i><span id="password-warning-text">RECUERDA: Esta contraseña no se comparte de ninguna forma. Se manda directamente a la base de datos de forma que quede invisible incluso para Fadia (no la puedo ver wacho).</span></div>
             <form id="form-change-password" class="auth-form">
                 <input type="password" id="new-password" placeholder="Nueva contraseña" required minlength="6">
                 <input type="password" id="confirm-password" placeholder="Confirmar contraseña" required minlength="6">
