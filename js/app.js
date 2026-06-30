@@ -2031,9 +2031,12 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                         console.warn('[ECON] RPC vender_carta no disponible; usando escritura directa en tablas:', rpcError);
                         result = await db.sellCardTable(supabaseClient, usuarioActual.id, cartaId, cantidad, valor);
                     }
-                    if (!result) throw new Error('Respuesta vacía del servidor');
-                    monedas = result.nuevo_saldo;
-                    await cargarDatos();
+                if (!result) throw new Error('Respuesta vacía del servidor');
+                monedas = result.nuevo_saldo;
+                const lastClaim = lastClaimServerMs;
+                await cargarDatos();
+                lastClaimServerMs = lastClaim;
+                guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
                 } catch (err) {
                     console.error('[ECON] Error vendiendo carta:', err);
                     mostrarErrorSupabase('Error al vender la carta');
