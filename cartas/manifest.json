@@ -635,6 +635,18 @@
       "valor": 35,
       "descripcion": "Hannah-Liz, la Híbrido Animal de 56 años originaria de los páramos helados de Skjoldheim y conocida bajo el alias de Vulpes Lagopus, es una espadachina mercenaria de tez albina, grandes ojos rojos y vestiduras orientales rojas y negras. A los 16 años dejó su tribu para unirse a una caravana mercante. En agradecimiento a sus compañeros, a quienes consideró su familia, saldó una deuda de honor entrenando arduamente desde los 20 años en el arte de la espada hasta convertir su hoja ligera en una extensión de su cuerpo. Tras despedirse de la caravana a los 34 años por motivos de salud, comenzó una nueva vida independiente. Ágil y letal, combate armada con una katana y 4 dagas ocultas entre sus ropajes, lista para desenvainar en cualquier momento.",
       "interprete": "Cherry"
+    },
+    {
+      "id": "astra/spiderknight",
+      "nombre": "Spider-Knight",
+      "imagen": "cartas/astra/spiderknight.png",
+      "region": "astra",
+      "raza": "Humano",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Petherius Parthurnax, conocido como Spider-Knight es un héroe de 22 años de Astra que obtuvo la agilidad y las cuerdas rojizas de un espíritu arácnido. Tras la trágica pérdida de su tío, decidió usar su máscara y sus poderes bajo el lema de que \"un gran poder conlleva una gran responsabilidad\" para proteger a los desvalidos en secreto. En combate, destaca por equipar una imponente armadura pesada roja y negra con un emblema de araña que mitiga grandes impactos entrantes y almacena su espada, penalizando a cambio su agilidad y velocidad de despliegue.",
+      "interprete": "Logic"
     }
   ]
 }
