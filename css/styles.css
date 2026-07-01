@@ -558,124 +558,135 @@ header h1 {
 
 .user-menu-modal {
     min-width: 280px;
-    padding: 32px 28px 28px;
+    padding: 32px 24px 24px;
     text-align: center;
-    max-width: 90vw;
-    width: 320px;
+    max-width: 92vw;
+    width: 340px;
     background: linear-gradient(135deg, rgba(42, 42, 42, 0.96), rgba(30, 30, 30, 0.96));
     border: 1px solid rgba(255, 193, 7, 0.25);
-    border-radius: 20px;
+    border-radius: 24px;
     backdrop-filter: blur(10px);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.user-menu-header {
+    padding: 0 12px 16px;
 }
 
 .user-menu-close {
     position: absolute;
     top: 14px;
     right: 14px;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     border: none;
     background: rgba(255, 255, 255, 0.08);
     color: var(--text-secondary);
-    font-size: 16px;
+    font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
 }
 
 .user-menu-close:hover {
     background: rgba(255, 255, 255, 0.15);
     color: var(--text);
-    transform: rotate(90deg);
+    transform: rotate(90deg) scale(1.1);
 }
 
 .user-menu-avatar {
-    width: 72px;
-    height: 72px;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
-    margin: 0 auto 12px;
+    margin: 0 auto 14px;
     background: linear-gradient(135deg, #ffc107, #ff9800);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: 34px;
     color: #1a1200;
     box-shadow: 0 0 25px rgba(255, 193, 7, 0.4);
 }
 
 .user-menu-name {
     color: var(--gold);
-    font-size: 20px;
-    margin: 0 0 4px;
+    font-size: 21px;
+    margin: 0 0 6px;
     font-weight: 700;
+    letter-spacing: -0.2px;
 }
 
 .user-menu-email {
     color: var(--text-secondary);
     font-size: 13px;
-    margin-bottom: 16px;
-    opacity: 0.8;
+    margin-bottom: 4px;
+    opacity: 0.85;
+    word-break: break-all;
 }
+
 .user-menu-email span {
+    display: block;
     font-size: 11px;
     opacity: 0.7;
+    margin-top: 2px;
 }
 
 .user-menu-divider {
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 16px 0;
+    background: rgba(255, 255, 255, 0.12);
+    margin: 18px 0;
 }
 
 .user-menu-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    margin-bottom: 10px;
-    width: fit-content;
-    min-width: 0;
-    max-width: 100%;
-    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 4px;
+    width: 100%;
 }
 
 .user-menu-btn {
     width: 100%;
-    aspect-ratio: 1;
-    border-radius: 12px;
+    border-radius: 14px;
     border: none;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--text);
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 600;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px;
+    gap: 14px;
+    padding: 14px 18px;
+}
+
+.user-menu-btn i {
+    font-size: 18px;
+    width: 24px;
+    color: var(--gold);
 }
 
 .user-menu-btn:hover {
     background: rgba(255, 255, 255, 0.12);
+    transform: translateX(4px);
 }
 
 .user-menu-btn:active {
-    transform: scale(0.97);
-    background: rgba(255, 255, 255, 0.18);
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.16);
 }
 
 .user-menu-btn.danger {
+    color: #fca5a5;
+}
+
+.user-menu-btn.danger i {
     color: #fca5a5;
 }
 
@@ -684,27 +695,49 @@ header h1 {
 }
 
 .user-menu-btn.danger:active {
-    background: rgba(183, 28, 28, 0.4);
+    background: rgba(183, 28, 28, 0.35);
 }
 
 .user-menu-btn.logout {
-    background: linear-gradient(135deg, rgba(183, 28, 28, 0.5), rgba(198, 40, 40, 0.5));
+    background: linear-gradient(135deg, rgba(183, 28, 28, 0.45), rgba(198, 40, 40, 0.45));
     color: #fca5a5;
     font-weight: 600;
-    width: fit-content;
-    margin: 16px auto 0;
-    padding: 12px 24px;
-    min-height: unset;
-    aspect-ratio: unset;
+    width: 100%;
+    margin-top: 4px;
+    padding: 14px 18px;
 }
 
 .user-menu-btn.logout:hover {
-    background: linear-gradient(135deg, rgba(183, 28, 28, 0.7), rgba(198, 40, 40, 0.7));
+    background: linear-gradient(135deg, rgba(183, 28, 28, 0.6), rgba(198, 40, 40, 0.6));
 }
 
-.user-menu-btn.logout:active {
-    background: linear-gradient(135deg, rgba(183, 28, 28, 0.8), rgba(198, 40, 40, 0.8));
-    transform: scale(0.97);
+/* Mobile User Menu */
+@media (max-width: 768px) {
+    .user-menu-modal {
+        width: 95vw;
+        padding: 28px 20px 20px;
+        border-radius: 20px;
+    }
+    
+    .user-menu-avatar {
+        width: 68px;
+        height: 68px;
+        font-size: 28px;
+    }
+    
+    .user-menu-name {
+        font-size: 19px;
+    }
+    
+    .user-menu-btn {
+        padding: 12px 16px;
+        font-size: 13px;
+        gap: 12px;
+    }
+    
+    .user-menu-btn i {
+        font-size: 16px;
+    }
 }
 
 /* Navegación */

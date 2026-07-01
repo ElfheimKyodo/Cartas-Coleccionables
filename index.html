@@ -59,20 +59,22 @@
     <div id="modal-user" class="modal">
         <div class="modal-contenido user-menu-modal">
             <button class="user-menu-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
-            <div class="user-menu-avatar">
-                <i class="fa-solid fa-user"></i>
+            <div class="user-menu-header">
+                <div class="user-menu-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3 id="user-menu-username" class="user-menu-name">Usuario</h3>
+                <div class="user-menu-email" id="user-menu-email"></div>
             </div>
-            <h3 id="user-menu-username" class="user-menu-name">Usuario</h3>
-            <div class="user-menu-email" id="user-menu-email"></div>
             <div class="user-menu-divider"></div>
             <div class="user-menu-actions">
-                <button id="btn-edit-profile" class="user-menu-btn"><i class="fa-solid fa-pen-to-square"></i> Editar Perfil</button>
-                <button id="profile-sync" class="user-menu-btn"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
-                <button id="profile-reset" class="user-menu-btn danger"><i class="fa-solid fa-trash-can"></i> Resetear Cartas</button>
-                <button id="profile-change-password" class="user-menu-btn"><i class="fa-solid fa-key"></i> Cambiar Contraseña</button>
+                <button id="profile-sync" class="user-menu-btn"><i class="fa-solid fa-rotate"></i><span>Sincronizar</span></button>
+                <button id="btn-edit-profile" class="user-menu-btn"><i class="fa-solid fa-pen-to-square"></i><span>Editar Perfil</span></button>
+                <button id="profile-change-password" class="user-menu-btn"><i class="fa-solid fa-key"></i><span>Cambiar Contraseña</span></button>
+                <button id="profile-reset" class="user-menu-btn danger"><i class="fa-solid fa-trash-can"></i><span>Resetear Cartas</span></button>
             </div>
             <div class="user-menu-divider"></div>
-            <button id="profile-logout" class="user-menu-btn logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            <button id="profile-logout" class="user-menu-btn logout"><i class="fa-solid fa-right-from-bracket"></i><span>Cerrar Sesión</span></button>
         </div>
     </div>
 
