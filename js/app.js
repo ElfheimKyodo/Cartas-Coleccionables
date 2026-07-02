@@ -2067,6 +2067,11 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             if (!item || (!supabaseEnabled && item.cantidad <= cantidad)) return;
 
             if (supabaseEnabled && usuarioActual) {
+                const ganancia = valor * cantidad;
+                if (monedas + ganancia < 1) {
+                    mostrarErrorSupabase('No podés quedar con menos de 1 moneda');
+                    return;
+                }
                 try {
                     let result;
                     try {
@@ -2087,8 +2092,13 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                     return;
                 }
             } else {
+                const ganancia = valor * cantidad;
+                if (monedas + ganancia < 1) {
+                    mostrarErrorSupabase('No podés quedar con menos de 1 moneda');
+                    return;
+                }
                 item.cantidad -= cantidad;
-                monedas += valor * cantidad;
+                monedas += ganancia;
                 guardarLocalStorage();
             }
 

@@ -149,8 +149,8 @@ const db = {
 
         const actual = Number(profile?.monedas ?? 0);
         const nuevo = actual + Number(delta || 0);
-        if (!Number.isFinite(nuevo) || nuevo < 0) {
-            throw new Error('Saldo insuficiente');
+        if (!Number.isFinite(nuevo) || nuevo < 1) {
+            throw new Error('Saldo mínimo no alcanzado');
         }
 
         const { data, error } = await client
