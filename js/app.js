@@ -1986,6 +1986,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             }
 
             try {
+                btnMoneda.disabled = true;
                 let result;
                 try {
                     result = await db.claimDailyCoins(supabaseClient, usuarioActual.id);
@@ -2016,6 +2017,8 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             } catch (err) {
                 console.error('[ECON] Error reclamando monedas:', err);
                 mostrarErrorSupabase('Error al reclamar la recompensa');
+            } finally {
+                btnMoneda.disabled = false;
             }
         });
         if (monedaTimer) clearInterval(monedaTimer);
