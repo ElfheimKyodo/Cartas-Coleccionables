@@ -2178,10 +2178,6 @@ nav {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
-.carta-sobre.revelada .carta-sobre-revelar {
-  /* background now set inline by JS based on rarity */
-}
-
 .carta-sobre.region-umbraeth {
   box-shadow: 0 12px 30px rgba(26, 35, 126, 0.65);
 }
