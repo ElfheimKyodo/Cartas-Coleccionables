@@ -15,6 +15,37 @@ let bannersConfigurados = [];
 let eventosConfigurados = [];
 let lastClaimServerMs = 0;
 let claimToastShown = false;
+let hasSpunTodayRuleta = false;
+const RULETA_SPIN_STORAGE_KEY = 'elfheim_ruleta_spin_date';
+
+function getRuletaSpinDate() {
+    try { return localStorage.getItem(RULETA_SPIN_STORAGE_KEY); } catch (e) { return null; }
+}
+
+function setRuletaSpinDate(fecha) {
+    try { localStorage.setItem(RULETA_SPIN_STORAGE_KEY, fecha); } catch (e) {}
+}
+
+function clearRuletaSpinDate() {
+    try { localStorage.removeItem(RULETA_SPIN_STORAGE_KEY); } catch (e) {}
+}
+
+function isRuletaSpinDateToday(fecha) {
+    if (!fecha) return false;
+    const ahora = new Date();
+    const fechaLocal = `${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,'0')}-${String(ahora.getDate()).padStart(2,'0')}`;
+    return fecha === fechaLocal;
+}
+
+function rehydrateRuletaSpinState() {
+    const fecha = getRuletaSpinDate();
+    if (isRuletaSpinDateToday(fecha)) {
+        hasSpunTodayRuleta = true;
+    } else {
+        hasSpunTodayRuleta = false;
+        clearRuletaSpinDate();
+    }
+}
 const LAST_CLAIM_STORAGE_KEY = 'elfheim_last_claim_at';
 const PITY_LIMITE = 40;
 let pityContador = 0;
@@ -2243,6 +2274,15 @@ const profileSync = document.getElementById('profile-sync');
         });
     }
 
+    const profileRuleta = document.getElementById('profile-ruleta');
+    if (profileRuleta) {
+        profileRuleta.addEventListener('click', async () => {
+            closeProfileMenu();
+            const puede = await checkCanSpin();
+            if (puede) abrirRuleta();
+        });
+    }
+
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -2464,7 +2504,7 @@ async function cargarLeaderboardCartas() {
                         <div class="leaderboard-item">
                             <span class="leaderboard-rank">${index + 1}</span>
                             <span class="leaderboard-username">${escapeHtml(item.username)}</span>
-                            <span class="leaderboard-value"><i class="fa-solid fa-id-badge"></i> ${item.total_cartas}</span>
+<span class="leaderboard-value"><i class="fa-solid fa-clone"></i> ${item.total_cartas}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -2655,6 +2695,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         await cargarDatos();
     }
 
+    rehydrateRuletaSpinState();
+
     inicializarUI();
     setUsuario(usuarioActual);
 
@@ -2668,4 +2710,263 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loadingScreen) loadingScreen.classList.add('oculto');
     }, 500);
 
+
+    initDailyWheel();
 });
+
+function abrirRuleta() {
+    const modal = document.getElementById('modal-ruleta');
+    if (!modal) return;
+    
+    modal.classList.add('active');
+    
+    const btnCerrar = modal.querySelector('.cerrar');
+    if (btnCerrar) {
+        btnCerrar.onclick = () => {
+            modal.classList.remove('active');
+            const wheelEl = document.getElementById('ruleta-wheel');
+            if (wheelEl) {
+                wheelEl.classList.remove('spinning');
+                wheelEl.style.transform = 'rotate(0deg)';
+            }
+        };
+    }
+    
+    window.setRuletaVisible(true);
+    
+    const canvas = document.getElementById('ruleta-canvas');
+    if (canvas && !window.ruletaWheel) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            drawWheel(ctx);
+        }
+    }
+    
+    const btnSpin = document.getElementById('btn-tirar-ruleta');
+    if (btnSpin) btnSpin.disabled = true;
+    const timerEl = document.getElementById('ruleta-timer');
+    if (timerEl) timerEl.textContent = 'Comprobando...';
+}
+
+function drawWheel(ctx) {
+    const canvas = ctx.canvas;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 170;
+    const rewards = [100, 200, 300, 400, 500];
+    const colors = ['#dc2626','#1f2937','#dc2626','#1f2937','#15803d'];
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    rewards.forEach((reward, i) => {
+        const startAngle = (i * 2 * Math.PI / rewards.length) - Math.PI/2;
+        const endAngle = ((i + 1) * 2 * Math.PI / rewards.length) - Math.PI/2;
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = colors[i];
+        ctx.fill();
+        
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate((startAngle + endAngle) / 2);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 22px sans-serif';
+        ctx.fillText(reward, radius * 0.65, 0);
+        ctx.restore();
+    });
+    
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 22, 0, 2 * Math.PI);
+    ctx.fillStyle = '#111827';
+    ctx.fill();
+}
+
+async function checkCanSpin() {
+    const btnSpin = document.getElementById('btn-tirar-ruleta');
+    const timerEl = document.getElementById('ruleta-timer');
+    if (!btnSpin) return false;
+    
+    if (hasSpunTodayRuleta || isRuletaSpinDateToday(getRuletaSpinDate())) {
+        hasSpunTodayRuleta = true;
+        btnSpin.disabled = true;
+        if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+        return false;
+    }
+    
+    if (!supabaseEnabled || !supabaseClient || !usuarioActual) {
+        btnSpin.disabled = true;
+        if (timerEl) timerEl.textContent = 'Inicia sesión para jugar';
+        return false;
+    }
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('ruleta_diaria')
+            .select('id')
+            .eq('user_id', usuarioActual.id)
+            .eq('fecha', new Date().toISOString().split('T')[0]);
+        
+        if (error && error.code === '42P01') {
+            console.warn('[RULETA] Tabla no existe, usando solo RPC');
+            return true;
+        }
+        
+        if (data && data.length > 0) {
+            const ahora = new Date();
+            const fechaLocal = `${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,'0')}-${String(ahora.getDate()).padStart(2,'0')}`;
+            hasSpunTodayRuleta = true;
+            setRuletaSpinDate(fechaLocal);
+            btnSpin.disabled = true;
+            if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+            crearNotificacionEvento({
+                categoria: 'ruleta',
+                tipo: 'error',
+                icono: 'fa-circle-xmark',
+                titulo: 'Ruleta diaria',
+                mensaje: 'Ya hiciste tu tirada de hoy. Vuelve mañana.'
+            });
+            return false;
+        }
+        
+        btnSpin.disabled = false;
+        if (timerEl) timerEl.textContent = '¡Puedes tirar!';
+        return true;
+    } catch (err) {
+        if (hasSpunTodayRuleta || isRuletaSpinDateToday(getRuletaSpinDate())) {
+            btnSpin.disabled = true;
+            if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+        } else {
+            btnSpin.disabled = false;
+            if (timerEl) timerEl.textContent = '';
+        }
+        return !(hasSpunTodayRuleta || isRuletaSpinDateToday(getRuletaSpinDate()));
+    }
+}
+
+async function initDailyWheel() {
+    const modal = document.getElementById('modal-ruleta');
+    const btnSpin = document.getElementById('btn-tirar-ruleta');
+    const resultEl = document.getElementById('ruleta-resultado');
+    const timerEl = document.getElementById('ruleta-timer');
+    
+    if (!modal || !btnSpin) return;
+    
+    let wheelSpinning = false;
+    let ruletaRotation = 0;
+    let ruletaAnimation = null;
+    
+    async function spinWheel() {
+        if (wheelSpinning) return;
+        if (btnSpin.disabled) return;
+        wheelSpinning = true;
+        btnSpin.disabled = true;
+        if (resultEl) resultEl.textContent = 'Girando...';
+        
+        const ahora = new Date();
+        const fechaLocal = `${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,'0')}-${String(ahora.getDate()).padStart(2,'0')}`;
+        
+        const wheelEl = document.getElementById('ruleta-wheel');
+        const rewards = [100, 200, 300, 400, 500];
+        
+        const randomSpins = Math.floor(Math.random() * 5) + 5;
+        const extraDegrees = Math.floor(Math.random() * 360);
+        const delta = randomSpins * 360 + extraDegrees;
+        const startDeg = ruletaRotation;
+        const endDeg = startDeg + delta;
+        
+        const anim = wheelEl.animate([
+            { transform: `rotate(${startDeg}deg)` },
+            { transform: `rotate(${endDeg}deg)` }
+        ], {
+            duration: 5000,
+            easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)',
+            fill: 'forwards'
+        });
+        
+        ruletaAnimation = anim;
+        ruletaRotation = endDeg;
+        
+        setTimeout(async () => {
+            if (supabaseEnabled && usuarioActual) {
+                try {
+                    const { data, error } = await supabaseClient.rpc('tirar_ruleta_diaria', { 
+                        p_user_id: usuarioActual.id,
+                        p_fecha: fechaLocal
+                    });
+                    if (!error && data && data[0]) {
+                        const result = data[0];
+                        if (result.ya_tirado || result.recompensa === 0) {
+                            hasSpunTodayRuleta = true;
+                            btnSpin.disabled = true;
+                            if (resultEl) resultEl.textContent = 'Ya tiraste hoy';
+                            if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+                        } else if (result.recompensa > 0) {
+                            const nuevoSaldo = Number(result.nuevo_saldo);
+                            if (!Number.isNaN(nuevoSaldo) && nuevoSaldo > 0) {
+                                monedas = nuevoSaldo;
+                            } else {
+                                monedas = Number(monedas) + Number(result.recompensa);
+                            }
+                            actualizarMonedas();
+                            if (resultEl) {
+                                resultEl.innerHTML = '<i class="fa-solid fa-coins"></i> ¡Ganaste ' + result.recompensa + ' monedas!';
+                                reproducirSonido('claim');
+                            }
+                            hasSpunTodayRuleta = true;
+                            setRuletaSpinDate(fechaLocal);
+                            btnSpin.disabled = true;
+                            if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+                        }
+                    } else if (error) {
+                        const localReward = rewards[Math.floor(Math.random() * rewards.length)];
+                        monedas = Number(monedas) + localReward;
+                        actualizarMonedas();
+                        if (resultEl) resultEl.innerHTML = '<i class="fa-solid fa-coins"></i> + ' + localReward + ' monedas!';
+                        hasSpunTodayRuleta = true;
+                        btnSpin.disabled = true;
+                        if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+                    } else {
+                        const localReward = rewards[Math.floor(Math.random() * rewards.length)];
+                        monedas = Number(monedas) + localReward;
+                        actualizarMonedas();
+                        if (resultEl) resultEl.innerHTML = '<i class="fa-solid fa-coins"></i> + ' + localReward + ' monedas!';
+                        hasSpunTodayRuleta = true;
+                        btnSpin.disabled = true;
+                        if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+                    }
+                } catch (err) {
+                    console.error('[RULETA] Error:', err);
+                    const localReward = rewards[Math.floor(Math.random() * rewards.length)];
+                    monedas = Number(monedas) + localReward;
+                    actualizarMonedas();
+                    if (resultEl) resultEl.innerHTML = '<i class="fa-solid fa-coins"></i> + ' + localReward + ' monedas!';
+                    hasSpunTodayRuleta = true;
+                    btnSpin.disabled = true;
+                    if (timerEl) timerEl.textContent = 'Ya tiraste hoy';
+                }
+            } else {
+                if (resultEl) resultEl.textContent = 'Inicia sesión para jugar';
+            }
+            
+            wheelSpinning = false;
+            checkCanSpin();
+        }, 5000);
+    }
+    
+    btnSpin.addEventListener('click', spinWheel);
+    
+    setInterval(checkCanSpin, 60000);
+    
+    if (typeof window.setRuletaVisible === 'undefined') {
+        window.setRuletaVisible = function(show) {
+            if (show && supabaseEnabled && usuarioActual) {
+                checkCanSpin();
+            }
+        };
+    }
+}

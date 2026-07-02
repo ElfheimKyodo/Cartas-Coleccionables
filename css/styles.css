@@ -530,6 +530,20 @@ header h1 {
   color: #66bb6a;
 }
 
+.evento-notificacion.evento-error {
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+.evento-notificacion.evento-error .evento-icono {
+  background: rgba(220, 38, 38, 0.15);
+  color: #ef4444;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.evento-notificacion.evento-error .evento-contenido strong {
+  color: #ef4444;
+}
+
 .profile-container {
   position: relative;
 }
@@ -2877,7 +2891,7 @@ nav {
      font-weight: 600;
  }
  
- .leaderboard-value {
+.leaderboard-value {
      color: var(--gold);
      font-weight: 700;
      display: flex;
@@ -2885,28 +2899,141 @@ nav {
      gap: 6px;
  }
  
-.loading-leaderboard {
-    text-align: center;
-    padding: 30px;
-    color: var(--text-secondary);
+ .loading-leaderboard {
+     text-align: center;
+     padding: 30px;
+     color: var(--text-secondary);
+ }
+ 
+ #modal-leaderboard .gacha-info-tab-content {
+     display: none;
+     max-height: 60vh;
+     overflow-y: auto;
+ }
+ 
+ #modal-leaderboard .gacha-info-tab-content.active {
+     display: block;
+ }
+ 
+ #modal-leaderboard .leaderboard-tabs {
+     margin-top: 16px;
+ }
+ 
+ #modal-leaderboard .gacha-info-tab.leaderboard-tab {
+     padding: 8px 16px;
+ }
+ 
+  /* Ruleta Diaria */
+  #modal-ruleta .modal-contenido {
+      padding: 24px 20px;
+  }
+  
+  #modal-ruleta .modal-contenido > * {
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+  }
+  
+  .ruleta-modal {
+      min-width: 380px;
+      padding: 32px 24px;
+      text-align: center;
+      max-width: 92vw;
+      background: linear-gradient(135deg, rgba(42, 42, 42, 0.96), rgba(30, 30, 30, 0.96));
+      border: 1px solid rgba(255, 193, 7, 0.25);
+      border-radius: 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  }
+ 
+.ruleta-container {
+    position: relative;
+    width: 340px;
+    height: 340px;
+    margin: 22px auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#modal-leaderboard .gacha-info-tab-content {
-    display: none;
-    max-height: 60vh;
-    overflow-y: auto;
+.ruleta-wheel {
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    transform-origin: center center;
+    will-change: transform;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#modal-leaderboard .gacha-info-tab-content.active {
+#ruleta-canvas {
     display: block;
 }
 
-#modal-leaderboard .leaderboard-tabs {
-    margin-top: 16px;
+.ruleta-pointer {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    margin-left: -18px;
+    width: 0;
+    height: 0;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 34px solid var(--gold);
+    filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.6));
+    z-index: 10;
+    pointer-events: none;
 }
 
-#modal-leaderboard .gacha-info-tab.leaderboard-tab {
-    padding: 8px 16px;
+.ruleta-resultado {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--gold);
+    margin: 15px 0;
+    min-height: 26px;
+}
+
+.ruleta-timer {
+    font-size: 14px;
+    color: var(--text-secondary);
+    min-height: 20px;
+}
+
+@media (max-width: 760px) {
+    #modal-ruleta .modal-contenido {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 18px 16px;
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    #modal-ruleta .modal-contenido > * {
+        max-width: 92vw;
+    }
+    
+    .modal-ruleta h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
+    }
+    
+    .ruleta-container {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        max-width: 300px;
+        margin: 6px auto 18px;
+    }
+    
+    .ruleta-wheel {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 @media (max-width: 760px) {

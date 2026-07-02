@@ -70,6 +70,7 @@
             <div class="user-menu-actions">
                 <button id="profile-sync" class="user-menu-btn"><i class="fa-solid fa-rotate"></i><span>Sincronizar</span></button>
                 <button id="profile-leaderboard" class="user-menu-btn"><i class="fa-solid fa-trophy"></i><span>Ranking</span></button>
+                <!--<button id="profile-ruleta" class="user-menu-btn"><i class="fa-solid fa-spinner"></i><span>Ruleta Diaria</span></button>-->
                 <button id="btn-edit-profile" class="user-menu-btn"><i class="fa-solid fa-pen-to-square"></i><span>Editar Perfil</span></button>
                 <button id="profile-change-password" class="user-menu-btn"><i class="fa-solid fa-key"></i><span>Cambiar Contraseña</span></button>
                 <button id="profile-reset" class="user-menu-btn danger"><i class="fa-solid fa-trash-can"></i><span>Resetear Cartas</span></button>
@@ -283,9 +284,30 @@
             <div id="leaderboard-content-monedas" class="gacha-info-tab-content"></div>
         </div>
     </div>
+
+    <div id="modal-ruleta" class="modal">
+        <div class="modal-contenido ruleta-modal">
+            <span class="cerrar">&times;</span>
+            <h2>Ruleta Diaria</h2>
+            <div class="ruleta-container">
+                <div class="ruleta-container">
+                    <div id="ruleta-wheel" class="ruleta-wheel">
+                        <canvas id="ruleta-canvas" width="340" height="340"></canvas>
+                    </div>
+                    <div class="ruleta-pointer"></div>
+                </div>
+            </div>
+            <button id="btn-tirar-ruleta" class="btn-gacha abrir">Tirar Ruleta</button>
+            <p id="ruleta-resultado" class="ruleta-resultado">¡Gira para ganar monedas!</p>
+            <p id="ruleta-timer" class="ruleta-timer"></p>
+        </div>
+    </div>
  
      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/app.js"></script>
+<script src="js/supabase.js"></script>
+     <script src="js/app.js"></script>
+     <script>
+         console.log('[DEBUG] Ruleta sistema listo');
+     </script>
 </body>
 </html>
