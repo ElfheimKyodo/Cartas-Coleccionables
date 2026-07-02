@@ -230,8 +230,8 @@ const db = {
             .eq('carta_id', cardId)
             .maybeSingle();
         if (readError) throw readError;
-        if (!actual || actual.cantidad < quantity) {
-            throw new Error('Inventario insuficiente');
+        if (!actual || actual.cantidad <= quantity) {
+            throw new Error('Debe mantener al menos 1 carta');
         }
 
         const siguiente = actual.cantidad - quantity;

@@ -1568,10 +1568,10 @@ function mostrarDetalle(cartaId) {
     const btnVender = document.getElementById('btn-vender');
     const inputVender = document.getElementById('vender-cantidad');
     if (btnVender && inputVender) {
-        const maxVenta = data.cantidad;
-        inputVender.value = 1;
+        const maxVenta = Math.max(0, data.cantidad - 1);
+        inputVender.value = maxVenta > 0 ? 1 : 0;
         inputVender.max = maxVenta;
-        btnVender.disabled = data.cantidad < 1;
+        btnVender.disabled = data.cantidad < 2;
     }
     const modalCarta = document.getElementById('modal-carta');
     modalCarta.dataset.cartaId = cartaId;
@@ -2064,7 +2064,10 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                 return;
             }
             const item = coleccion[cartaId];
-            if (!item || (!supabaseEnabled && item.cantidad <= cantidad)) return;
+            if (!item || cantidad >= item.cantidad) {
+                mostrarErrorSupabase('No podés vender tu última copia, tenés que quedarte al menos con 1.');
+                return;
+            }
 
             if (supabaseEnabled && usuarioActual) {
                 const ganancia = valor * cantidad;
@@ -2112,7 +2115,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             const itemActualizado = coleccion[cartaId];
             const cantidadTexto = document.getElementById('carta-detalle-cantidad');
             if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${itemActualizado?.cantidad ?? 0}`;
-            if (btnVender) btnVender.disabled = !itemActualizado || itemActualizado.cantidad < 1;
+            if (btnVender) btnVender.disabled = !itemActualizado || itemActualizado.cantidad < 2;
         });
     }
 
@@ -2124,7 +2127,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             const modal = document.getElementById('modal-carta');
             const cartaId = modal?.dataset?.cartaId;
             const item = cartaId ? coleccion[cartaId] : null;
-            const max = item ? item.cantidad : 1;
+            const max = item ? Math.max(0, item.cantidad - 1) : 0;
             let valor = parseInt(inputVender.value || '1', 10);
             if (Number.isFinite(valor)) {
                 inputVender.value = Math.min(max, valor + 1);

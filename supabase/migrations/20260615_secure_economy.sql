@@ -199,8 +199,8 @@ BEGIN
     END IF;
 
     SELECT cantidad INTO v_cantidad FROM inventory WHERE user_id = p_user_id AND carta_id = p_carta_id FOR UPDATE;
-    IF NOT FOUND OR v_cantidad IS NULL OR v_cantidad < p_cantidad THEN
-        RAISE EXCEPTION 'Inventario insuficiente';
+    IF NOT FOUND OR v_cantidad IS NULL OR v_cantidad <= p_cantidad THEN
+        RAISE EXCEPTION 'Debe mantener al menos 1 carta';
     END IF;
 
     IF v_cantidad <= p_cantidad THEN
