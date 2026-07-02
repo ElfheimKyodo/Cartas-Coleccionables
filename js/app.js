@@ -2235,6 +2235,14 @@ const profileSync = document.getElementById('profile-sync');
         });
     }
 
+    const profileLeaderboard = document.getElementById('profile-leaderboard');
+    if (profileLeaderboard) {
+        profileLeaderboard.addEventListener('click', () => {
+            closeProfileMenu();
+            abrirLeaderboard();
+        });
+    }
+
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -2354,10 +2362,228 @@ const profileSync = document.getElementById('profile-sync');
             closeProfileMenu();
         }
     });
+
+    document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.dataset.tab;
+            cambiarTabLeaderboard(tabName);
+        });
+    });
+
+    const modalLeaderboard = document.getElementById('modal-leaderboard');
+    if (modalLeaderboard) {
+        modalLeaderboard.addEventListener('click', (e) => {
+            if (e.target === modalLeaderboard) {
+                cerrarLeaderboard();
+            }
+        });
+    }
+}
+
+function abrirLeaderboard() {
+    const modal = document.getElementById('modal-leaderboard');
+    if (!modal) return;
+    modal.classList.add('active');
+    cargarLeaderboard();
+}
+
+function cerrarLeaderboard() {
+    const modal = document.getElementById('modal-leaderboard');
+    if (modal) modal.classList.remove('active');
+}
+
+async function cargarLeaderboard() {
+    document.querySelectorAll('#modal-leaderboard .leaderboard-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#modal-leaderboard .gacha-info-tab-content').forEach(c => {
+        c.classList.remove('active');
+        c.innerHTML = '';
+    });
+    
+    const tabCartas = document.querySelector('#modal-leaderboard .leaderboard-tab[data-tab="cartas"]');
+    const contentCartas = document.getElementById('leaderboard-content-cartas');
+    
+    if (tabCartas) tabCartas.classList.add('active');
+    if (contentCartas) {
+        contentCartas.classList.add('active');
+        await cargarLeaderboardCartas();
+    }
+}
+
+async function cargarLeaderboardCartas() {
+    const contentEl = document.getElementById('leaderboard-content-cartas');
+    if (!contentEl) return;
+    
+    contentEl.innerHTML = '<p class="loading-leaderboard">Cargando ranking...</p>';
+    
+    try {
+        if (!supabaseEnabled || !supabaseClient) {
+            contentEl.innerHTML = '<p class="sin-cartas">El leaderboard requiere conexión al servidor.</p>';
+            return;
+        }
+        
+        const { data, error } = await supabaseClient
+            .rpc('obtener_ranking_cartas', { limite: 20 });
+        
+        if (error) {
+            console.warn('[LEADERBOARD] RPC error, usando fallback directo:', error);
+            const { data: inventario, error: invError } = await supabaseClient
+                .from('inventory')
+                .select('user_id, cantidad');
+            
+            if (invError) throw invError;
+            
+            const cartasPorUsuario = {};
+            for (const item of inventario || []) {
+                if (!cartasPorUsuario[item.user_id]) {
+                    cartasPorUsuario[item.user_id] = 0;
+                }
+                cartasPorUsuario[item.user_id] += Number(item.cantidad || 0);
+            }
+            
+            const userIds = Object.keys(cartasPorUsuario);
+            const { data: profiles, error: profileError } = await supabaseClient
+                .from('profiles')
+                .select('id, username')
+                .in('id', userIds);
+            
+            if (profileError) throw profileError;
+            
+            const ranking = (profiles || []).map(p => ({
+                username: p.username || 'Usuario',
+                total_cartas: cartasPorUsuario[p.id] || 0
+            })).sort((a, b) => b.total_cartas - a.total_cartas).slice(0, 20);
+            
+            if (ranking.length === 0) {
+                contentEl.innerHTML = '<p class="sin-cartas">No hay datos disponibles aún.</p>';
+                return;
+            }
+            
+            contentEl.innerHTML = `
+                <div class="leaderboard-lista">
+                    ${ranking.map((item, index) => `
+                        <div class="leaderboard-item">
+                            <span class="leaderboard-rank">${index + 1}</span>
+                            <span class="leaderboard-username">${escapeHtml(item.username)}</span>
+                            <span class="leaderboard-value"><i class="fa-solid fa-id-badge"></i> ${item.total_cartas}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            return;
+        }
+        
+        if (!data || data.length === 0) {
+            contentEl.innerHTML = '<p class="sin-cartas">No hay datos disponibles aún.</p>';
+            return;
+        }
+        
+        contentEl.innerHTML = `
+            <div class="leaderboard-lista">
+                ${data.map((item, index) => `
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">${index + 1}</span>
+                        <span class="leaderboard-username">${escapeHtml(item.username || 'Usuario')}</span>
+                        <span class="leaderboard-value"><i class="fa-solid fa-id-badge"></i> ${item.total_cartas}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } catch (err) {
+        console.error('[LEADERBOARD] Error cargando ranking cartas:', err);
+        contentEl.innerHTML = '<p class="error-mensaje">Error al cargar el ranking.</p>';
+    }
+}
+
+async function cargarLeaderboardMonedas() {
+    const contentEl = document.getElementById('leaderboard-content-monedas');
+    if (!contentEl) return;
+    
+    contentEl.innerHTML = '<p class="loading-leaderboard">Cargando ranking...</p>';
+    
+    try {
+        if (!supabaseEnabled || !supabaseClient) {
+            contentEl.innerHTML = '<p class="sin-cartas">El leaderboard requiere conexión al servidor.</p>';
+            return;
+        }
+        
+        const { data, error } = await supabaseClient
+            .rpc('obtener_ranking_monedas', { limite: 20 });
+        
+        if (error) {
+            const { data: profiles, error: directError } = await supabaseClient
+                .from('profiles')
+                .select('id, username, monedas')
+                .order('monedas', { ascending: false })
+                .limit(20);
+            
+            if (directError) throw directError;
+            
+            const ranking = (profiles || []).map(p => ({
+                username: p.username || 'Usuario',
+                monedas: p.monedas || 0
+            }));
+            
+            if (ranking.length === 0) {
+                contentEl.innerHTML = '<p class="sin-cartas">No hay datos disponibles aún.</p>';
+                return;
+            }
+            
+            contentEl.innerHTML = `
+                <div class="leaderboard-lista">
+                    ${ranking.map((item, index) => `
+                        <div class="leaderboard-item">
+                            <span class="leaderboard-rank">${index + 1}</span>
+                            <span class="leaderboard-username">${escapeHtml(item.username)}</span>
+                            <span class="leaderboard-value"><i class="fa-solid fa-coins"></i> ${item.monedas}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            return;
+        }
+        
+        if (!data || data.length === 0) {
+            contentEl.innerHTML = '<p class="sin-cartas">No hay datos disponibles aún.</p>';
+            return;
+        }
+        
+        contentEl.innerHTML = `
+            <div class="leaderboard-lista">
+                ${data.map((item, index) => `
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">${index + 1}</span>
+                        <span class="leaderboard-username">${escapeHtml(item.username || 'Usuario')}</span>
+                        <span class="leaderboard-value"><i class="fa-solid fa-coins"></i> ${item.monedas}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } catch (err) {
+        console.error('[LEADERBOARD] Error cargando ranking monedas:', err);
+        contentEl.innerHTML = '<p class="error-mensaje">Error al cargar el ranking.</p>';
+    }
+}
+
+function cambiarTabLeaderboard(tab) {
+    document.querySelectorAll('#modal-leaderboard .leaderboard-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#modal-leaderboard .gacha-info-tab-content').forEach(c => c.classList.remove('active'));
+    
+    const tabBtn = document.querySelector(`#modal-leaderboard .leaderboard-tab[data-tab="${tab}"]`);
+    const contentEl = document.getElementById(`leaderboard-content-${tab}`);
+    
+    if (tabBtn) tabBtn.classList.add('active');
+    if (contentEl) {
+        contentEl.classList.add('active');
+        if (tab === 'cartas') {
+            cargarLeaderboardCartas();
+        } else if (tab === 'monedas') {
+            cargarLeaderboardMonedas();
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('[INIT] DOM cargado, iniciando app...');
+    console.log('[STEP] DOM cargado, iniciando app...');
     window.onerror = (msg, url, line, col, err) => {
         console.error('[GLOBAL ERROR]', msg, 'at', url + ':' + line + ':' + col, 'err=', err);
     };

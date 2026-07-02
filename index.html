@@ -69,6 +69,7 @@
             <div class="user-menu-divider"></div>
             <div class="user-menu-actions">
                 <button id="profile-sync" class="user-menu-btn"><i class="fa-solid fa-rotate"></i><span>Sincronizar</span></button>
+                <button id="profile-leaderboard" class="user-menu-btn"><i class="fa-solid fa-trophy"></i><span>Ranking</span></button>
                 <button id="btn-edit-profile" class="user-menu-btn"><i class="fa-solid fa-pen-to-square"></i><span>Editar Perfil</span></button>
                 <button id="profile-change-password" class="user-menu-btn"><i class="fa-solid fa-key"></i><span>Cambiar Contraseña</span></button>
                 <button id="profile-reset" class="user-menu-btn danger"><i class="fa-solid fa-trash-can"></i><span>Resetear Cartas</span></button>
@@ -268,7 +269,22 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <div id="modal-leaderboard" class="modal">
+        <div class="modal-contenido gacha-info-modal">
+            <span class="cerrar">&times;</span>
+            <div class="gacha-info-header">
+                <h2>Ranking</h2>
+                <div class="gacha-info-tabs leaderboard-tabs">
+                    <button class="gacha-info-tab leaderboard-tab active" data-tab="cartas">Cartas</button>
+                    <button class="gacha-info-tab leaderboard-tab" data-tab="monedas">Monedas</button>
+                </div>
+            </div>
+            <div id="leaderboard-content-cartas" class="gacha-info-tab-content active"></div>
+            <div id="leaderboard-content-monedas" class="gacha-info-tab-content"></div>
+        </div>
+    </div>
+ 
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
 </body>

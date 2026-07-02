@@ -15,14 +15,6 @@ CREATE TABLE IF NOT EXISTS transacciones_monedas (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE profiles
-  ADD CONSTRAINT chk_monedas_no_negativas
-    CHECK (monedas >= 0);
-
-ALTER TABLE inventory
-  ADD CONSTRAINT chk_cantidad_no_negativa
-    CHECK (cantidad >= 0);
-
 CREATE INDEX IF NOT EXISTS idx_transacciones_monedas_user_id ON transacciones_monedas(user_id);
 
 
@@ -41,20 +33,8 @@ CREATE TYPE resultado_abrir_sobre AS (
     mensaje TEXT
 );
 
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'abrir_sobre') THEN
-    EXECUTE 'DROP FUNCTION abrir_sobre(UUID, TEXT, JSONB) CASCADE';
-    EXECUTE 'DROP FUNCTION abrir_sobre(UUID, TEXT, JSONB, INTEGER, TEXT[]) CASCADE';
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'vender_carta') THEN
-    EXECUTE 'DROP FUNCTION vender_carta(UUID, TEXT, INTEGER, INTEGER) CASCADE';
-  END IF;
-END $$;
+DROP FUNCTION IF EXISTS abrir_sobre(UUID, TEXT, JSONB, INTEGER, TEXT[]);
+DROP FUNCTION IF EXISTS vender_carta(UUID, TEXT, INTEGER, INTEGER);
 
 
 -- ============================================================================
@@ -238,8 +218,45 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 -- ============================================================================
+-- Funciones para leaderboard
+-- ============================================================================
+
+CREATE OR REPLACE FUNCTION obtener_ranking_cartas(limite INTEGER)
+RETURNS TABLE (
+    username TEXT,
+    total_cartas INTEGER
+) LANGUAGE sql SECURITY DEFINER AS $$
+    SELECT 
+        p.username,
+        COALESCE(SUM(i.cantidad), 0)::INTEGER AS total_cartas
+    FROM profiles p
+    LEFT JOIN inventory i ON i.user_id = p.id
+    GROUP BY p.id, p.username
+    ORDER BY total_cartas DESC
+    LIMIT limite;
+$$;
+
+CREATE OR REPLACE FUNCTION obtener_ranking_monedas(limite INTEGER)
+RETURNS TABLE (
+    username TEXT,
+    monedas INTEGER
+) LANGUAGE sql SECURITY DEFINER AS $$
+    SELECT username, monedas
+    FROM profiles
+    ORDER BY monedas DESC
+    LIMIT limite;
+$$;
+
+
+-- ============================================================================
 -- 4. Restricciones e integridad (despues de crear tipos para evitar conflictos)
 -- ============================================================================
+
+ALTER TABLE IF EXISTS profiles
+  DROP CONSTRAINT IF EXISTS chk_monedas_no_negativas;
+
+ALTER TABLE IF EXISTS inventory
+  DROP CONSTRAINT IF EXISTS chk_cantidad_no_negativa;
 
 ALTER TABLE profiles
   ADD CONSTRAINT chk_monedas_no_negativas
@@ -317,3 +334,21 @@ GRANT SELECT ON profiles TO authenticated;
 GRANT SELECT ON inventory TO authenticated;
 GRANT UPDATE (monedas, updated_at) ON profiles TO authenticated;
 GRANT INSERT, UPDATE, DELETE ON inventory TO authenticated;
+
+-- Políticas para leaderboard (permiten lectura pública de datos agregados)
+DROP POLICY IF EXISTS "leaderboard read profiles" ON profiles;
+DROP POLICY IF EXISTS "leaderboard read inventory" ON inventory;
+
+CREATE POLICY "leaderboard read profiles"
+    ON profiles FOR SELECT
+    TO authenticated
+    USING (true);
+
+CREATE POLICY "leaderboard read inventory"
+    ON inventory FOR SELECT
+    TO authenticated
+    USING (true);
+
+-- Permisos para funciones de leaderboard
+GRANT EXECUTE ON FUNCTION obtener_ranking_cartas(INTEGER) TO authenticated;
+GRANT EXECUTE ON FUNCTION obtener_ranking_monedas(INTEGER) TO authenticated;

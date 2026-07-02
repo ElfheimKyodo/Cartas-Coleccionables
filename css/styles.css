@@ -2822,8 +2822,119 @@ nav {
     font-size: 16px;
   }
 
-  #modal-sobre h2 {
-    font-size: 22px;
-  }
+#modal-sobre h2 {
+     font-size: 22px;
+   }
+ }
+ 
+ /* Leaderboard */
+ .leaderboard-lista {
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+     margin-top: 10px;
+ }
+ 
+ .leaderboard-item {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 12px 16px;
+     background: rgba(255, 255, 255, 0.06);
+     border-radius: 12px;
+     border: 1px solid rgba(255, 255, 255, 0.08);
+ }
+ 
+ .leaderboard-rank {
+     width: 30px;
+     height: 30px;
+     border-radius: 50%;
+     background: var(--gold);
+     color: #000;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-weight: 900;
+     font-size: 14px;
+ }
+ 
+ .leaderboard-item:nth-child(1) .leaderboard-rank {
+     background: linear-gradient(135deg, #ffd700, #ffaa00);
+     box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+ }
+ 
+ .leaderboard-item:nth-child(2) .leaderboard-rank {
+     background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
+     box-shadow: 0 0 12px rgba(192, 192, 192, 0.4);
+ }
+ 
+ .leaderboard-item:nth-child(3) .leaderboard-rank {
+     background: linear-gradient(135deg, #cd7f32, #daa520);
+     box-shadow: 0 0 12px rgba(205, 127, 50, 0.4);
+ }
+ 
+ .leaderboard-username {
+     flex: 1;
+     text-align: left;
+     margin-left: 12px;
+     color: var(--text);
+     font-weight: 600;
+ }
+ 
+ .leaderboard-value {
+     color: var(--gold);
+     font-weight: 700;
+     display: flex;
+     align-items: center;
+     gap: 6px;
+ }
+ 
+.loading-leaderboard {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-secondary);
+}
+
+#modal-leaderboard .gacha-info-tab-content {
+    display: none;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+#modal-leaderboard .gacha-info-tab-content.active {
+    display: block;
+}
+
+#modal-leaderboard .leaderboard-tabs {
+    margin-top: 16px;
+}
+
+#modal-leaderboard .gacha-info-tab.leaderboard-tab {
+    padding: 8px 16px;
+}
+
+@media (max-width: 760px) {
+    #modal-leaderboard .modal-contenido {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        height: 100dvh;
+        max-height: 100dvh;
+        margin: 0;
+        padding: 24px 16px;
+        border-radius: 0;
+    }
+    
+    .leaderboard-item {
+        padding: 10px 12px;
+    }
+    
+    .leaderboard-username {
+        font-size: 13px;
+    }
+    
+    .leaderboard-value {
+        font-size: 12px;
+    }
 }
 
