@@ -647,6 +647,68 @@
       "valor": 35,
       "descripcion": "Petherius Parthurnax, conocido como Spider-Knight es un héroe de 22 años de Astra que obtuvo la agilidad y las cuerdas rojizas de un espíritu arácnido. Tras la trágica pérdida de su tío, decidió usar su máscara y sus poderes bajo el lema de que \"un gran poder conlleva una gran responsabilidad\" para proteger a los desvalidos en secreto. En combate, destaca por equipar una imponente armadura pesada roja y negra con un emblema de araña que mitiga grandes impactos entrantes y almacena su espada, penalizando a cambio su agilidad y velocidad de despliegue.",
       "interprete": "Logic"
+    },
+    {
+      "id": "astra/goblinsnormales",
+      "nombre": "Goblins Normales",
+      "imagen": "cartas/astra/goblinsnormales.png",
+      "region": "astra",
+      "raza": "Goblin",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Los Goblins Normales, o Goblinus Vulgaris, constituyen la base de una plaga minera. Aunque individualmente son cobardes y enclenques, su codicia los lleva a sabotear la tecnología de Astra arrastrándose sigilosamente por tuberías y techos para desmantelar maquinaria pesada mientras los obreros descansan. En combate, atacan siempre desde las sombras en ventaja numérica utilizando picos de minería oxidados, herramientas robadas u hondas con rocas calientes; si la situación se complica, huyen hacia conductos estrechos inaccesibles para humanos con prótesis pesadas.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "astra/booyaghs",
+      "nombre": "Booyaghs",
+      "imagen": "cartas/astra/booyaghs.png",
+      "region": "astra",
+      "raza": "Goblin",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Los Booyaghs, también conocidos como “Los Portadores del Caos”, son goblins cuya magia surge de un accidente biológico tras exponerse a fugas de energía rúnica o morder un Núcleo activo. No estudian la magia, sino que la canalizan de forma salvaje e inestable, lo que se refleja en sus ojos violetas y en el uso de cetros improvisados con tubos de escape y cristales rotos. En combate son altamente impredecibles: pueden lanzar ráfagas de fuego térmico puro, provocar explosiones suicidas o alterar la gravedad de los túneles, por lo que eliminarlos rápido es una prioridad antes de que desestabilicen por completo el entorno.",
+      "interprete": "__null__"
+    },
+    {
+      "id": "astra/nilbogs",
+      "nombre": "Nilbogs",
+      "imagen": "cartas/astra/nilbogs.png",
+      "region": "astra",
+      "raza": "Goblin",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Los Nilbogs, conocidos como “La Paradoja Viviente”, son goblins envueltos en el misterio de si padecen una mutación psicológica o una maldición espiritual, actuando como si estuvieran poseídos por un duendecillo de la discordia que desafía toda lógica. Se desplazan dando saltos ridículos, visten retazos de uniformes militares de Astra al revés y su mera presencia induce jaquecas cognitivas en los soldados debido a sus constantes burlas. En combate representan una aberración táctica: debido a su naturaleza mística invertida, los ataques que deberían herirlos sanan sus heridas, mientras que los hechizos de restauración o el orden lógico los debilitan. Esta frustración suele ser fatal para los soldados novatos, por lo que se requiere una mente fría para romper su juego mental.",
+      "interprete": "__null__"
+    },
+    
+    {
+      "id": "astra/huargosdelasprofundidades",
+      "nombre": "Huargos de las Profundidades",
+      "imagen": "cartas/astra/huargosdelasprofundidades.png",
+      "region": "astra",
+      "raza": "Goblin",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Los Huargos de las Profundidades, o “Canis Vorax Subterraneus”, representan los colmillos que cazan a los hombres, formando una simbiosis perfecta con los goblins. Estas masivas bestias caninas de inteligencia malévola poseen un pelaje áspero y oscuro cubierto de barro, ojos adaptados a la negrura que brillan ante las linternas de vapor y un olfato tan agudo que rastrea sudor, sangre o lubricante de prótesis a kilómetros de distancia. En combate actúan como la caballería del subsuelo, siendo montados por los goblins más audaces para ejecutar emboscadas relámpago en túneles ferroviarios. Son capaces de derribar a un guardia blindado de un solo impacto y arrastrarlo a la oscuridad, y su mandíbula posee la fuerza suficiente para abollar y destrozar extremidades mecánicas de latón si logran morderlas de lleno.",
+      "interprete": "__null__"
+    },
+    
+    {
+      "id": "astra/goblinschatarreros",
+      "nombre": "Goblins Chatarreros",
+      "imagen": "cartas/astra/goblinschatarreros.png",
+      "region": "astra",
+      "raza": "Goblin",
+      "categoria": "NPC",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Los Goblins Chatarreros, llamados “Goblinus Mechanicus”, representan el peligro intelectual de la plaga verde. Poseen una retorcida intuición mecánica que les permite no solo robar la tecnología de Astra, sino imitarla, modificarla y hacerla funcionar a su manera. Pasan horas en vertederos uniendo piezas imposibles, cargando aparatosas mochilas de chatarra que liberan vapor y fluidos volátiles, y portando herramientas pesadas con sus dedos quemados por el ácido. En combate evitan el cuerpo a cuerpo directo, prefiriendo desatar el caos desde la retaguardia con rústicas armas de clavos de presión hidráulica o mochilas propulsoras defectuosas que los hacen volar erráticamente. Su táctica más molesta es el despliegue de pequeños “autómatas-bomba” de relojería que persiguen fuentes de calor, y al morir, es vital alejarse rápido, ya que sus mochilas explotan catastróficamente en una nube de metralla y vapor hirviendo.",
+      "interprete": "__null__"
     }
   ]
 }
