@@ -781,6 +781,18 @@
       "valor": 35,
       "descripcion": "Cristinne Klein, conocida como “Lady C”, es una vampira de 101 años de Umbraeth, de aspecto elegante, piel pálida, cabello negro y característicos lentes rojos. Fiel defensora de la etiqueta y las formalidades frente a la pura agresividad, adoptó un camino de venganza tras ver a muchos de su raza morir a manos de cazamonstruos. Sus ideales se vieron confrontados al conocer a Svetlana, una vampira salvaje a la que terminó ejecutando hace 40 años en su único y destructivo episodio de pérdida de autocontrol, perdiendo en dicho combate a su “alma gemela incompatible”.",
       "interprete": "Adam"
+    },
+    {
+      "id": "elarion/narissa",
+      "nombre": "Narissa",
+      "imagen": "cartas/elarion/narissa.png",
+      "region": "elarion",
+      "raza": "Sirena",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Narissa Arlette, apodada “La mariposa bajo el agua” y reina de Elarion, es una mestiza de humana y sirena de 27 años con ojos morados de pupilas rojas y cabello azul estilo medusa. Tras huir de un traumático matrimonio arreglado lleno de abusos, fue acogida por la diosa Thalassa. Años más tarde, utilizó su brillante inteligencia desde las sombras para colapsar un sistema militar y detener una guerra, demostrando un control absoluto sobre el océano. Actualmente protege a su pueblo mediante la sanación y la botánica, aunque mantiene un pacto implacable con las sirenas para ahogar sin remordimientos a maltratadores y abusadores.",
+      "interprete": "Adam"
     }
   ]
 }
