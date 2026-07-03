@@ -46,7 +46,7 @@
       "rareza": "epica",
       "valor": 35,
       "descripcion": "Cassius Ferrant, apodado \"El vacío\", es un robusto joven de Skjoldheim con cabello oscuro, mechones plateados y una cálida sonrisa. A diferencia de sus tres prodigiosos hermanos, nació completamente desprovisto de magia, ganándose el desprecio de su padre, quien lo nombró así por considerarlo un \"hueco\" y anunció falsamente su muerte ante la sociedad. Pese a ser ocultado y repudiado, Cassius irradia una energía alegre, y se niega firmemente a matar al sostener que decidir sobre la vida de los demás no es algo que él deba controlar, diferenciándose por completo de la crueldad paterna.",
-      "interprete": "Anubis"
+      "interprete": "Cass"
     },
     {
       "id": "skjoldheim/raven",
@@ -721,6 +721,30 @@
       "valor": 35,
       "descripcion": "Kael Dante Sol'vayne, conocido como The Black Knight, es un paladín de 22 años de Solareth que, debido a su albinismo, creció bajo el constante rechazo social y la crueldad de la academia militar. Impulsado por el desprecio recibido, dominó de forma feroz el combate con espada y el control de la luz oscura, vistiendo de negro como un luto permanente. Aunque inicialmente planeaba usar su poder para vengarse de sus humilladores, la sabia guía de su madre lo transformó en un noble protector de los necesitados. En el juego, se materializa luciendo una apariencia andrógina de intensos ojos rojos y portando su armadura completa de hierro negro Eclipse, un escudo masivo y una espada larga con los que defiende con orgullo a su reino.",
       "interprete": "Logic"
+    },
+    {
+      "id": "astra/axiom",
+      "nombre": "Axiom",
+      "imagen": "cartas/astra/axiom.png",
+      "region": "astra",
+      "raza": "DIOS",
+      "categoria": "NPC",
+      "rareza": "legendaria",
+      "valor": 150,
+      "descripcion": "Axiom, el Arquitecto del Mundo, es una deidad del Orden que, tras un conflicto divino, se exilió en el desierto y creó una civilización biónica cuyas máquinas rebeldes terminaron sepultadas en las Ruinas. Posteriormente, selló un pacto con el Primer Rey de Astra para perdonar a los humanos a cambio de desterrar la magia mística, forzando al reino a avanzar solo mediante la ciencia y la herrería. Recluido en su dimensión por su masivo poder, sufre la maldición del Orden Absoluto, que le obliga a percibir el cosmos únicamente como un flujo infinito de datos y números. Esta sobrecarga le impide comunicarse con normalidad, manifestándose en los sueños del monarca actual como una silueta de metal líquido con una columna de humo matemático brotando de su cabeza.",
+      "interprete": "Cass"
+    },
+    {
+      "id": "solareth/altithuriel",
+      "nombre": "Ithuriel",
+      "imagen": "cartas/solareth/altithuriel.png",
+      "region": "solareth",
+      "raza": "DIOS",
+      "categoria": "NPC",
+      "rareza": "legendaria",
+      "valor": 150,
+      "descripcion": "Ithuriel, aclamada como La Primera Luz, es descrita en los registros sagrados como una mujer de belleza imposible, cabellos azul pálido y múltiples alas blancas que inspiran una profunda paz. Venerada a través de miles de esculturas erigidas en su honor, su doctrina guía a los fieles enseñando el valor del deber y la protección comunitaria; sin embargo, entre las grietas de su culto se susurra “ክ፱ክርል ፕ፱ህዐ ፱ክ ዪዐነፕዪዐ ⶴ፱ጮልክዐ” y “ነ፱ነ ቹክነቹክልክጊልነ ቹሸጎፏቹክ ዓ፱ቹ ቹረ ነልርዪጎቻጎርጎዐ ጋቹ ፱ክዐነ የዐርዐነ ነልረህቹ ል ጮጎረቹነ”. Como protectora, desciende una vez al año durante el Festival del Sol Eterno para otorgar su bendición divina, mientras las estatuas que la honran ocultan la fría realidad de una entidad que no dudará en cambiar el mundo entero antes que cambiar su propia opinión.",
+      "interprete": "Vaelisse"
     }
   ]
 }
