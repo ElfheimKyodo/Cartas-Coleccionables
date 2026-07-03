@@ -759,18 +759,6 @@
       "interprete": "Vaelisse"
     },
     {
-      "id": "umbraeth/cristinne",
-      "nombre": "Cristinne",
-      "imagen": "cartas/umbraeth/cristinne.png",
-      "region": "umbraeth",
-      "raza": "Vampiro",
-      "categoria": "Personaje",
-      "rareza": "epica",
-      "valor": 35,
-      "descripcion": "Cristinne Klein, conocida como “Lady C”, es una vampira de 101 años de Umbraeth, de aspecto elegante, piel pálida, cabello negro y característicos lentes rojos. Fiel defensora de la etiqueta y las formalidades frente a la pura agresividad, adoptó un camino de venganza tras ver a muchos de su raza morir a manos de cazamonstruos. Sus ideales se vieron confrontados al conocer a Svetlana, una vampira salvaje a la que terminó ejecutando hace 40 años en su único y destructivo episodio de pérdida de autocontrol, perdiendo en dicho combate a su “alma gemela incompatible”.",
-      "interprete": "Adam"
-    },
-    {
       "id": "elarion/ravenne",
       "nombre": "Ravenne",
       "imagen": "cartas/elarion/ravenne.png",
@@ -781,6 +769,18 @@
       "valor": 35,
       "descripcion": "Ravenne Duclair, conocida como “Rav”, es una joven de 24 años, híbrido de cisne negro originaria de Elarion, que ejerce como co-propietaria de la taberna L’Étang Secret en Stredomir junto a su hermana Odette. A diferencia de su hermana, quien se centró en la armonía del refugio, Rav posee una presencia elegante pero inquietante y se especializó en comprender los secretos de las personas cuando la paz se rompe, logrando que la gente siempre quiera quedarse. Viste de tonos oscuros, realiza movimientos suaves y precisos, y mantiene una expresión cansada que delata su capacidad para anticipar el fin de cada conversación; además, sus alas negras se despliegan de forma instintiva al detectar tensión, conflictos o engaños en el local.",
       "interprete": "Monique"
+    },
+    {
+      "id": "umbraeth/cristinne",
+      "nombre": "Cristinne",
+      "imagen": "cartas/umbraeth/cristinne.png",
+      "region": "umbraeth",
+      "raza": "Vampiro",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Cristinne Klein, conocida como “Lady C”, es una vampira de 101 años de Umbraeth, de aspecto elegante, piel pálida, cabello negro y característicos lentes rojos. Fiel defensora de la etiqueta y las formalidades frente a la pura agresividad, adoptó un camino de venganza tras ver a muchos de su raza morir a manos de cazamonstruos. Sus ideales se vieron confrontados al conocer a Svetlana, una vampira salvaje a la que terminó ejecutando hace 40 años en su único y destructivo episodio de pérdida de autocontrol, perdiendo en dicho combate a su “alma gemela incompatible”.",
+      "interprete": "Adam"
     }
   ]
 }
