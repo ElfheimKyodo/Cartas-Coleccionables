@@ -278,8 +278,8 @@ const db = {
         if (readError) throw readError;
 
         const now = Date.now();
-        const serverNow = lastClaimServerMs > 0 ? lastClaimServerMs : now;
-        const remaining = lastClaimServerMs > 0 ? cooldownMs - (now - serverNow) : 0;
+        const serverNow = profile?.updated_at ? new Date(profile.updated_at).getTime() : 0;
+        const remaining = serverNow > 0 ? cooldownMs - (now - serverNow) : 0;
 
         if (remaining > 0) {
             return {
@@ -293,10 +293,7 @@ const db = {
         const nuevo = Number(profile?.monedas ?? 0) + 100;
         const { data, error } = await client
             .from('profiles')
-            .update({
-                monedas: nuevo,
-                updated_at: new Date().toISOString()
-            })
+            .update({ monedas: nuevo, updated_at: new Date().toISOString() })
             .eq('id', userId)
             .select('monedas, updated_at')
             .single();
@@ -304,9 +301,9 @@ const db = {
 
         return {
             obtenido: 100,
-            nuevo_saldo: data.monedas,
+            nuevo_saldo: Number(data?.monedas ?? nuevo),
             proxima_en: 0,
-            ultima_actualizacion: data.updated_at
+            ultima_actualizacion: data?.updated_at || new Date().toISOString()
         };
     },
 

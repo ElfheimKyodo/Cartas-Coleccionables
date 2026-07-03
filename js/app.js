@@ -492,7 +492,8 @@ function actualizarBotonMoneda() {
     const userId = usuarioActual?.id || 'local';
     const serverNow = lastClaimServerMs > 0 ? lastClaimServerMs : now;
     const cooldownMs = 60 * 60 * 1000;
-    const remaining = lastClaimServerMs > 0 ? cooldownMs - (now - serverNow) : 0;
+    const diff = now - serverNow;
+    const remaining = serverNow > 0 && diff < cooldownMs ? cooldownMs - diff : 0;
     //console.log('[COOLDOWN DEBUG] userId=', userId, 'now=', now, 'lastClaimServerMs=', lastClaimServerMs, 'remaining=', remaining);
 
     if (remaining > 0) {
@@ -1972,7 +1973,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                 actualizarMonedas();
                 animarReclamoMonedas();
                 lastClaimServerMs = Date.now();
-                guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
+                guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual?.id || 'local');
                 actualizarBotonMoneda();
                 guardarLocalStorage();
                 crearNotificacionEvento({
@@ -1992,7 +1993,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                     result = await db.claimDailyCoins(supabaseClient, usuarioActual.id);
                 } catch (rpcError) {
                     console.warn('[ECON] RPC reclamar_monedas_diarias no disponible; usando escritura directa en tablas:', rpcError);
-                    result = await db.claimDailyCoinsTable(supabaseClient, usuarioActual.id, lastClaimServerMs);
+                    result = await db.claimDailyCoinsTable(supabaseClient, usuarioActual.id);
                 }
 
                 if (result && result.obtenido > 0) {
@@ -2009,7 +2010,7 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                 } else {
                     if (typeof result?.proxima_en === 'number' && result.proxima_en > 0) {
                         lastClaimServerMs = Date.now() - (3600000 - result.proxima_en * 1000);
-                        guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
+                guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual?.id || 'local');
                     }
                 }
                 console.log('[COOLDOWN CLAIM] userId=', usuarioActual?.id || 'local', 'result:', result, 'lastClaimServerMs:', lastClaimServerMs);
