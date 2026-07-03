@@ -96,9 +96,9 @@ const CATEGORIA_NOMBRES = {
     item: 'Item'
 };
 const RAREZA_ICONS = {
-    comun: 'fa-gem',
-    rara: 'fa-circle',
-    epica: 'fa-sparkles',
+    comun: 'fa-circle',
+    rara: 'fa-diamond',
+    epica: 'fa-gem',
     legendaria: 'fa-star'
 };
 const REGION_ICONS = {
