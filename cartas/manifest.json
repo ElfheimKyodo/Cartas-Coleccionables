@@ -402,7 +402,7 @@
       "imagen": "cartas/elarion/thalassa.png",
       "region": "elarion",
       "raza": "DIOS",
-      "categoria": "NPC",
+      "categoria": "Personaje",
       "rareza": "legendaria",
       "valor": 150,
       "descripcion": "Thalassa es la deidad creadora y patrona absoluta de Elarion, caracterizada por una imponente silueta de sirena con piel azul pálido, una corona de abismo, cabello blanco esponjoso y una cola con constelaciones brillantes. A pesar de su inmenso poder divino y de portar un gran tridente de piedra oscura con el que esculpió el mundo, posee el corazón de una niña eterna, inocente y caprichosa que aborrece la solemnidad, prefiere las risas o los dulces y busca siempre la felicidad de sus creaciones. Sin embargo, esta faceta alegre esconde un rechazo absoluto hacia la muerte y la decadencia, lo que la lleva a prohibir tajantemente cualquier viaje a las oscuras ruinas de la Vieja Pontéia y a desatar un llanto capaz de partir el océano si la sombra de la muerte acecha su ecosistema.",
@@ -728,7 +728,7 @@
       "imagen": "cartas/astra/axiom.png",
       "region": "astra",
       "raza": "DIOS",
-      "categoria": "NPC",
+      "categoria": "Personaje",
       "rareza": "legendaria",
       "valor": 150,
       "descripcion": "Axiom, el Arquitecto del Mundo, es una deidad del Orden que, tras un conflicto divino, se exilió en el desierto y creó una civilización biónica cuyas máquinas rebeldes terminaron sepultadas en las Ruinas. Posteriormente, selló un pacto con el Primer Rey de Astra para perdonar a los humanos a cambio de desterrar la magia mística, forzando al reino a avanzar solo mediante la ciencia y la herrería. Recluido en su dimensión por su masivo poder, sufre la maldición del Orden Absoluto, que le obliga a percibir el cosmos únicamente como un flujo infinito de datos y números. Esta sobrecarga le impide comunicarse con normalidad, manifestándose en los sueños del monarca actual como una silueta de metal líquido con una columna de humo matemático brotando de su cabeza.",
@@ -740,10 +740,22 @@
       "imagen": "cartas/solareth/altithuriel.png",
       "region": "solareth",
       "raza": "DIOS",
-      "categoria": "NPC",
+      "categoria": "Personaje",
       "rareza": "legendaria",
       "valor": 150,
       "descripcion": "Ithuriel, aclamada como La Primera Luz, es descrita en los registros sagrados como una mujer de belleza imposible, cabellos azul pálido y múltiples alas blancas que inspiran una profunda paz. Venerada a través de miles de esculturas erigidas en su honor, su doctrina guía a los fieles enseñando el valor del deber y la protección comunitaria; sin embargo, entre las grietas de su culto se susurra “ክ፱ክርል ፕ፱ህዐ ፱ክ ዪዐነፕዪዐ ⶴ፱ጮልክዐ” y “ነ፱ነ ቹክነቹክልክጊልነ ቹሸጎፏቹክ ዓ፱ቹ ቹረ ነልርዪጎቻጎርጎዐ ጋቹ ፱ክዐነ የዐርዐነ ነልረህቹ ል ጮጎረቹነ”. Como protectora, desciende una vez al año durante el Festival del Sol Eterno para otorgar su bendición divina, mientras las estatuas que la honran ocultan la fría realidad de una entidad que no dudará en cambiar el mundo entero antes que cambiar su propia opinión.",
+      "interprete": "Vaelisse"
+    },
+    {
+      "id": "elarion/odette",
+      "nombre": "Odette",
+      "imagen": "cartas/elarion/odette.png",
+      "region": "elarion",
+      "raza": "DIOS",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Odette Duclair, conocida como “Ody”, es una guerrera de 24 años de género femenino. Es una híbrido animal de cisne blanco nacida en Elarion, donde creció en un entorno tranquilo y conectado a la naturaleza junto a su hermana Ravenne. Con el tiempo, ambas dejaron su hogar para asentarse en Středomír y fundar L’Étang Secret, una taberna famosa por su ambiente acogedor y su orden impecable. Destaca por su belleza delicada, una presencia calmante y una expresión que rara vez se altera; además, posee unas alas no constantes que, al aparecer, refuerzan notablemente su autoridad dentro del local.",
       "interprete": "Vaelisse"
     }
   ]
