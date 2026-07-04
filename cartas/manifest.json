@@ -793,6 +793,18 @@
       "valor": 35,
       "descripcion": "Narissa Arlette, apodada “La mariposa bajo el agua” y reina de Elarion, es una mestiza de humana y sirena de 27 años con ojos morados de pupilas rojas y cabello azul estilo medusa. Tras huir de un traumático matrimonio arreglado lleno de abusos, fue acogida por la diosa Thalassa. Años más tarde, utilizó su brillante inteligencia desde las sombras para colapsar un sistema militar y detener una guerra, demostrando un control absoluto sobre el océano. Actualmente protege a su pueblo mediante la sanación y la botánica, aunque mantiene un pacto implacable con las sirenas para ahogar sin remordimientos a maltratadores y abusadores.",
       "interprete": "Adam"
+    },
+    {
+      "id": "astra/alaric",
+      "nombre": "Alaric",
+      "imagen": "cartas/astra/alaric.png",
+      "region": "astra",
+      "raza": "Humano",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Alaric Aurel, apodado “El Cartógrafo Errante”, es un explorador de 23 años perteneciente a un antiguo linaje de Astra, de complexión atlética, cabello rubio y ojos azul violáceo. Equipado con herramientas alquímicas, arco y dagas, abandonó la comodidad urbana para adentrarse en ruinas y templos derruidos que apenas figuran en la cartografía moderna. Tras descubrir en estos lugares extraños símbolos y patrones imposibles de encajar con las crónicas oficiales, comenzó a sospechar que el pasado conocido está incompleto, por lo que hoy recorre el continente financiándose con encargos mientras persigue una sola incógnita: ¿Qué parte de la historia decidió el mundo olvidar?",
+      "interprete": "Caelum"
     }
   ]
 }
