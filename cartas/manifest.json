@@ -805,6 +805,18 @@
       "valor": 35,
       "descripcion": "Alaric Aurel, apodado “El Cartógrafo Errante”, es un explorador de 23 años perteneciente a un antiguo linaje de Astra, de complexión atlética, cabello rubio y ojos azul violáceo. Equipado con herramientas alquímicas, arco y dagas, abandonó la comodidad urbana para adentrarse en ruinas y templos derruidos que apenas figuran en la cartografía moderna. Tras descubrir en estos lugares extraños símbolos y patrones imposibles de encajar con las crónicas oficiales, comenzó a sospechar que el pasado conocido está incompleto, por lo que hoy recorre el continente financiándose con encargos mientras persigue una sola incógnita: ¿Qué parte de la historia decidió el mundo olvidar?",
       "interprete": "Caelum"
+    },
+    {
+      "id": "skjoldheim/maki",
+      "nombre": "Maki",
+      "imagen": "cartas/skjoldheim/maki.png",
+      "region": "skjoldheim",
+      "raza": "Híbrido",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Maki Kanzaki es una joven de 22 años, híbrido de conejo de Skjoldheim, de 1.55 m de estatura, piel pálida con pecas, grandes ojos azules y largas orejas caídas. Suele vestir ropa abrigada para el frío, elemento que acostumbra sonrojar sus delicadas mejillas. A nivel emocional, carga con una profunda melancolía del pasado; despierta frecuentemente agitada y entre lágrimas al revivir en sueños recuerdos nostálgicos de sus padres, lidiando en soledad con una persistente opresión en el pecho por la falta que le hacen.",
+      "interprete": "Ada Wong"
     }
   ]
 }
