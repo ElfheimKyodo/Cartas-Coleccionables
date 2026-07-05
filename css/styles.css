@@ -3061,3 +3061,150 @@ nav {
     }
 }
 
+#modal-changelog .gacha-info-tab-content {
+    padding: 20px;
+    text-align: left;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.changelog-content h1,
+#modal-changelog h1,
+#modal-changelog .markdown-content h1 {
+    color: var(--gold);
+    margin: 16px 0 8px;
+    font-size: 24px;
+}
+
+.changelog-content h2,
+#modal-changelog h2,
+#modal-changelog .markdown-content h2 {
+    color: var(--gold);
+    margin: 14px 0 6px;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+}
+
+.changelog-content h3,
+#modal-changelog h3,
+#modal-changelog .markdown-content h3 {
+    color: var(--text);
+    margin: 12px 0 4px;
+    font-size: 16px;
+}
+
+.changelog-content ul,
+#modal-changelog ul,
+#modal-changelog .markdown-content ul {
+    margin: 8px 0;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.changelog-content li,
+#modal-changelog li,
+#modal-changelog .markdown-content li {
+    margin: 4px 0;
+    padding-left: 8px;
+    position: relative;
+    color: var(--text);
+}
+
+#modal-changelog li:before,
+#modal-changelog .changelog-content li:before {
+    content: "•";
+    color: var(--gold);
+    position: absolute;
+    left: 0;
+}
+
+.changelog-content p,
+#modal-changelog p,
+#modal-changelog .markdown-content p {
+    margin: 8px 0;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.changelog-content a,
+#modal-changelog a,
+#modal-changelog .markdown-content a {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+.changelog-content a:hover,
+#modal-changelog a:hover,
+#modal-changelog .markdown-content a:hover {
+    text-decoration: underline;
+}
+
+#modal-changelog code {
+    background: var(--surface-light);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #ffeb3b;
+}
+
+#modal-changelog pre {
+    background: var(--surface-light);
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+#modal-changelog pre code {
+    background: transparent;
+    padding: 0;
+    color: var(--text);
+}
+
+#modal-changelog blockquote {
+    border-left: 3px solid var(--gold);
+    padding-left: 12px;
+    margin: 12px 0;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+#modal-changelog strong {
+    color: var(--gold);
+    font-weight: bold;
+}
+
+#modal-changelog em {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.loading-changelog {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+#changelog-content h1, .changelog-content h1 {
+    color: var(--gold) !important;
+    margin: 16px 0 8px !important;
+    font-size: 24px !important;
+    font-weight: normal !important;
+}
+
+#changelog-content h2, .changelog-content h2 {
+    color: var(--gold) !important;
+    margin: 14px 0 6px !important;
+    font-size: 18px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding-bottom: 4px !important;
+    font-weight: normal !important;
+}
+
+#changelog-content ul, .changelog-content ul {
+    margin: 8px 0 !important;
+    padding-left: 20px !important;
+}
+

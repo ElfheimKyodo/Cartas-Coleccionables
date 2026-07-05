@@ -70,6 +70,7 @@
             <div class="user-menu-actions">
                 <button id="profile-sync" class="user-menu-btn"><i class="fa-solid fa-rotate"></i><span>Sincronizar</span></button>
                 <button id="profile-leaderboard" class="user-menu-btn"><i class="fa-solid fa-trophy"></i><span>Ranking</span></button>
+                <button id="profile-changelog" class="user-menu-btn"><i class="fa-solid fa-clock"></i><span>Actualizaciones</span></button>
                 <!--<button id="profile-ruleta" class="user-menu-btn"><i class="fa-solid fa-spinner"></i><span>Ruleta Diaria</span></button>-->
                 <button id="btn-edit-profile" class="user-menu-btn"><i class="fa-solid fa-pen-to-square"></i><span>Editar Perfil</span></button>
                 <button id="profile-change-password" class="user-menu-btn"><i class="fa-solid fa-key"></i><span>Cambiar Contraseña</span></button>
@@ -301,9 +302,22 @@
             <p id="ruleta-resultado" class="ruleta-resultado">¡Gira para ganar monedas!</p>
             <p id="ruleta-timer" class="ruleta-timer"></p>
         </div>
-    </div>
- 
+</div>
+  
+  <div id="modal-changelog" class="modal">
+      <div class="modal-contenido gacha-info-modal">
+          <span class="cerrar">&times;</span>
+          <div class="gacha-info-header">
+              <h2>Actualizaciones</h2>
+          </div>
+          <div id="changelog-content" class="changelog-content gacha-info-tab-content active" style="padding: 20px; text-align: left; max-height: 70vh; overflow-y: auto;">
+              <p class="loading-changelog">Cargando actualizaciones...</p>
+          </div>
+      </div>
+  </div>
+
      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="js/supabase.js"></script>
      <script src="js/app.js"></script>
      <script>

@@ -2291,6 +2291,14 @@ const profileSync = document.getElementById('profile-sync');
         });
     }
 
+    const profileChangelog = document.getElementById('profile-changelog');
+    if (profileChangelog) {
+        profileChangelog.addEventListener('click', () => {
+            closeProfileMenu();
+            abrirChangelog();
+        });
+    }
+
     const profileRuleta = document.getElementById('profile-ruleta');
     if (profileRuleta) {
         profileRuleta.addEventListener('click', async () => {
@@ -2442,6 +2450,84 @@ function abrirLeaderboard() {
     if (!modal) return;
     modal.classList.add('active');
     cargarLeaderboard();
+}
+
+function abrirChangelog() {
+    const modal = document.getElementById('modal-changelog');
+    const contentEl = document.getElementById('changelog-content');
+    if (!modal || !contentEl) return;
+    modal.classList.add('active');
+    contentEl.innerHTML = '<p class="loading-changelog">Cargando actualizaciones...</p>';
+    fetch('js/updates.json')
+        .then(r => r.ok ? r.json() : Promise.reject('No se encontró updates.json'))
+        .then(data => renderizarChangelog(data, contentEl))
+        .catch(err => {
+            console.warn('[CHANGELOG] Error cargando updates:', err);
+            contentEl.innerHTML = '<p class="error-mensaje">No hay actualizaciones disponibles.</p>';
+        });
+}
+
+function renderizarChangelog(data, contenedor) {
+    if (!data || !data.actualizaciones || data.actualizaciones.length === 0) {
+        contenedor.innerHTML = '<p class="sin-cartas">No hay actualizaciones.</p>';
+        return;
+    }
+    
+    let html = '';
+    
+    for (const update of data.actualizaciones) {
+        html += '<h2 style="color: var(--gold); margin: 14px 0 6px; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">' + escapeHtml(update.fecha || '') + '</h2>';
+        html += '<ul style="margin: 8px 0; padding-left: 20px; list-style: none;">';
+        if (update.descripcion) {
+            html += '<li style="margin: 4px 0; color: var(--text);">' + escapeHtml(update.descripcion) + '</li>';
+        }
+        if (update.cambios && Array.isArray(update.cambios)) {
+            for (const cambio of update.cambios) {
+                html += '<li style="margin: 4px 0; color: var(--text);">' + escapeHtml(cambio) + '</li>';
+            }
+        }
+        html += '</ul>';
+    }
+    
+    contenedor.innerHTML = html;
+}
+
+function renderizarMarkdown(md, contenedor) {
+    const lineas = md.split('\n');
+    let html = '';
+    let enLista = false;
+    
+    for (let linea of lineas) {
+        linea = linea.trimEnd();
+        
+        if (linea.startsWith('# ')) {
+            if (enLista) { html += '</ul>'; enLista = false; }
+            html += '<h1 style="color: var(--gold); margin: 16px 0 8px; font-size: 24px;">' + escapeHtml(linea.slice(2)) + '</h1>';
+        } else if (linea.startsWith('## ')) {
+            if (enLista) { html += '</ul>'; enLista = false; }
+            html += '<h2 style="color: var(--gold); margin: 14px 0 6px; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">' + escapeHtml(linea.slice(3)) + '</h2>';
+        } else if (linea.startsWith('### ')) {
+            if (enLista) { html += '</ul>'; enLista = false; }
+            html += '<h3 style="color: var(--text); margin: 12px 0 4px; font-size: 16px;">' + escapeHtml(linea.slice(4)) + '</h3>';
+        } else if (linea.startsWith('* ') || linea.startsWith('- ')) {
+            if (!enLista) { html += '<ul style="margin: 8px 0; padding-left: 20px;">'; enLista = true; }
+            const contenido = procesarEnlacesInline(escapeHtml(linea.slice(2)));
+            html += '<li style="margin: 4px 0; color: var(--text);">' + contenido + '</li>';
+        } else if (linea === '') {
+            if (enLista) { html += '</ul>'; enLista = false; }
+        } else {
+            if (enLista) { html += '</ul>'; enLista = false; }
+            const contenido = procesarEnlacesInline(escapeHtml(linea));
+            html += '<p style="margin: 8px 0; color: var(--text); line-height: 1.5;">' + contenido + '</p>';
+        }
+    }
+    
+    if (enLista) html += '</ul>';
+    contenedor.innerHTML = html || '<p class="sin-cartas">No hay actualizaciones.</p>';
+}
+
+function procesarEnlacesInline(texto) {
+    return texto.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: var(--gold); text-decoration: none;" target="_blank">$1</a>');
 }
 
 function cerrarLeaderboard() {
