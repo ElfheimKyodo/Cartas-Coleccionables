@@ -5,7 +5,7 @@ let usuarioActual = null;
 let supabaseClient = null;
 let supabaseEnabled = false;
 let panelVentaGlobal = null;
-let sobreSeleccionado = 'generic';
+let sobreSeleccionado = '';
 let logoGenericoIndex = 0;
 let logoGachaTimer = null;
 let previewDestelloTimer = null;
@@ -68,7 +68,8 @@ const REGION_NOMBRES = {
     skjoldheim: 'Skjoldheim',
     astra: 'Astra',
     solareth: 'Solareth',
-    elarion: 'Elarion'
+    elarion: 'Elarion',
+    ederia: 'Ederia'
 };
 const RAREZA_NOMBRES = {
     comun: 'Comun',
@@ -107,6 +108,7 @@ const REGION_ICONS = {
     astra: 'fa-star',
     solareth: 'fa-sun',
     elarion: 'fa-tree',
+    ederia: 'fa-hands-holding-circle',
     generic: 'fa-layer-group'
 };
 const CATEGORIA_ICONS = {
@@ -186,7 +188,7 @@ async function cargarConfiguracionSobres() {
         if (sobresConfigurados.length === 0) {
             console.warn('sobres-config.json no tiene sobres disponibles');
         }
-        if (!sobresConfigurados.some(sobre => sobre.tipo === sobreSeleccionado)) {
+        if (!sobreSeleccionado || !sobresConfigurados.some(sobre => sobre.tipo === sobreSeleccionado)) {
             sobreSeleccionado = sobresConfigurados[0]?.tipo || 'generic';
         }
     } catch (error) {
@@ -333,19 +335,20 @@ async function cargarDatos() {
         console.log('[COOLDOWN] profile:', profile);
         monedas = profile?.monedas ?? 500;
 
-        if (profile?.updated_at) {
-            const parsed = Date.parse(profile.updated_at);
-            console.log('[COOLDOWN] updated_at raw:', profile.updated_at, 'parsed:', parsed, 'isNaN:', Number.isNaN(parsed));
+        const ultimaRecompensa = profile?.ultima_recompensa_diaria;
+        if (ultimaRecompensa) {
+            const parsed = Date.parse(ultimaRecompensa);
+            console.log('[COOLDOWN] ultima_recompensa_diaria raw:', ultimaRecompensa, 'parsed:', parsed, 'isNaN:', Number.isNaN(parsed));
             if (!Number.isNaN(parsed)) {
                 lastClaimServerMs = parsed;
                 guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
             } else {
                 lastClaimServerMs = leerUltimoReclamoLocal(usuarioActual.id);
-                console.log('[COOLDOWN] updated_at inválido; usando localStorage:', lastClaimServerMs);
+                console.log('[COOLDOWN] ultima_recompensa_diaria inválido; usando localStorage:', lastClaimServerMs);
             }
         } else {
             lastClaimServerMs = leerUltimoReclamoLocal(usuarioActual.id);
-            console.log('[COOLDOWN] updated_at ausente; usando localStorage:', lastClaimServerMs);
+            console.log('[COOLDOWN] ultima_recompensa_diaria ausente; usando localStorage:', lastClaimServerMs);
         }
 
         const inventario = await db.getInventory(supabaseClient, usuarioActual.id);
@@ -653,6 +656,10 @@ function actualizarSrcConTransicion(img, src, alt) {
 }
 
 function obtenerImagenSobre(sobre) {
+    if (sobre.featured) {
+        const carta = cartasData.find(c => c.id === sobre.featured);
+        if (carta) return carta.imagen;
+    }
     let cartasPermitidas = [];
     if (sobre.cartas && sobre.cartas.length > 0) {
         cartasPermitidas = cartasData.filter(carta => sobre.cartas.includes(carta.id));
@@ -799,6 +806,24 @@ function actualizarPresentacionGacha() {
     if (preview) {
         preview.className = `gacha-preview region-${sobre.tipo}`;
         aplicarFondoSobre(preview, sobre.tipo);
+        const esPromo = sobre.tipo === 'promocional';
+        preview.classList.toggle('gacha-preview-promocional', esPromo);
+        let contParticulas = preview.querySelector('.gacha-particulas');
+        if (esPromo && !contParticulas) {
+            contParticulas = document.createElement('div');
+            contParticulas.className = 'gacha-particulas';
+            for (let i = 0; i < 14; i++) {
+                const particula = document.createElement('span');
+                particula.className = 'gacha-particula';
+                particula.style.left = (Math.random() * 100) + '%';
+                particula.style.animationDelay = (Math.random() * 7) + 's';
+                particula.style.animationDuration = (6 + Math.random() * 4) + 's';
+                contParticulas.appendChild(particula);
+            }
+            preview.appendChild(contParticulas);
+        } else if (!esPromo && contParticulas) {
+            contParticulas.remove();
+        }
     }
     aplicarFondoStage(sobre.tipo);
     if (img) {
@@ -845,7 +870,7 @@ function toggleInformacionGacha() {
     titulo.textContent = sobre.nombre;
 
     const probRarezas = sobre.probabilidades;
-    const regionIcons = { umbraeth: 'fa-moon', skjoldheim: 'fa-shield-halved', astra: 'fa-star', solareth: 'fa-sun', elarion: 'fa-tree', generic: 'fa-layer-group' };
+    const regionIcons = { umbraeth: 'fa-moon', skjoldheim: 'fa-shield-halved', astra: 'fa-star', solareth: 'fa-sun', elarion: 'fa-tree', ederia: 'fa-hands-holding-circle', generic: 'fa-layer-group' };
     const regionesInfo = sobre.regiones.map(r => `<li><i class="fa-solid ${regionIcons[r] || 'fa-question'}" style="margin-right:6px;color:var(--gold);"></i>${REGION_NOMBRES[r] || r}</li>`).join('');
     const rarezaInfo = Object.entries(probRarezas).map(([r, w]) => 
         `<li>${RAREZA_NOMBRES[r] || r}: ${calcularPorcentaje(probRarezas, r)}%</li>`
@@ -1035,7 +1060,7 @@ function generarCartasRegion(region) {
         }
         let cartasFiltradas = cartasPermitidas.filter(c => c.rareza === rarezaSeleccionada);
         if (cartasFiltradas.length > 0) {
-            const carta = cartasFiltradas[Math.floor(Math.random() * cartasFiltradas.length)];
+            const carta = elegirCartaPonderada(cartasFiltradas, sobre);
             cartas.push(carta);
             if (carta.rareza === 'legendaria') tieneLegendaria = true;
         } else if (rarezaSeleccionada === 'legendaria') {
@@ -1056,6 +1081,22 @@ function generarCartasRegion(region) {
     }
 
     return { cartas, tieneLegendaria };
+}
+
+function elegirCartaPonderada(lista, sobre) {
+    const featured = sobre.featured;
+    const mult = Number(sobre.featuredMultiplicador || 1);
+    if (featured && mult > 1 && lista.some(c => c.id === featured)) {
+        const pesos = lista.map(c => c.id === featured ? mult : 1);
+        const total = pesos.reduce((a, b) => a + b, 0);
+        let r = Math.random() * total;
+        for (let i = 0; i < lista.length; i++) {
+            r -= pesos[i];
+            if (r <= 0) return lista[i];
+        }
+        return lista[lista.length - 1];
+    }
+    return lista[Math.floor(Math.random() * lista.length)];
 }
 
 function obtenerRarezaPorProbabilidad(probRarezas) {
@@ -2479,7 +2520,13 @@ function renderizarChangelog(data, contenedor) {
         html += '<h2 style="color: var(--gold); margin: 14px 0 6px; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">' + escapeHtml(update.fecha || '') + '</h2>';
         html += '<ul style="margin: 8px 0; padding-left: 20px; list-style: none;">';
         if (update.descripcion) {
-            html += '<li style="margin: 4px 0; color: var(--text);">' + escapeHtml(update.descripcion) + '</li>';
+            if (Array.isArray(update.descripcion)) {
+                for (const d of update.descripcion) {
+                    html += '<li style="margin: 4px 0; color: var(--text);">' + escapeHtml(d) + '</li>';
+                }
+            } else {
+                html += '<li style="margin: 4px 0; color: var(--text);">' + escapeHtml(update.descripcion) + '</li>';
+            }
         }
         if (update.cambios && Array.isArray(update.cambios)) {
             for (const cambio of update.cambios) {

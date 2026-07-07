@@ -2,11 +2,16 @@
   "actualizaciones": [
     {
       "fecha": "7/7/26",
-      "descripcion": "Corrección de interprete de Narissa."
+      "descripcion": [
+        "Corrección de interprete de Narissa.",
+        "Se agregó la región Ederia",
+        "Se cambió el sistema de sobres",
+        "Se añadió a: Lobo Infernal, Anezka, Alistair, Diamond y Jestress"
+      ]
     },
     {
       "fecha": "5/7/26",
-      "descripcion": "Maki añadida."
+      "descripcion": ["Maki añadida."]
     }
   ]
 }

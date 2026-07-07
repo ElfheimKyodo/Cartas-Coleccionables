@@ -1,6 +1,39 @@
 {
   "sobres": [
     {
+      "tipo": "promocional",
+      "disponible": true,
+      "oferta": 0,
+      "nombre": "SOBRE PROMOCIONAL",
+      "iconoFa": "fa-solid fa-gift",
+      "precio": 100,
+      "regiones": [],
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 20, "legendaria": 1 },
+      "cartas": [
+        "umbraeth/lilith",
+        "skjoldheim/raven"
+      ],
+      "featured": "ederia/diamond",
+      "featuredMultiplicador": 2,
+      "descripcion": "Sobre promocional pensado para eventos. Solo saldrán las cartas definidas en el valor \"cartas\", respetando las probabilidades por rareza de este sobre. La carta en \"featured\" se muestra en el icono y tiene su probabilidad multiplicada por \"featuredMultiplicador\". Actívalo (disponible: true) durante el evento.",
+      "informacion": "<h4>Contiene 3 cartas del evento (definidas en \"cartas\")</h4>"
+    },
+    {
+      "tipo": "permanente",
+      "disponible": true,
+      "oferta": 25,
+      "nombre": "SOBRE PERMANENTE",
+      "iconoFa": "fa-solid fa-box-open",
+      "precio": 100,
+      "regiones": [],
+      "probabilidades": { "comun": 100, "rara": 50, "epica": 20, "legendaria": 1 },
+      "cartas": [],
+      "featured": "",
+      "featuredMultiplicador": 2,
+      "descripcion": "Sobre genérico permanente. Aquí puedes agregar algunas cartas fijas en el valor \"cartas\"; el gacha solo las repartirá respetando las probabilidades por rareza de este sobre. La carta en \"featured\" se muestra en el icono y tiene su probabilidad multiplicada por \"featuredMultiplicador\".",
+      "informacion": "<h4>Contiene 3 cartas fijas (definidas en \"cartas\")</h4>"
+    },
+    {
       "tipo": "generic",
       "disponible": true,
       "oferta": 0,
@@ -14,7 +47,7 @@
     },
     {
       "tipo": "umbraeth",
-      "disponible": true,
+      "disponible": false,
       "oferta": 25,
       "nombre": "GACHA UMBRAETH",
       "iconoFa": "fa-solid fa-moon",
@@ -26,7 +59,7 @@
     },
     {
       "tipo": "skjoldheim",
-      "disponible": true,
+      "disponible": false,
       "oferta": 25,
       "nombre": "GACHA SKJOLDHEIM",
       "iconoFa": "fa-solid fa-snowflake",
@@ -38,7 +71,7 @@
     },
     {
       "tipo": "astra",
-      "disponible": true,
+      "disponible": false,
       "oferta": 25,
       "nombre": "GACHA ASTRA",
       "iconoFa": "fa-solid fa-star",
@@ -50,7 +83,7 @@
     },
     {
       "tipo": "solareth",
-      "disponible": true,
+      "disponible": false,
       "oferta": 25,
       "nombre": "GACHA SOLARETH",
       "iconoFa": "fa-solid fa-dragon",
@@ -62,7 +95,7 @@
     },
     {
       "tipo": "elarion",
-      "disponible": true,
+      "disponible": false,
       "oferta": 25,
       "nombre": "GACHA ELARION",
       "iconoFa": "fa-solid fa-leaf",

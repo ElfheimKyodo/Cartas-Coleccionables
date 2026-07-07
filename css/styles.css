@@ -1078,6 +1078,40 @@ nav {
   background: linear-gradient(135deg, #1b5e20, #43a047);
 }
 
+.gacha-preview.region-promocional {
+  background: linear-gradient(135deg, #6b4e16, #c9a227);
+}
+
+.gacha-preview.gacha-preview-promocional {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(212, 175, 55, 0.45);
+}
+
+.gacha-particulas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.gacha-particula {
+  position: absolute;
+  bottom: -8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6cf 0%, #f5d36b 55%, rgba(245, 211, 107, 0) 100%);
+  opacity: 0;
+  animation: particula-dorada 7s linear infinite;
+}
+
+@keyframes particula-dorada {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.85; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(-440px) scale(1); opacity: 0; }
+}
+
 .gacha-presentacion {
   position: relative;
   z-index: 1;

@@ -95,7 +95,7 @@ const db = {
     async getProfile(client, userId) {
         const { data, error } = await client
             .from('profiles')
-            .select('monedas, updated_at, pity_contador, username, must_change_password')
+            .select('monedas, updated_at, ultima_recompensa_diaria, pity_contador, username, must_change_password')
             .eq('id', userId)
             .maybeSingle();
         if (error) {
@@ -110,7 +110,7 @@ const db = {
     async getProfileByUsername(client, username) {
         const { data, error } = await client
             .from('profiles')
-            .select('id, monedas, updated_at, pity_contador, username, must_change_password')
+            .select('id, monedas, updated_at, ultima_recompensa_diaria, pity_contador, username, must_change_password')
             .eq('username', username)
             .maybeSingle();
         if (error) {
@@ -272,13 +272,13 @@ const db = {
         const cooldownMs = 60 * 60 * 1000;
         const { data: profile, error: readError } = await client
             .from('profiles')
-            .select('monedas, updated_at')
+            .select('monedas, ultima_recompensa_diaria')
             .eq('id', userId)
             .single();
         if (readError) throw readError;
 
         const now = Date.now();
-        const serverNow = profile?.updated_at ? new Date(profile.updated_at).getTime() : 0;
+        const serverNow = profile?.ultima_recompensa_diaria ? new Date(profile.ultima_recompensa_diaria).getTime() : 0;
         const remaining = serverNow > 0 ? cooldownMs - (now - serverNow) : 0;
 
         if (remaining > 0) {
@@ -286,16 +286,16 @@ const db = {
                 obtenido: 0,
                 nuevo_saldo: Number(profile?.monedas ?? 0),
                 proxima_en: Math.max(0, Math.ceil(remaining / 1000)),
-                ultima_actualizacion: profile?.updated_at || null
+                ultima_actualizacion: profile?.ultima_recompensa_diaria || null
             };
         }
 
         const nuevo = Number(profile?.monedas ?? 0) + 100;
         const { data, error } = await client
             .from('profiles')
-            .update({ monedas: nuevo, updated_at: new Date().toISOString() })
+            .update({ monedas: nuevo, ultima_recompensa_diaria: new Date().toISOString() })
             .eq('id', userId)
-            .select('monedas, updated_at')
+            .select('monedas, ultima_recompensa_diaria')
             .single();
         if (error) throw error;
 
@@ -303,7 +303,7 @@ const db = {
             obtenido: 100,
             nuevo_saldo: Number(data?.monedas ?? nuevo),
             proxima_en: 0,
-            ultima_actualizacion: data?.updated_at || new Date().toISOString()
+            ultima_actualizacion: data?.ultima_recompensa_diaria || new Date().toISOString()
         };
     },
 
