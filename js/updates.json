@@ -1,8 +1,12 @@
 {
   "actualizaciones": [
     {
+      "fecha": "7/7/26",
+      "descripcion": "Corrección de interprete de Narissa."
+    },
+    {
       "fecha": "5/7/26",
-      "descripcion": "Maki añadida"
+      "descripcion": "Maki añadida."
     }
   ]
 }
