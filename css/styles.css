@@ -1082,6 +1082,14 @@ nav {
   background: linear-gradient(135deg, #6b4e16, #c9a227);
 }
 
+.gacha-preview.region-ederia {
+  background: linear-gradient(135deg, #3a2e0a, #8a6d1f 45%, #0e5e66 100%);
+}
+
+.gacha-preview.gacha-preview-ederia {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 229, 255, 0.35), 0 0 10px rgba(201, 162, 39, 0.4);
+}
+
 .gacha-preview.gacha-preview-promocional {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(212, 175, 55, 0.45);
 }
@@ -2244,6 +2252,10 @@ nav {
 
 .carta-sobre.region-elarion {
   box-shadow: 0 12px 30px rgba(27, 94, 32, 0.65);
+}
+
+.carta-sobre.region-ederia {
+  box-shadow: 0 12px 30px rgba(14, 94, 102, 0.65), 0 0 14px rgba(201, 162, 39, 0.35);
 }
 
 @keyframes entradaCarta {

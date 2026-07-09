@@ -828,7 +828,8 @@
       "rareza": "rara",
       "valor": 10,
       "descripcion": "Los Lobos Infernales son criaturas nacidas del propio Nihil, una Fuerza que se opone a la existencia misma. Los Lobos Infernales son más grandes y sanguinarios que los lobos ordinarios, y otro de sus rasgos más distintivos son sus brillantes ojos carmesíes. Suelen atacar en manada, y en grandes números pueden llegar a ser un problema incluso para los exploradores veteranos.",
-      "interprete": "Jess"
+      "interprete": "Jess",
+      "visible": false
     },
     {
       "id": "ederia/anezka",
@@ -840,7 +841,8 @@
       "rareza": "epica",
       "valor": 35,
       "descripcion": "Anežka Svobodova era una niña de 6 años que nació en la capital de Ederia. Una noche, varios asesinos, liderados por Diamond y Jestress, quienes habían sentido que su alma era ideal para su próximo plan, acabaron con la vida de sus padres en frente de ella. Fue secuestrada y sometida a intensa tortura durante semanas, incluyendo fuertes descargas eléctricas para amoldar su alma a la de un amuleto especial. Durante la tortura, su alma fue maldecida. Durante \"Entre la Corona y la Perdición\", el collar de Anežka, impregnado de maná, invocaba lobos exponencialmente. La maldición se desató cuando el collar fue destruido durante el incidente, convirtiéndose en una loba infernal gigantesca, y terminando por conocer su final a manos de los defensores de la ciudad.",
-      "interprete": "Jess"
+      "interprete": "Jess",
+      "visible": false
     },
     {
       "id": "ederia/Alistair",
@@ -852,7 +854,8 @@
       "rareza": "legendaria",
       "valor": 150,
       "descripcion": "Alistair Di’Zerkam fue el rey de Ederia. Bendecido por la gracia de los Dioses, gobernó durante varios milenios. Fue conocido como “El Rey Milenario”, era querido y respetado por su pueblo, a quienes veían como símbolo de virtud y justicia. Era usuario de las Espadas Gemelas de Sylverstand. Llegó a conocer a Havard Hacha Negra, el primer Rey de Skjoldheim, entablando una relación de amistad con él. En algún punto, aprendió sobre la Profecía del Fin, de manos de la Diosa del Invierno. Prestó ayuda al reino de Skjoldheim contra las tropas No Muertas de Umbraeth, en la Guerra de los Avatares. Milenios más tarde, fue asesinado por Jestress durante los eventos de “Entre la Corona y la Perdición”.",
-      "interprete": "Son Of Sparda"
+      "interprete": "Son Of Sparda",
+      "visible": false
     },
     {
       "id": "ederia/Jestress",
@@ -864,7 +867,8 @@
       "rareza": "legendaria",
       "valor": 150,
       "descripcion": "Jestress es la criminal más peligrosa y temida de Elfheim. Es la líder de los Cuatros Aces, entre otros villanos que operan con ella desde las sombras. Su desconoce su verdadera identidad. Carece de empatía y remordimiento por sus actos, burlándose de sus atrocidades, de ahí su apodo: Jestress (Bufona). Es capaz de manipular el Nihil, una energía ancestral que se opone a la vida. Durante \"Entre la Corona y la Perdición\", usó la maldición que puso en Anežka, junto a Diamond, para causar una invocación de Lobos Infernales en el centro de Středomír, como distracción para irrumpir en el Palacio Real y robar la Bendición que la Diosa del Invierno le había otorgado al pueblo de Ederia siglos atrás. Arrancó Las Lágrimas de Skjaldra del pecho del Rey Alistair, acabando con su vida.",
-      "interprete": "Jess"
+      "interprete": "Jess",
+      "visible": false
     },
     {
       "id": "ederia/diamond",
@@ -876,7 +880,8 @@
       "rareza": "legendaria",
       "valor": 150,
       "descripcion": "Diamond es una de los Cuatros Aces (El As de Diamantes). Es una invocadora de almas, y una de las Invocadoras más fuertes de todo Elfheim. Su invocación más fuerte es Vermillion: Un poderoso demonio de varios metros de alto que se coordina con ella con una precisión milimétrica. Vermillion, como todos los demonios, es un ser hecho de Nihil extremadamente poderoso, con la capacidad de rivalizar con el poder de los ángeles. Diamond tiene es una mujer de pocas palabras y de carácter frío. Usualmente mantiene su ojo derecho oculto tras vendajes, y cuando los remueve, desata su máximo poder.",
-      "interprete": "Jess"
+      "interprete": "Jess",
+      "visible": false
     }
   ]
 }

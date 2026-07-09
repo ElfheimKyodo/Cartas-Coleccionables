@@ -166,7 +166,7 @@ async function cargarCartas() {
         const response = await fetch('cartas/manifest.json');
         if (response.ok) {
             const manifest = await response.json();
-            cartasData = manifest.cartas || [];
+            cartasData = (manifest.cartas || []).filter(c => c.visible !== false);
             console.log(`Cargadas ${cartasData.length} cartas desde manifest.json`);
         } else {
             console.warn('No se encontró manifest.json');
@@ -208,7 +208,7 @@ async function precargarAssets() {
     let images = [];
     if (manifestResp?.ok) {
         const manifest = await manifestResp.json();
-        images = (manifest.cartas || []).map(c => c.imagen).filter(Boolean);
+        images = (manifest.cartas || []).filter(c => c.visible !== false).map(c => c.imagen).filter(Boolean);
     }
     const extraImages = [
         'cartas/PORTADA.png',
