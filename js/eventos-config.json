@@ -27,6 +27,32 @@
       "prioridad": 1
     },
     {
+      "id": "promocional-permanente",
+      "titulo": "Cambio en los gachas",
+      "texto": "Los gachas han cambiado. Ahora el estilo de los gachas se separará en dos tipos: Gacha Promocional y Gacha Permanente. El Gacha Promocional tendrá un tiempo limitado y estará disponible por un tiempo determinado con un boosteo de conseguir el personaje que se anuncia, mientras que el Gacha Permanente estará disponible de forma indefinida con todas las cartas.",
+      "tipo": "",
+      "etiqueta": "CAMBIO",
+      "visibilidad": {
+        "mostrarBanner": true,
+        "mostrarEtiqueta": true,
+        "mostrarTexto": true,
+        "mostrarIcono": true,
+        "mostrarFondo": true
+      },
+      "colores": {
+        "fondo": "#1e1b4b",
+        "fondoGradiente": "linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95)",
+        "texto": "#f5f3ff",
+        "textoSecundario": "#c4b5fd",
+        "etiqueta": "#fbbf24",
+        "etiquetaTexto": "#1a1200",
+        "borde": "#a78bfa",
+        "sombra": "rgba(139, 92, 246, 0.35)",
+        "destello": "#c4b5fd"
+      },
+      "prioridad": 2
+    },
+    {
       "id": "evento-monedas",
       "titulo": "¡Evento de Monedas!",
       "texto": "¡Gana monedas extras en tu primera sesión! Solo por iniciar sesión, podrás ganar 1000 monedas para empezar a probar los sobres.",
@@ -40,15 +66,15 @@
         "mostrarFondo": true
       },
       "colores": {
-        "fondo": "#174569",
-        "fondoGradiente": "linear-gradient(135deg, #174569, #0894ff)",
-        "texto": "#ffff00",
-        "textoSecundario": "#ffffff",
+        "fondo": "#1e1b4b",
+        "fondoGradiente": "linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95)",
+        "texto": "#f5f3ff",
+        "textoSecundario": "#c4b5fd",
         "etiqueta": "#fbbf24",
         "etiquetaTexto": "#1a1200",
-        "borde": "#fbbf24",
-        "sombra": "rgba(251, 191, 36, 0.3)",
-        "destello": "#fbbf24"
+        "borde": "#a78bfa",
+        "sombra": "rgba(139, 92, 246, 0.35)",
+        "destello": "#c4b5fd"
       },
       "prioridad": 5
     }
