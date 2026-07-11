@@ -882,6 +882,58 @@
       "descripcion": "Diamond es una de los Cuatros Aces (El As de Diamantes). Es una invocadora de almas, y una de las Invocadoras más fuertes de todo Elfheim. Su invocación más fuerte es Vermillion: Un poderoso demonio de varios metros de alto que se coordina con ella con una precisión milimétrica. Vermillion, como todos los demonios, es un ser hecho de Nihil extremadamente poderoso, con la capacidad de rivalizar con el poder de los ángeles. Diamond tiene es una mujer de pocas palabras y de carácter frío. Usualmente mantiene su ojo derecho oculto tras vendajes, y cuando los remueve, desata su máximo poder.",
       "interprete": "Jess",
       "visible": false
+    },
+    {
+      "id": "solareth/insigniadelsol",
+      "nombre": "Insignia del Sol",
+      "imagen": "cartas/solareth/insigniadelsol.png",
+      "region": "solareth",
+      "raza": "__null__",
+      "categoria": "Objeto",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Una insginia originaria de Solareth utilizada en El Festival del Sol Eterno. Los participantes tenían que conseguir dichas insignias en diferentes desafíos para recibir la bendición del Dios de Solareth, Ithuriel. En la insginia, se pueden notas los colores dorados característicos de Solareth, junto a un emblema de un sol en el centro y acabados relacionados al sol. Sin duda, una insignia que marca el desafío completado dentro de el evento.",
+      "interprete": "__null__",
+      "visible": true
+    },
+    {
+      "id": "solareth/esperanzaesmeralda",
+      "nombre": "Esperanza Esmeralda",
+      "imagen": "cartas/solareth/esperanzaesmeralda.png",
+      "region": "solareth",
+      "raza": "__null__",
+      "categoria": "Objeto",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Un refinado colgante elaborado en oro blanco, cuya pieza central es una esmerlada tallada en forma de gota. Delicadas decoraciones de metal rodean la gema dándole un aspecto elegante y refinado. Este colgante otorga al usuario que lo porta los siguientes efectos: +10 Velocidad. +5 de Maná.",
+      "interprete": "__null__",
+      "visible": true
+    },
+    {
+      "id": "solareth/gallinadelamanecer",
+      "nombre": "Gallina del Amanecer",
+      "imagen": "cartas/solareth/gallinadelamanecer.png",
+      "region": "solareth",
+      "raza": "__null__",
+      "categoria": "Objeto",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Una diminuta estatuilla de oro macizo con la forma de una orgullosa gallina. Sus plumas están grabadas con sorprendente detalle y dos pequeños cuarzos hacen de ojos. A pesar de su evidente valor, nadie parece saber por qué semejante objeto terminó oculto dentro de un cofre ceremonial de Solareth. Otorga 20% de bonificación adicional al recibir un pago en monedas por una misión o encargo, mientras el usuario sostenga la gallina. Además, 10% de descuento en cada compra que haga el usuario mientras sostiene la gallina.",
+      "interprete": "__null__",
+      "visible": true
+    },
+    {
+      "id": "solareth/seraphine",
+      "nombre": "Seraphine",
+      "imagen": "cartas/solareth/seraphine.png",
+      "region": "solareth",
+      "raza": "__null__",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Seraphine Lévesque, conocida como “La Voz de Ithuriel” o “La Juez del Alba”, es una Santa de 25 años y líder de la Facción Religiosa de Solareth. Físicamente mide 1.69 m, viste hábitos blancos litúrgicos y destaca por su largo cabello verde pastel, ojos azul celeste y una expresión serena que no pierde ni en combate. Bendecida desde su infancia —cuando pronunció antiguas plegarias como sus primeras palabras—, fue educada por la Iglesia, sobresaliendo por la sabiduría de sus juicios y la gran autoridad de su voz suave. Actualmente, actúa como la máxima representante de la fe en el reino, viajando para presidir juicios sagrados y resolver conflictos de relevancia nacional.",
+      "interprete": "__null__",
+      "visible": true
     }
   ]
 }

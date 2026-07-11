@@ -1,12 +1,20 @@
 {
   "actualizaciones": [
     {
+      "fecha": "11/7/26",
+      "descripcion": [
+        "Bug corregido: Spamear la venta de cartas hacía una multiventa (Fogman).",
+        "El Gacha Promocional está activo. Cuenta con 25% de descuento y contiene cartas de Solareth. Ithuriel tiene un x2.5 de probabilidad de aparecer en el gacha.",
+        "Se añadieron las siguientes cartas: Seraphine, Esperanza Esmeralda, Insignia del Sol y Gallina del Amanecer."
+      ]
+    },
+    {
       "fecha": "7/7/26",
       "descripcion": [
         "Corrección de interprete de Narissa.",
-        "Se agregó la región Ederia",
-        "Se cambió el sistema de sobres",
-        "Se añadió a: Lobo Infernal, Anezka, Alistair, Diamond y Jestress"
+        "Se agregó la región Ederia.",
+        "Se cambió el sistema de sobres.",
+        "Se añadió a: Lobo Infernal, Anezka, Alistair, Diamond y Jestress."
       ]
     },
     {

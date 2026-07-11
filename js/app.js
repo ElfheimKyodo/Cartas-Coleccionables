@@ -869,7 +869,7 @@ function toggleInformacionGacha() {
 
     titulo.textContent = sobre.nombre;
 
-    const probRarezas = sobre.probabilidades;
+    const probRarezas = aplicarBoostFeaturedAProbabilidades(sobre.probabilidades, sobre);
     const regionIcons = { umbraeth: 'fa-moon', skjoldheim: 'fa-shield-halved', astra: 'fa-star', solareth: 'fa-sun', elarion: 'fa-tree', ederia: 'fa-hands-holding-circle', generic: 'fa-layer-group' };
     const regionesInfo = sobre.regiones.map(r => `<li><i class="fa-solid ${regionIcons[r] || 'fa-question'}" style="margin-right:6px;color:var(--gold);"></i>${REGION_NOMBRES[r] || r}</li>`).join('');
     const rarezaInfo = Object.entries(probRarezas).map(([r, w]) => 
@@ -901,11 +901,14 @@ function toggleInformacionGacha() {
 
     cartasPosibles.sort((a, b) => (RAREZA_ORDEN[a.rareza] ?? 99) - (RAREZA_ORDEN[b.rareza] ?? 99));
 
+    const multBadge = Number(sobre.featuredMultiplicador || 1);
+    const esFeatured = (c) => c.id === sobre.featured && multBadge > 1;
+
     tabCartas.innerHTML = cartasPosibles.length > 0
         ? `<div class="gacha-info-cartas-grid">${cartasPosibles.map(carta => `
-            <div class="gacha-info-carta-item">
+            <div class="gacha-info-carta-item${esFeatured(carta) ? ' gacha-info-carta-featured' : ''}">
                 <img src="${carta.imagen}" alt="${carta.nombre}" loading="lazy" onerror="this.src='cartas/PORTADA.png'">
-                <span class="gacha-info-carta-nombre">${carta.nombre}</span>
+                <span class="gacha-info-carta-nombre">${carta.nombre}${esFeatured(carta) ? `<span class="gacha-info-badge-x2">x${multBadge}</span>` : ''}</span>
             </div>
           `).join('')}</div>`
         : '<p class="sin-cartas">No hay cartas registradas para este sobre.</p>';
@@ -1011,6 +1014,15 @@ function calcularPorcentaje(probRarezas, rareza) {
     return ((probRarezas[rareza] || 0) / total * 100).toFixed(2);
 }
 
+function aplicarBoostFeaturedAProbabilidades(probRarezas, sobre) {
+    const mult = Number(sobre.featuredMultiplicador || 1);
+    if (!sobre.featured || mult <= 1) return probRarezas;
+    const cartaFeatured = cartasData.find(c => c.id === sobre.featured);
+    const rarezaFeatured = cartaFeatured?.rareza;
+    if (!rarezaFeatured || probRarezas[rarezaFeatured] == null) return probRarezas;
+    return { ...probRarezas, [rarezaFeatured]: probRarezas[rarezaFeatured] * mult };
+}
+
 function generarCartasRegion(region) {
     const cartas = [];
     const sobre = obtenerSobre(region);
@@ -1043,9 +1055,11 @@ function generarCartasRegion(region) {
     const probRarezasFiltradas = Object.fromEntries(
         Object.entries(probRarezas).filter(([r]) => rarezasDisponibles.has(r))
     );
-    const probRarezasFinal = Object.keys(probRarezasFiltradas).length > 0
+    let probRarezasFinal = Object.keys(probRarezasFiltradas).length > 0
         ? probRarezasFiltradas
         : probRarezas;
+
+    probRarezasFinal = aplicarBoostFeaturedAProbabilidades(probRarezasFinal, sobre);
 
     const tieneLegendariaEnSobre = probRarezasFinal.hasOwnProperty('legendaria');
     const pityActivo = pityContador >= PITY_LIMITE && tieneLegendariaEnSobre;
@@ -2094,7 +2108,10 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
 
     const btnConfirmarVenta = document.getElementById('btn-confirmar-venta');
     if (btnConfirmarVenta) {
+        let ventaEnProceso = false;
+        let ventaCooldownTimer = null;
         btnConfirmarVenta.addEventListener('click', async () => {
+            if (ventaEnProceso) return;
             console.log('[VENTA] Click confirmar venta');
             const modal = document.getElementById('modal-carta');
             const cartaId = modal?.dataset?.cartaId;
@@ -2110,54 +2127,67 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
                 mostrarErrorSupabase('No podés vender tu última copia, tenés que quedarte al menos con 1.');
                 return;
             }
+            ventaEnProceso = true;
+            const textoOriginalVenta = btnConfirmarVenta.textContent;
+            btnConfirmarVenta.disabled = true;
+            btnConfirmarVenta.textContent = 'Vendiendo...';
 
-            if (supabaseEnabled && usuarioActual) {
-                const ganancia = valor * cantidad;
-                if (monedas + ganancia < 1) {
-                    mostrarErrorSupabase('No podés quedar con menos de 1 moneda');
-                    return;
-                }
-                try {
-                    let result;
-                    try {
-                        result = await db.sellCard(supabaseClient, usuarioActual.id, cartaId, cantidad, valor);
-                    } catch (rpcError) {
-                        console.warn('[ECON] RPC vender_carta no disponible; usando escritura directa en tablas:', rpcError);
-                        result = await db.sellCardTable(supabaseClient, usuarioActual.id, cartaId, cantidad, valor);
+            try {
+                if (supabaseEnabled && usuarioActual) {
+                    const ganancia = valor * cantidad;
+                    if (monedas + ganancia < 1) {
+                        mostrarErrorSupabase('No podés quedar con menos de 1 moneda');
+                        return;
                     }
-                if (!result) throw new Error('Respuesta vacía del servidor');
-                monedas = result.nuevo_saldo;
-                const lastClaim = lastClaimServerMs;
-                await cargarDatos();
-                lastClaimServerMs = lastClaim;
-                guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
-                } catch (err) {
-                    console.error('[ECON] Error vendiendo carta:', err);
-                    mostrarErrorSupabase('Error al vender la carta');
-                    return;
+                    try {
+                        let result;
+                        try {
+                            result = await db.sellCard(supabaseClient, usuarioActual.id, cartaId, cantidad, valor);
+                        } catch (rpcError) {
+                            console.warn('[ECON] RPC vender_carta no disponible; usando escritura directa en tablas:', rpcError);
+                            result = await db.sellCardTable(supabaseClient, usuarioActual.id, cartaId, cantidad, valor);
+                        }
+                    if (!result) throw new Error('Respuesta vacía del servidor');
+                    monedas = result.nuevo_saldo;
+                    const lastClaim = lastClaimServerMs;
+                    await cargarDatos();
+                    lastClaimServerMs = lastClaim;
+                    guardarUltimoReclamoLocal(lastClaimServerMs, usuarioActual.id);
+                    } catch (err) {
+                        console.error('[ECON] Error vendiendo carta:', err);
+                        mostrarErrorSupabase('Error al vender la carta');
+                        return;
+                    }
+                } else {
+                    const ganancia = valor * cantidad;
+                    if (monedas + ganancia < 1) {
+                        mostrarErrorSupabase('No podés quedar con menos de 1 moneda');
+                        return;
+                    }
+                    item.cantidad -= cantidad;
+                    monedas += ganancia;
+                    guardarLocalStorage();
                 }
-            } else {
-                const ganancia = valor * cantidad;
-                if (monedas + ganancia < 1) {
-                    mostrarErrorSupabase('No podés quedar con menos de 1 moneda');
-                    return;
-                }
-                item.cantidad -= cantidad;
-                monedas += ganancia;
-                guardarLocalStorage();
-            }
 
-            actualizarMonedas();
-            actualizarEstadisticas();
-            renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
-            if (panelVenta) {
-                panelVenta.classList.remove('open');
-                panelVenta.dataset.abierto = '0';
+                actualizarMonedas();
+                actualizarEstadisticas();
+                renderizarColeccion('todas', { campo: 'nombre', valor: '' }, obtenerOrdenActual());
+                if (panelVenta) {
+                    panelVenta.classList.remove('open');
+                    panelVenta.dataset.abierto = '0';
+                }
+                const itemActualizado = coleccion[cartaId];
+                const cantidadTexto = document.getElementById('carta-detalle-cantidad');
+                if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${itemActualizado?.cantidad ?? 0}`;
+                if (btnVender) btnVender.disabled = !itemActualizado || itemActualizado.cantidad < 2;
+            } finally {
+                ventaEnProceso = false;
+                if (ventaCooldownTimer) clearTimeout(ventaCooldownTimer);
+                ventaCooldownTimer = setTimeout(() => {
+                    btnConfirmarVenta.disabled = false;
+                    btnConfirmarVenta.textContent = textoOriginalVenta;
+                }, 500);
             }
-            const itemActualizado = coleccion[cartaId];
-            const cantidadTexto = document.getElementById('carta-detalle-cantidad');
-            if (cantidadTexto) cantidadTexto.textContent = `Cantidad: ${itemActualizado?.cantidad ?? 0}`;
-            if (btnVender) btnVender.disabled = !itemActualizado || itemActualizado.cantidad < 2;
         });
     }
 
@@ -2493,19 +2523,50 @@ function abrirLeaderboard() {
     cargarLeaderboard();
 }
 
+const UPDATES_FALLBACK = {
+    actualizaciones: [
+        {
+            fecha: "7/7/26",
+            descripcion: [
+                "Corrección de interprete de Narissa.",
+                "Se agregó la región Ederia",
+                "Se cambió el sistema de sobres",
+                "Se añadió a: Lobo Infernal, Anezka, Alistair, Diamond y Jestress"
+            ]
+        },
+        {
+            fecha: "5/7/26",
+            descripcion: ["Maki añadida."]
+        }
+    ]
+};
+
 function abrirChangelog() {
     const modal = document.getElementById('modal-changelog');
     const contentEl = document.getElementById('changelog-content');
     if (!modal || !contentEl) return;
     modal.classList.add('active');
     contentEl.innerHTML = '<p class="loading-changelog">Cargando actualizaciones...</p>';
-    fetch('js/updates.json')
-        .then(r => r.ok ? r.json() : Promise.reject('No se encontró updates.json'))
+    cargarUpdates()
         .then(data => renderizarChangelog(data, contentEl))
         .catch(err => {
             console.warn('[CHANGELOG] Error cargando updates:', err);
             contentEl.innerHTML = '<p class="error-mensaje">No hay actualizaciones disponibles.</p>';
         });
+}
+
+function cargarUpdates() {
+    return new Promise(resolve => {
+        let resuelto = false;
+        const resolver = (data) => { if (!resuelto) { resuelto = true; resolve(data); } };
+        fetch('js/updates.json?t=' + Date.now())
+            .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(data => { if (data && Array.isArray(data.actualizaciones)) resolver(data); else throw new Error('Formato inválido'); })
+            .catch(err => {
+                console.warn('[CHANGELOG] No se pudo cargar updates.json, usando respaldo embebido:', err);
+                resolver(UPDATES_FALLBACK);
+            });
+    });
 }
 
 function renderizarChangelog(data, contenedor) {

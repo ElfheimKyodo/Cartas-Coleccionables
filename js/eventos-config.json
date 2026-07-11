@@ -1,13 +1,39 @@
 {
   "banners": [
     {
+      "id": "promocional-solareth",
+      "titulo": "El Festival del Sol Eterno!",
+      "texto": "¡El Festival del Sol Eterno ha llegado a Solareth! Participa en el evento y consigue cartas exclusivas de la región. ¡No te pierdas la oportunidad de obtener a Ithuriel con un x2.5 de probabilidad!",
+      "tipo": "",
+      "etiqueta": "EVENTO",
+      "visibilidad": {
+        "mostrarBanner": true,
+        "mostrarEtiqueta": true,
+        "mostrarTexto": true,
+        "mostrarIcono": true,
+        "mostrarFondo": true
+      },
+      "colores": {
+        "fondo": "#241a00",
+        "fondoGradiente": "linear-gradient(135deg, #241a00, #5c4300, #241a00)",
+        "texto": "#ffd700",
+        "textoSecundario": "#fff7e0",
+        "etiqueta": "#ffd700",
+        "etiquetaTexto": "#241a00",
+        "borde": "#ffd700",
+        "sombra": "rgba(255, 215, 0, 0.4)",
+        "destello": "#ffd700"
+      },
+      "prioridad": 1
+    },
+    {
       "id": "evento-salida",
       "titulo": "¡Evento de Salida!",
       "texto": "¡Bienvenido al inicio del gacha! Cuando inicies sesión, recibirás un regalo de bienvenida de 500 monedas para empezar a hacer tiradas. Para más tiradas, tendrás que entrar cada hora a reclamar 100 monedas.",
       "tipo": "",
       "etiqueta": "EVENTO",
       "visibilidad": {
-        "mostrarBanner": true,
+        "mostrarBanner": false,
         "mostrarEtiqueta": true,
         "mostrarTexto": true,
         "mostrarIcono": true,
@@ -33,7 +59,7 @@
       "tipo": "",
       "etiqueta": "CAMBIO",
       "visibilidad": {
-        "mostrarBanner": true,
+        "mostrarBanner": false,
         "mostrarEtiqueta": true,
         "mostrarTexto": true,
         "mostrarIcono": true,

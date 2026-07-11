@@ -2072,6 +2072,28 @@ nav {
   line-height: 1.2;
   max-height: 2.4em;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+.gacha-info-badge-x2 {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--gold), #ffcf6b);
+  color: #2a1c00;
+  font-weight: 800;
+  font-size: 9px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  letter-spacing: 0.3px;
+}
+
+.gacha-info-carta-featured img {
+  box-shadow: 0 0 0 2px var(--gold), 0 4px 12px rgba(0,0,0,0.5);
 }
 
 .gacha-info-modal h4 {
