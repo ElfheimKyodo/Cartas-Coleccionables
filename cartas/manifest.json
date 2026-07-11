@@ -289,18 +289,6 @@
       "interprete": "Nicholas"
     },
     {
-      "id": "solareth/apollo",
-      "nombre": "Apollo",
-      "imagen": "cartas/solareth/apollo.png",
-      "region": "solareth",
-      "raza": "Elfo Solar",
-      "categoria": "personaje",
-      "rareza": "epica",
-      "valor": 35,
-      "descripcion": "Apôllindor Saethryn K’aon Arxindas de Duinor Sorvael Tharindel (o solamente Apollo) es un Elfo Solar de Solareth con aproximadamente siete siglos de edad, de la cual no existe ningún registro documental. Es un elfo esbelto de rasgos afilados, ojos ámbar, orejas puntiagudas con pendientes y cabello castaño oscuro con mechones sueltos. Viste capas funcionales superpuestas con bordados mágicos de hojas y flores que acumulan siglos de desgaste, acompañadas por botas arrugadas, un bolso lleno de pergaminos y múltiples accesorios de caza y alquimia. Su principal distintivo es su bastón de raíz viviente de madera oscura y retorcida, brotado de hojas y flores de su época como aprendiz de druida, al cual llama afectuosamente \"el palo\".",
-      "interprete": "Apollo"
-    },
-    {
       "id": "umbraeth/elphen",
       "nombre": "Elphen",
       "imagen": "cartas/umbraeth/elphen.png",
