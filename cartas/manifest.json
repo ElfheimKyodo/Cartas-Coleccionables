@@ -963,10 +963,10 @@
       "visible": true
     },
     {
-      "id": "solareth/rukkhadevata",
+      "id": "ederia/rukkhadevata",
       "nombre": "Rukkhadevata",
-      "imagen": "cartas/solareth/rukkhadevata.png",
-      "region": "solareth",
+      "imagen": "cartas/ederia/rukkhadevata.png",
+      "region": "ederia",
       "raza": "Hada",
       "categoria": "Personaje",
       "rareza": "epica",
