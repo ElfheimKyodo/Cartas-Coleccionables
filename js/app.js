@@ -1628,6 +1628,8 @@ function mostrarDetalle(cartaId) {
         inputVender.value = maxVenta > 0 ? 1 : 0;
         inputVender.max = maxVenta;
         btnVender.disabled = data.cantidad < 2;
+        const btnVenderMax = document.getElementById('vender-max');
+        if (btnVenderMax) btnVenderMax.disabled = data.cantidad < 2;
     }
     const modalCarta = document.getElementById('modal-carta');
     modalCarta.dataset.cartaId = cartaId;
@@ -2216,6 +2218,16 @@ const btnLimpiarFiltro = document.getElementById('btn-limpiar-filtro');
             } else {
                 inputVender.value = 1;
             }
+        });
+    }
+    const btnVenderMax = document.getElementById('vender-max');
+    if (btnVenderMax && inputVender) {
+        btnVenderMax.addEventListener('click', () => {
+            const modal = document.getElementById('modal-carta');
+            const cartaId = modal?.dataset?.cartaId;
+            const item = cartaId ? coleccion[cartaId] : null;
+            const max = item ? Math.max(0, item.cantidad - 1) : 0;
+            inputVender.value = max;
         });
     }
 

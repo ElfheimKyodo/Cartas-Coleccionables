@@ -2551,6 +2551,15 @@ nav {
   transform: scale(1.1);
 }
 
+#vender-max {
+  width: auto;
+  min-width: 48px;
+  padding: 0 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
 .vender-input {
   width: 56px;
   text-align: center;

@@ -1000,6 +1000,19 @@
       "descripcion": "Plutarco Mothglass, “El santo del mundo”, es un sacerdote de 16 años de Solareth, midiendo 1.65 metros, con apariencia inocente, piel blanca como el mármol y ojos azules brillantes. Al nacer, usó sus dones divinos para salvar a su madre de morir desangrada, pero ella lo vendió a la iglesia por cinco monedas y poco después falleció. Aunque fue criado por la institución, Plutarco rechaza en secreto las estatuas y la iconografía impuesta de su dios Ithuriel; por ello, desde los 12 años se escapa constantemente para ofrecer curaciones gratuitas y predicar el códice solaris a los más desfavorecidos, manteniendo siempre un carácter feliz y un cuerpo delgado debido a su ayuno voluntario.",
       "interprete": "Binary Star",
       "visible": true
+    },
+    {
+      "id": "solareth/lagrimasdezafiro",
+      "nombre": "Lágrimas de Zafiro",
+      "imagen": "cartas/solareth/lagrimasdezafiro.png",
+      "region": "solareth",
+      "raza": "__null__",
+      "categoria": "Objeto",
+      "rareza": "rara",
+      "valor": 10,
+      "descripcion": "Colgante antiguo elaborado en oro blanco y piedra lunar. Una gran perla de cuarzo ocupa el centro de la joya, abrazada por una delicada filigrana con varias piezas de zafiro finamente incrustadas. Otorg +10 de Maná y 20% de probabilidad de regenerar 5 puntos de salud cada 7 turnos de combate.",
+      "interprete": "__null__",
+      "visible": true
     }
   ]
 }
