@@ -1,6 +1,13 @@
 {
   "actualizaciones": [
     {
+      "fecha": "12/7/26",
+      "descripcion": [
+        "Se añadieron las siguientes cartas: Krakenor, Plutarco, Rukkhadevata, Seraphine Noctis, Scarlett, Sigrdrífa.",
+        "Se ha corregido la carta Anezka, la cual tenía un error en su escudo."
+      ]
+    },
+    {
       "fecha": "11/7/26",
       "descripcion": [
         "Bug corregido: Spamear la venta de cartas hacía una multiventa (Fogman).",
