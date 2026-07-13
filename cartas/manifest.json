@@ -1013,6 +1013,19 @@
       "descripcion": "Colgante antiguo elaborado en oro blanco y piedra lunar. Una gran perla de cuarzo ocupa el centro de la joya, abrazada por una delicada filigrana con varias piezas de zafiro finamente incrustadas. Otorg +10 de Maná y 20% de probabilidad de regenerar 5 puntos de salud cada 7 turnos de combate.",
       "interprete": "__null__",
       "visible": true
+    },
+    {
+      "id": "umbraeth/igniriz",
+      "nombre": "Igniriz",
+      "imagen": "cartas/umbraeth/igniriz.png",
+      "region": "umbraeth",
+      "raza": "DIOS",
+      "categoria": "Personaje",
+      "rareza": "legendaria",
+      "valor": 150,
+      "descripcion": "Igniriz, la Diosa de la Muerte, es la soberana del último suspiro y la guardiana del umbral que separa la vida del eterno descanso. Su presencia no inspira únicamente temor, sino un respeto casi sagrado, pues es ella quien garantiza que el ciclo del mundo jamás se rompa. Envuelta en un aura fría como el mármol y con una belleza inquietante, camina entre las almas con una serenidad inquebrantable, observando el destino de mortales y dioses con unos ojos capaces de contemplar tanto el pasado como el final de toda existencia. Implacable, sabia y ajena a la compasión cuando el equilibrio está en juego, Igniriz no concede segundas oportunidades ni acepta súplicas, pues entiende que la muerte no es un castigo, sino una verdad inevitable que todos, sin excepción, deben abrazar.",
+      "interprete": "Bella",
+      "visible": true
     }
   ]
 }
