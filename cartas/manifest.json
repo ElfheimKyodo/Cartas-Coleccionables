@@ -1026,6 +1026,19 @@
       "descripcion": "Igniriz, la Diosa de la Muerte, es la soberana del último suspiro y la guardiana del umbral que separa la vida del eterno descanso. Su presencia no inspira únicamente temor, sino un respeto casi sagrado, pues es ella quien garantiza que el ciclo del mundo jamás se rompa. Envuelta en un aura fría como el mármol y con una belleza inquietante, camina entre las almas con una serenidad inquebrantable, observando el destino de mortales y dioses con unos ojos capaces de contemplar tanto el pasado como el final de toda existencia. Implacable, sabia y ajena a la compasión cuando el equilibrio está en juego, Igniriz no concede segundas oportunidades ni acepta súplicas, pues entiende que la muerte no es un castigo, sino una verdad inevitable que todos, sin excepción, deben abrazar.",
       "interprete": "Bella",
       "visible": true
+    },
+    {
+      "id": "solareth/lavan",
+      "nombre": "Lavan",
+      "imagen": "cartas/solareth/lavan.png",
+      "region": "solareth",
+      "raza": "Santo",
+      "categoria": "Personaje",
+      "rareza": "epica",
+      "valor": 35,
+      "descripcion": "Lavan Yami , apodado “El Fantasma Blanco”, es un hombre de 27 años (1.88 m) de Solareth con cabello blanco platinado, cuerpo lleno de cicatrices y ojos de distinto color (izquierdo gris, derecho carmesí). Aunque nació muerto, resucitó gracias a un pacto con espíritus que le otorgó dones sobrenaturales a cambio de su alma, lo que provocó el rechazo de su pueblo y de su padre. A los 14 años, tras regresar de cazar almas en pena, descubrió que su padre alcohólico había vendido su hogar a unos bandidos que asesinaron brutalmente a su madre. Cegado por la ira, Lavan masacró a los más de cien criminales y torturó a su progenitor hasta la muerte. Desde entonces, vaga de forma autómata en la frontera del más allá, cosechando almas para el abismo sin buscar paz ni redención.",
+      "interprete": "Yuta",
+      "visible": true
     }
   ]
 }
